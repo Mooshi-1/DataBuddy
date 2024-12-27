@@ -5,23 +5,10 @@ Created on Mon Dec 23 12:21:22 2024
 @author: e314883
 """
 
-
-#SCGEN Functions working
-##rename, bind, merge, create batch pack (excluding sequence)
-###next features -- highlighting, crossing out, deleting pages, include seq in bp
-
-
-#methods to do 
-#quants
-#remaining GC quants?
-
-###need winpython or portable python installed
-
 #export QC data to pdf
 #handle reinjects
 #integrate sequence generation from test batch
 ##export sequence as pdf
-
 
 
 import sys
@@ -44,6 +31,12 @@ def main(input_dir, output_dir, batch_num, method):
         SCRNZ_omni.Zrename(input_dir)
         SCRNZ_omni.Zbinder(input_dir, output_dir, batch_num)
         SCRNZ_omni.Zcontrols(output_dir, batch_num)
+        
+input_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
+output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
+batch_num = 111
+method = "SCGEN"
+main(input_dir, output_dir, batch_num, method)
 
 if __name__ == "__main__":
     input_dir = sys.argv[1]

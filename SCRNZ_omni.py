@@ -146,14 +146,14 @@ def Zcontrols(output_dir, batch_num):
     print("batch pack created")
         
 
-batch_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
-output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
-batch_num = 12777
+#batch_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
+#output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
+#batch_num = 12777
 
 #r prefix makes it so python does not interpret backslashes as line breaks
-Zrename(batch_dir)
-Zbinder(batch_dir, output_dir, batch_num)
-Zcontrols(output_dir, batch_num)
+#Zrename(batch_dir)
+#Zbinder(batch_dir, output_dir, batch_num)
+#Zcontrols(output_dir, batch_num)
 
 
 

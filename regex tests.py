@@ -16,5 +16,3 @@ def main(string):
 
 # Example usage
 print(main(r"24-3158_livx5 A Data File Path"))
-
- 

@@ -86,9 +86,16 @@ def GENcontrols(output_dir, batch_num):
     merged_pdf = fitz.open()
     
     #merge
-    for pdf in files_to_merge:
-        with fitz.open(os.path.join(output_dir, pdf)) as pdf_document:
-            merged_pdf.insert_pdf(pdf_document)
+    try:
+        for pdf in files_to_merge:
+            if pdf is not None:
+                with fitz.open(os.path.join(output_dir, pdf)) as pdf_document:
+                    merged_pdf.insert_pdf(pdf_document)
+            else:
+                raise TypeError("PDF file is None")
+    except TypeError as e:
+        print(f"No controls found in {output_dir} - rerun program in batch pack data")
+        print(f"Error details: {e}")
     
     #save
     merged_pdf.save(os.path.join(output_dir, f"SCGEN_{batch_num}.pdf"))
