@@ -16,6 +16,7 @@ import sys
 import SCGEN_OMNI
 import SCRNZ_omni
 import searcher
+import SCLCMSMS_OMNI
 
 def main(input_dir, batch_num, method):
     print(f"Input Directory: {input_dir}")
@@ -37,12 +38,15 @@ def main(input_dir, batch_num, method):
         SCRNZ_omni.Zrename(input_dir)
         SCRNZ_omni.Zbinder(input_dir, output_dir, batch_num)
         SCRNZ_omni.Zcontrols(output_dir, batch_num)
+    
+    if method == "SCLCMSMS":
+        SCLCMSMS_OMNI.LCMSrename(input_dir)
+
         
 input_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
-output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
 batch_num = 111
 method = "SCGEN"
-main(input_dir, output_dir, batch_num, method)
+main(input_dir, batch_num, method)
 
 if __name__ == "__main__":
     input_dir = sys.argv[1]

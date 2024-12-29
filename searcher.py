@@ -30,10 +30,10 @@ def copy_contents(src_dir, dest_dir):
 #Shuttle(input_dir)
 
 def binder_dir(input_dir):
-    binder_path = os.path.join(input_dir, "binder")
+    binder_path = os.path.join(input_dir, "--binder files--")
     if not os.path.exists(binder_path):
         os.makedirs(binder_path)
-        print("made directory {binder_path}")
+        print(f"made directory {binder_path}")
 
 #binder_dir(input_dir)
 #need to change -- sys.argv

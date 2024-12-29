@@ -79,6 +79,10 @@ def Zrename(batch_dir):
 
             except PermissionError as e:
                 print(f"PermissionError: {e}")
+            except FileExistsError as e:
+                print(f"File Exists Error: {e}")
+            except FileNotFoundError as e:
+                print(f"File Not Found Error: {e}")
 
 def Zbinder(batch_dir, output_dir, batch_num):
     # Iterate through batch_dir for filenames

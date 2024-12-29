@@ -18,14 +18,12 @@ echo o888bood8P'   `Y888""8o   "888" `Y888""8o      o888bood8P'  o888o o888o o88
 echo .
 
 echo Version 1.0 - 12/26/24
-echo To rename files only - leave 2nd and 3rd prompts empty
-
 
 set /p input_dir="Enter the directory of the raw data: "
 set /p batch_num="Enter batch number: "
 set /p method="Enter method currently supported: SCGEN, SCRNZ: "
 
-echo ##ensure that your raw data folder does not contain sequences or other files##
+echo ensure that your PDF CASE DATA folder does not contain sequences or other files
 
 pause
 
