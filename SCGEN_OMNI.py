@@ -47,10 +47,13 @@ def GENrename(batch_dir):
                 print(f"{filename} has been renamed to {new_filename}")
             except PermissionError as e:
                 print(f"--PermissionError--: {e}")
+                continue
             except FileExistsError as e:
                 print(f"File Exists Error: {e}")
+                continue
             except FileNotFoundError as e:
                 print(f"File Not Found Error: {e}")
+                continue
         
 def GENbinder(batch_dir, output_dir, batch_num):
     #iterate thrugh batch_dir for filenames
