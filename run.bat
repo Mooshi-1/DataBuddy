@@ -22,7 +22,6 @@ echo To rename files only - leave 2nd and 3rd prompts empty
 
 
 set /p input_dir="Enter the directory of the raw data: "
-set /p output_dir="Enter the directory to deposit bound data: "
 set /p batch_num="Enter batch number: "
 set /p method="Enter method currently supported: SCGEN, SCRNZ: "
 
@@ -30,6 +29,6 @@ echo ##ensure that your raw data folder does not contain sequences or other file
 
 pause
 
-python "G:\PDF DATA\Python\WPy64-31260\notebooks\MAIN.py" "%input_dir%" "%output_dir%" "%batch_num%" "%method%"
+python "G:\PDF DATA\Python\WPy64-31260\notebooks\MAIN.py" "%input_dir%" "%batch_num%" "%method%"
 
 pause

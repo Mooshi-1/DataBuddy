@@ -11,7 +11,10 @@ import re
 
 def Zrename(batch_dir):
     # Define case number patterns
-    case_pattern = re.compile(r'(\d+-\d+_.+ [AB])')
+    # [A-Za-z]{0,2}: This part of the pattern matches zero to two letters, case insensitive.
+    # \d+-\d+: This matches the numeric part of the case number.
+    #  [AB]: This matches a space followed by either 'A' or 'B'.
+    case_pattern = re.compile(r'([A-Za-z]{0,2}\d+-\d+_.+ [AB])')
     control_pattern = re.compile(r'\D+CTRL [0-99] [AB]')
 
     # Iterate through the directory defined by filepath
@@ -145,6 +148,7 @@ def Zcontrols(output_dir, batch_num):
     merged_pdf.save(os.path.join(output_dir, f"SCRNZ_{batch_num}.pdf"))
     print("batch pack created")
         
+
 
 #batch_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
 #output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"

@@ -15,13 +15,19 @@ import sys
 #import os
 import SCGEN_OMNI
 import SCRNZ_omni
+import searcher
 
-def main(input_dir, output_dir, batch_num, method):
+def main(input_dir, batch_num, method):
     print(f"Input Directory: {input_dir}")
-    print(f"Output Directory: {output_dir}")
     print(f"Batch Number: {batch_num}")
     print(f"{method}")
     
+#take it a step further, just ask for batch number
+
+    output_dir = searcher.binder_dir(input_dir)
+    print(f"Output Directory: {output_dir}")
+    searcher.Shuttle(input_dir)
+
     if method == "SCGEN":
         SCGEN_OMNI.GENrename(input_dir)
         SCGEN_OMNI.GENbinder(input_dir, output_dir, batch_num)
@@ -40,7 +46,6 @@ main(input_dir, output_dir, batch_num, method)
 
 if __name__ == "__main__":
     input_dir = sys.argv[1]
-    output_dir = sys.argv[2]
-    batch_num = sys.argv[3]
-    method = sys.argv[4]
-    main(input_dir, output_dir, batch_num, method)
+    batch_num = sys.argv[2]
+    method = sys.argv[3]
+    main(input_dir, batch_num, method)
