@@ -1,11 +1,3 @@
-# Ignore all .pdf files
 *.pdf
-
-# Ignore __pycache__ directories everywhere
-__pycache__/
-
-# Ignore __pycache__ directories at any depth
 **/__pycache__/
-
-# Ensure all directories are tracked
-!*/
+**/*.pyc
