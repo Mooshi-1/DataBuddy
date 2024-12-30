@@ -40,5 +40,6 @@ def binder_dir(input_dir):
     if not os.path.exists(binder_path):
         os.makedirs(binder_path)
         print(f"made directory {binder_path}")
+    return binder_path
 
 #binder_dir(input_dir)
