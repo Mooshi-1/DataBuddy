@@ -1,7 +1,6 @@
 __pycache__/
-op_tests/
-raw_tests/
-
+*.pdf
+!*/
 
 
 

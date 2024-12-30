@@ -40,4 +40,3 @@ def binder_dir(input_dir):
         print(f"made directory {binder_path}")
 
 #binder_dir(input_dir)
-#need to change -- sys.argv

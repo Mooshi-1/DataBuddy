@@ -9,7 +9,7 @@ import os
 input_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
 
 def scrambler(input_dir):
-    counter = 00
+    counter = 000
     
     for filename in os.listdir(input_dir):
         #os.rename(old-file, new-file)
