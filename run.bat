@@ -19,14 +19,13 @@ echo .
 
 echo Version 1.0 - 12/26/24
 
-set /p input_dir="Enter the directory of the raw data: "
 set /p batch_num="Enter batch number: "
-set /p method="Enter method currently supported: SCGEN, SCRNZ: "
+set /p method="Enter method currently supported: SCGEN, SCRNZ, SCLCMSMS: "
 
-echo ensure that your PDF CASE DATA folder does not contain sequences or other files
+echo ensure that your batch folder does not contain sequences or other files
 
 pause
 
-python "G:\PDF DATA\Python\WPy64-31260\notebooks\MAIN.py" "%input_dir%" "%batch_num%" "%method%"
+python "G:\PDF DATA\Python\WPy64-31260\notebooks\MAIN.py" "%batch_num%" "%method%"
 
 pause

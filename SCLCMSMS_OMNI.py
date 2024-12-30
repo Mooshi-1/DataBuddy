@@ -26,6 +26,7 @@ def LCMSrename(batch_dir):
 
             case_number_1 = None
             case_number_2 = None
+            new_filename = None
             
             #find case number using sample name index + 1
             if "Insight MTS Report - Summary" in lines:
@@ -36,6 +37,11 @@ def LCMSrename(batch_dir):
                 sample_name_index = lines.index("Sample Name")
                 case_number_2 = lines[sample_name_index + 1]
                 print(f"{case_number_2}")
+            elif "Shimadzu 8060NX LCMS Batch Table" in lines:
+                if new_filename == None:
+                    new_filename = "Sequence_1.pdf"
+                else:
+                    new_filename = "Sequence_2.pdf"
             else:
                 print("case number not found for {filename}")
 
@@ -95,7 +101,7 @@ def LCMScontrols(output_dir, batch_num):
             pos_ctrls.append(filename)
 
     #sort pos controls 
-    pos_ctrls.sort(key=lambda x: int(x.split()[2].split("_")[0]))    
+    pos_ctrls.sort(key=lambda x: int(x.split()[2].split("_")[0]))
     
     #prepare lists for merge
     files_to_merge = [neg_ctrl] + pos_ctrls
@@ -114,17 +120,17 @@ def LCMScontrols(output_dir, batch_num):
         print(f"Error details: {e}")
     
     #save
-    merged_pdf.save(os.path.join(output_dir, f"SCGEN_{batch_num}.pdf"))
+    merged_pdf.save(os.path.join(output_dir, f"SCLCMSMS_{batch_num}.pdf"))
     print("batch pack created")
         
 
 
-batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
-output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA\--binder files--"
-batch_num = 12756
+#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
+#output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA\--binder files--"
+#batch_num = 12756
 
 #r prefix makes it so python does not interpret backslashes as line breaks
-LCMSrename(batch_dir)
-LCMSbinder(batch_dir, output_dir, batch_num)
+#LCMSrename(batch_dir)
+#LCMSbinder(batch_dir, output_dir, batch_num)
 #LCMScontrols(output_dir, batch_num)
 
