@@ -17,7 +17,7 @@ echo  888     d88' d8(  888    888 . d8(  888        888    .88P  888   888   88
 echo o888bood8P'   `Y888""8o   "888" `Y888""8o      o888bood8P'  o888o o888o o888o `Y8bod88P" `Y8bod8P' d888b    
 echo .
 
-echo Version 1.0 - 12/26/24
+echo Version 1.01 - 12/30/24
 
 set /p batch_num="Enter batch number: "
 set /p method="Enter method currently supported: SCGEN, SCRNZ, SCLCMSMS: "

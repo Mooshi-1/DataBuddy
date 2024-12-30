@@ -26,7 +26,6 @@ def main(batch_num, method):
     data_dir = r"G:\PDF DATA"
     print(f"Starting in: {data_dir}")
     
-    #find batch
     print("finding batch...")
     for year in os.listdir(data_dir):
         year_dir = os.path.join(data_dir, year)
@@ -41,9 +40,12 @@ def main(batch_num, method):
             for batch in os.listdir(month_dir):
                 if batch == str(batch_num):
                     print(f"found batch {batch_num}")
-                    #define directories
+                    
                     case_dir = os.path.join(month_dir, batch, "CASE DATA")
+                    print(f"Case Directory = {case_dir}")
                     qc_dir = os.path.join(month_dir, batch, "BATCH PACK DATA")
+                    print(f"QC Directory = {qc_dir}")
+                    
     #create binder output
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
@@ -71,8 +73,6 @@ def main(batch_num, method):
         SCLCMSMS_OMNI.LCMSrename(qc_dir)
         SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
         SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
-
-        
 
 if __name__ == "__main__":
     batch_num = sys.argv[1]
