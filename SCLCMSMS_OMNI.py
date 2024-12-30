@@ -14,71 +14,73 @@ def LCMSrename(batch_dir):
     #iterate through directory defined by filepath
     for filename in os.listdir(batch_dir):
         if filename.endswith(".pdf"):
-            pdf_path = os.path.join(batch_dir, filename)
-            
+            pdf_path = os.path.join(batch_dir, filename)        
             doc = fitz.open(pdf_path)
 
             # Extract text from the first page
             page = doc[0]
             text = page.get_text()
-            print(text)
+            #print(text)
             lines = text.split('\n')
-            print(lines)
+            #print(lines)
+
+            case_number_1 = None
+            case_number_2 = None
             
-            def get top sheet:
-            def get bottom sheet:
-            def define controls:
-            
-            
-            #get case number
-            try: 
-                if "Insight MTS Report - Summary" in lines:
-                    sample_name_index = lines.index("Sample Name")
-                    case_number = lines[sample_index + 1]
-                    print(f"{filename}")
+            #find case number using sample name index + 1
+            if "Insight MTS Report - Summary" in lines:
+                sample_name_index = lines.index("Sample Name")
+                case_number_1 = lines[sample_name_index + 1]
+                print(f"{case_number_1}")
+            elif "Insight MTS Report - Detail" in lines:
+                sample_name_index = lines.index("Sample Name")
+                case_number_2 = lines[sample_name_index + 1]
+                print(f"{case_number_2}")
+            else:
+                print("case number not found for {filename}")
 
-            # # Extract the case number from the third line
-            # case_number = lines[2].strip()
-            # #print(case_number)
-            # #handle exceptions -- regex string for hyphenated case num
-            # pattern = re.compile(r"^.+-.+ [AB]$")
-            # if not pattern.match(case_number):
-            #     if not case_number.startswith("NEG") \
-            #     and not case_number.startswith("POS"):    
-            #         print(f"--error--skipping {filename} due to invalid case num")
-            #         continue
+            # Close the document
+            doc.close()
 
-            # # Close the document
-            # doc.close()
+            # Define the new filename
+            if case_number_1:
+                new_filename = f"{case_number_1}_1.pdf"
+            if case_number_2:
+                new_filename = f"{case_number_2}_2.pdf"
+            new_path = os.path.join(os.path.dirname(pdf_path), new_filename)
 
-            # # Define the new filename
-            # new_filename = f"{case_number}.pdf"
-            # new_path = os.path.join(os.path.dirname(pdf_path), new_filename)
+            # Rename the file
+            try:
+                os.rename(pdf_path, new_path)
+                print(f"{filename} has been renamed to {new_filename}")
 
-            # # Rename the file
-            # try:
-            #     os.rename(pdf_path, new_path)
-            #     print(f"{filename} has been renamed to {new_filename}")
-            # except PermissionError as e:
-            #     print(f"--PermissionError--: {e}")
+            except PermissionError as e:
+                print(f"PermissionError: {e}")
+                continue
+            except FileExistsError as e:
+                print(f"File Exists Error: {e}")
+                continue
+            except FileNotFoundError as e:
+                print(f"File Not Found Error: {e}")
+                continue
         
 def LCMSbinder(batch_dir, output_dir, batch_num):
     #iterate thrugh batch_dir for filenames
     for filename in os.listdir(batch_dir):
-        #check base-acid pairs -- do nothing if base-acid pair does not exist
-        if filename.endswith(" B.pdf"):
-            #cuts off " B" and defines that as sample - comes back in save file
-            sample = filename.rsplit(" B.pdf", 1)[0]
-            base = filename
-            acid = f"{sample} A.pdf"
+        #check _1 _2 pair
+        if filename.endswith("_1.pdf"):
+            #cuts off "_1" and defines that as sample - comes back in save file
+            sample = filename.rsplit("_1.pdf", 1)[0]
+            top_sheet = filename
+            bot_sheet = f"{sample}_2.pdf"
             
-            #bind acid into base and save file with batch number
-            if base in os.listdir(batch_dir) \
-            and acid in os.listdir(batch_dir):
-                base_doc = fitz.open(os.path.join(batch_dir,base))
-                acid_doc = fitz.open(os.path.join(batch_dir,acid))
-                base_doc.insert_pdf(acid_doc)
-                base_doc.save(os.path.join(output_dir, f"{sample}_{batch_num}.pdf"))
+            #combine and save file with batch number
+            if top_sheet in os.listdir(batch_dir) \
+            and bot_sheet in os.listdir(batch_dir):
+                top_doc = fitz.open(os.path.join(batch_dir,top_sheet))
+                bot_doc = fitz.open(os.path.join(batch_dir,bot_sheet))
+                top_doc.insert_pdf(bot_doc)
+                top_doc.save(os.path.join(output_dir, f"{sample}_{batch_num}.pdf"))
                 print(f"successfully bound {sample}")
                 
 def LCMScontrols(output_dir, batch_num):
@@ -117,12 +119,12 @@ def LCMScontrols(output_dir, batch_num):
         
 
 
-batch_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
-#output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
-#batch_num = 12756
+batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
+output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA\--binder files--"
+batch_num = 12756
 
 #r prefix makes it so python does not interpret backslashes as line breaks
 LCMSrename(batch_dir)
-#LCMSbinder(batch_dir, output_dir, batch_num)
+LCMSbinder(batch_dir, output_dir, batch_num)
 #LCMScontrols(output_dir, batch_num)
 
