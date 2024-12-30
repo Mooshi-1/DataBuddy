@@ -8,6 +8,8 @@ Created on Mon Dec 23 18:36:25 2024
 import os
 import fitz
 import re
+#for testing
+#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA\for testing"
 
 def Zrename(batch_dir):
     # Define case number patterns
@@ -30,31 +32,23 @@ def Zrename(batch_dir):
             #print(lines)
             
             #iterate lines and search for case number
-            #MH case numbers are .match()
-            #AMDIS case numbers are .search()
-            #elif statements so that the line cannot match to multiple criteria
-            #search functions on bottom so matches happen first
             MH_case_number = None
             AM_case_number = None
             
-            for line in lines:
-                if case_pattern.match(line):
-                    MH_case_number = case_pattern.match(line).group().strip()
-                    print(f"matched MH {MH_case_number}")
-                    break
-                elif control_pattern.match(line):
-                    MH_case_number = control_pattern.match(line).group().strip()
-                    print(f"matched MH {MH_case_number}")
-                    break                    
-                elif case_pattern.search(line):
-                    AM_case_number = case_pattern.search(line).group().strip()
-                    print(f"matched AM {AM_case_number}")
-                    break
-                elif control_pattern.search(line):
-                    AM_case_number = control_pattern.search(line).group().strip()
-                    print(f"matched AM {AM_case_number}")
-                    break
-                    
+            if "GC-MS-NPD Analysis Report" in lines:
+                sample_name_index = lines.index("Sample Name")
+                MH_case_number = lines[sample_name_index + 1]
+                print(f"MH found {MH_case_number}")
+                
+            elif lines[0].startswith("GC/MS Analysis"):
+                if case_pattern.search(lines[0]):
+                    AM_case_number = case_pattern.search(lines[0]).group().strip()
+                    print(f"AM matched {AM_case_number}")
+
+                if control_pattern.search(lines[0]):
+                    AM_case_number = control_pattern.search(lines[0]).group().strip()
+                    print(f"control matched {AM_case_number}")
+
 
             # Close the document
             doc.close()
@@ -157,7 +151,7 @@ def Zcontrols(output_dir, batch_num):
         
 
 
-#batch_dir = r"C:\Users\e314883\Desktop\python pdf\raw_tests"
+#testing comments
 #output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
 #batch_num = 12777
 

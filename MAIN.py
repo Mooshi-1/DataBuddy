@@ -19,6 +19,10 @@ import SCRNZ_omni
 import searcher
 import SCLCMSMS_OMNI
 
+##testing comments
+##batch_num = 12777
+##method = "SCRNZ"
+
 def main(batch_num, method):
     print(f"Batch Number: {batch_num}")
     print(f"Method: {method}")
@@ -73,6 +77,8 @@ def main(batch_num, method):
         SCLCMSMS_OMNI.LCMSrename(qc_dir)
         SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
         SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
+##testing comment
+##main(batch_num, method)
 
 if __name__ == "__main__":
     batch_num = sys.argv[1]
