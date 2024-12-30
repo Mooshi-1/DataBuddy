@@ -24,6 +24,9 @@ def main(input_dir, batch_num, method):
     print(f"{method}")
     
 #take it a step further, just ask for batch number
+#need a way to point to batch pack data and get QC files
+
+#need a way to move files back in after bind
 
     output_dir = searcher.binder_dir(input_dir)
     print(f"Output Directory: {output_dir}")
