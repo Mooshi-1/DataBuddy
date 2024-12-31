@@ -94,7 +94,7 @@ def Zbinder(batch_dir, output_dir, batch_num):
             b_am = f"{sample} B-AM.pdf"
             a_mh = f"{sample} A-MH.pdf"
             a_am = f"{sample} A-AM.pdf"
-            print(sample)
+            #print(sample)
 
             # Bind the files in the specified order and save the file with batch number
             if b_mh in os.listdir(batch_dir) \
@@ -138,25 +138,21 @@ def Zcontrols(output_dir, batch_num):
     merged_pdf = fitz.open()
     
     #merge
-    try:
-        for pdf in files_to_merge:
-            if pdf is not None:
-                with fitz.open(os.path.join(output_dir, pdf)) as pdf_document:
-                    merged_pdf.insert_pdf(pdf_document)
-            else:
-                raise TypeError("PDF file is None")
-    except TypeError as e:
-        print(f"No controls found in {output_dir} - rerun program in batch pack data")
-        print(f"Error details: {e}")
-        
+    for pdf in files_to_merge:
+        if pdf is not None:
+            with fitz.open(os.path.join(output_dir, pdf)) as pdf_document:
+                merged_pdf.insert_pdf(pdf_document)
     #save
-    merged_pdf.save(os.path.join(output_dir, f"SCRNZ_{batch_num}.pdf"))
-    print("batch pack created")
-        
+    try:
+        merged_pdf.save(os.path.join(output_dir, f"SCRNZ_{batch_num}.pdf"))
+        print("batch pack created")
+    except ValueError:
+        print("--error-- could not find control data")
+
 
 
 #testing comments
-#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA"
+#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\BATCH PACK DATA"
 #output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA\--binder files--"
 #batch_num = 12778
 
