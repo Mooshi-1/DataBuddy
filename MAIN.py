@@ -9,7 +9,6 @@ Created on Mon Dec 23 12:21:22 2024
 #handle reinjects
 #integrate sequence generation from test batch
 ##export sequence as pdf
-#need a way to move files back in after bind
 #use pyinstaller or py2exe libs to create .exe file
 
 import sys
@@ -77,6 +76,10 @@ def main(batch_num, method):
         SCLCMSMS_OMNI.LCMSrename(qc_dir)
         SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
         SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
+        
+    #return files to individual directory
+    searcher.ShuttleHome(case_dir)
+    
 ##testing comment
 ##main(batch_num, method)
 

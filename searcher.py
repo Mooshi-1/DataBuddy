@@ -46,25 +46,26 @@ def binder_dir(input_dir):
 input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA"
 
 def ShuttleHome(input_dir):
+    #list contents
     for contents in os.listdir(input_dir):
         content_path = os.path.join(input_dir, contents)
         
-        number = "99999"
-        
+        #look for pdfs, extract last 4 of case number as string
         if contents.endswith('.pdf'):          
-            number = contents.split('_')[0]
-            number = number.split('-')[1]
-            number = f"{number}"
-            print(number)
+            number = str(contents.split('_')[0].split('-')[1])
             
-        if os.path.isdir(content_path):
-            case_folder = contents
-            if number in case_folder:
-                try:
-                    shutil.move(os.path.join(input_dir, contents), os.path.join(input_dir, case_folder, contents))
-                except:
-                    continue
-                        
-        
+            #check folders and look for case number in folder
+            for folder in os.listdir(input_dir):
+                folder_path = os.path.join(input_dir, folder)
+                if os.path.isdir(folder_path) and number in folder:
+                    #if found, attempt to move
+                    try:
+                        shutil.move(content_path, os.path.join(folder_path, contents))
+                        print(f"moved {contents} to {folder}")
+                        break
+                    except Exception as e:
+                        print(e)
+                        break
+                                 
 ShuttleHome(input_dir)
 
