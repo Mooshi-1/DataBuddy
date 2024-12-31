@@ -38,6 +38,7 @@ def Zrename(batch_dir):
             if "GC-MS-NPD Analysis Report" in lines:
                 sample_name_index = lines.index("Sample Name")
                 MH_case_number = lines[sample_name_index + 1]
+                MH_case_number = MH_case_number.upper()
                 print(f"MH found {MH_case_number}")
                 
             elif lines[0].startswith("GC/MS Analysis"):
@@ -84,6 +85,8 @@ def Zrename(batch_dir):
 def Zbinder(batch_dir, output_dir, batch_num):
     # Iterate through batch_dir for filenames
     for filename in os.listdir(batch_dir):
+    
+        
         # Check for B-MH.pdf files
         if filename.endswith(" B-MH.pdf"):
             sample = filename.rsplit(" B-MH.pdf", 1)[0]
@@ -91,6 +94,7 @@ def Zbinder(batch_dir, output_dir, batch_num):
             b_am = f"{sample} B-AM.pdf"
             a_mh = f"{sample} A-MH.pdf"
             a_am = f"{sample} A-AM.pdf"
+            print(sample)
 
             # Bind the files in the specified order and save the file with batch number
             if b_mh in os.listdir(batch_dir) \
@@ -152,8 +156,9 @@ def Zcontrols(output_dir, batch_num):
 
 
 #testing comments
-#output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
-#batch_num = 12777
+#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA"
+#output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA\--binder files--"
+#batch_num = 12778
 
 #r prefix makes it so python does not interpret backslashes as line breaks
 #Zrename(batch_dir)

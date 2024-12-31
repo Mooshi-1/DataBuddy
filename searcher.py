@@ -49,16 +49,22 @@ def ShuttleHome(input_dir):
     for contents in os.listdir(input_dir):
         content_path = os.path.join(input_dir, contents)
         
+        number = "99999"
+        
         if contents.endswith('.pdf'):          
             number = contents.split('_')[0]
             number = number.split('-')[1]
+            number = f"{number}"
             print(number)
             
-        if os.isdir(contents) == True:
+        if os.path.isdir(content_path):
             case_folder = contents
-        if number in case_folder:
-            shutil.move(os.path.join(input_dir, number), os.path.join(input_dir, case_folder))
-            
+            if number in case_folder:
+                try:
+                    shutil.move(os.path.join(input_dir, contents), os.path.join(input_dir, case_folder, contents))
+                except:
+                    continue
+                        
         
 ShuttleHome(input_dir)
 
