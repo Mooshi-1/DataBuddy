@@ -17,13 +17,13 @@ echo  888     d88' d8(  888    888 . d8(  888        888    .88P  888   888   88
 echo o888bood8P'   `Y888""8o   "888" `Y888""8o      o888bood8P'  o888o o888o o888o `Y8bod88P" `Y8bod8P' d888b    
 echo .
 
-echo Version 1.01 - 12/30/24
+echo Version 1.02 - 12/31/24
 
 set /p batch_num="Enter batch number: "
 set /p method="Enter method currently supported: SCGEN, SCRNZ, SCLCMSMS: "
 
-echo other pdf files in directory are OK
-echo for now, you'll have to manually bind your sequence to batch pack.
+echo please check output for any errors
+echo you'll have to manually bind reinjects and sequence
 
 pause
 

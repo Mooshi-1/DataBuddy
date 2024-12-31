@@ -88,6 +88,8 @@ def LCMSbinder(batch_dir, output_dir, batch_num):
                 top_doc.insert_pdf(bot_doc)
                 top_doc.save(os.path.join(output_dir, f"{sample}_{batch_num}.pdf"))
                 print(f"successfully bound {sample}")
+            else:
+                print(f"--error-- cannot locate all documents for {filename}")
                 
 def LCMScontrols(output_dir, batch_num):
     neg_ctrl = None

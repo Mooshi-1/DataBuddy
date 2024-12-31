@@ -29,26 +29,11 @@ def main(batch_num, method):
     data_dir = r"G:\PDF DATA"
     print(f"Starting in: {data_dir}")
     
-    print("finding batch...")
-    for year in os.listdir(data_dir):
-        year_dir = os.path.join(data_dir, year)
-        if not os.path.isdir(year_dir):
-            continue
-        
-        for month in os.listdir(year_dir):
-            month_dir = os.path.join(year_dir, month)
-            if not os.path.isdir(month_dir):
-                continue
-            
-            for batch in os.listdir(month_dir):
-                if batch == str(batch_num):
-                    print(f"found batch {batch_num}")
-                    
-                    case_dir = os.path.join(month_dir, batch, "CASE DATA")
-                    print(f"Case Directory = {case_dir}")
-                    qc_dir = os.path.join(month_dir, batch, "BATCH PACK DATA")
-                    print(f"QC Directory = {qc_dir}")
-                    
+    #call FindBatch function to locate directories
+    case_dir, qc_dir = searcher.FindBatch(data_dir, batch_num)
+    if case_dir and qc_dir == None:
+        raise Exception("Unable to locate batch directory")                
+    
     #create binder output
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")

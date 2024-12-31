@@ -43,17 +43,21 @@ def binder_dir(input_dir):
     return binder_path
 
 #binder_dir(input_dir)
-input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA"
+#input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA"
 
 def ShuttleHome(input_dir):
     #list contents
+    print("returning contents to individual case folders:")
     for contents in os.listdir(input_dir):
         content_path = os.path.join(input_dir, contents)
         
         #look for pdfs, extract last 4 of case number as string
-        if contents.endswith('.pdf'):          
-            number = str(contents.split('_')[0].split('-')[1])
-            
+        if contents.endswith('.pdf'):
+            try:
+                number = str(contents.split('_')[0].split('-')[1])
+            except Exception as e:
+                print(f"invalid case number | {e}")
+                continue
             #check folders and look for case number in folder
             for folder in os.listdir(input_dir):
                 folder_path = os.path.join(input_dir, folder)
@@ -65,7 +69,30 @@ def ShuttleHome(input_dir):
                         break
                     except Exception as e:
                         print(e)
-                        break
-                                 
-ShuttleHome(input_dir)
+                        break                            
+#ShuttleHome(input_dir)
 
+def FindBatch(data_dir, batch_num):
+    
+    print("finding batch...")
+    for year in os.listdir(data_dir):
+        year_dir = os.path.join(data_dir, year)
+        if not os.path.isdir(year_dir):
+            continue
+        
+        for month in os.listdir(year_dir):
+            month_dir = os.path.join(year_dir, month)
+            if not os.path.isdir(month_dir):
+                continue
+            
+            for batch in os.listdir(month_dir):
+                if batch == str(batch_num):
+                    print(f"found batch {batch_num}")
+                    
+                    case_dir = os.path.join(month_dir, batch, "CASE DATA")
+                    print(f"Case Directory = {case_dir}")
+                    qc_dir = os.path.join(month_dir, batch, "BATCH PACK DATA")
+                    print(f"QC Directory = {qc_dir}")
+                    return case_dir, qc_dir
+    return None, None
+                    
