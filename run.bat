@@ -22,7 +22,8 @@ echo Version 1.01 - 12/30/24
 set /p batch_num="Enter batch number: "
 set /p method="Enter method currently supported: SCGEN, SCRNZ, SCLCMSMS: "
 
-echo ensure that your batch folder does not contain sequences or other files
+echo other pdf files in directory are OK
+echo for now, you'll have to manually bind your sequence to batch pack.
 
 pause
 
