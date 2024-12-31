@@ -43,3 +43,22 @@ def binder_dir(input_dir):
     return binder_path
 
 #binder_dir(input_dir)
+input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA"
+
+def ShuttleHome(input_dir):
+    for contents in os.listdir(input_dir):
+        content_path = os.path.join(input_dir, contents)
+        
+        if contents.endswith('.pdf'):          
+            number = contents.split('_')[0]
+            number = number.split('-')[1]
+            print(number)
+            
+        if os.isdir(contents) == True:
+            case_folder = contents
+        if number in case_folder:
+            shutil.move(os.path.join(input_dir, number), os.path.join(input_dir, case_folder))
+            
+        
+ShuttleHome(input_dir)
+
