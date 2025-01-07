@@ -17,7 +17,7 @@ import fitz  # PyMuPDF
 import os
 import re
 
-batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024"
+
 
 def LCQUANTrename(batch_dir):
     #iterate through directory defined by filepath
@@ -45,6 +45,7 @@ def LCQUANTrename(batch_dir):
             if quant_method in lines:
                 sample_name_index = lines.index("Sample Name")
                 case_number_1 = lines[sample_name_index + 1]
+                case_number_1 = case_number_1[2:]
                 print(f"{case_number_1}")
                 #': DILN BLOOD 1:1'
                 #current string
@@ -64,7 +65,6 @@ def LCQUANTrename(batch_dir):
             # Close the document
             doc.close()
 
-LCQUANTrename(batch_dir)
 
 """"
             # Define the new filename
@@ -89,3 +89,7 @@ LCQUANTrename(batch_dir)
                 print(f"File Not Found Error: {e}")
                 continue
 """
+
+if __name__ == "__main__":
+    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024"
+    LCQUANTrename(batch_dir)
