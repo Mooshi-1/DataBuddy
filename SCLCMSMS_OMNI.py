@@ -121,14 +121,11 @@ def LCMScontrols(output_dir, batch_num):
     except ValueError:
         print("--error-- could not find control data")
         
+if __name__ == "__main__":
+    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
+    output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA\--binder files--"
+    batch_num = 12756
 
-
-#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
-#output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA\--binder files--"
-#batch_num = 12756
-
-#r prefix makes it so python does not interpret backslashes as line breaks
-#LCMSrename(batch_dir)
-#LCMSbinder(batch_dir, output_dir, batch_num)
-#LCMScontrols(output_dir, batch_num)
-
+    LCMSrename(batch_dir)
+    LCMSbinder(batch_dir, output_dir, batch_num)
+    LCMScontrols(output_dir, batch_num)

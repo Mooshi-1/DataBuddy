@@ -140,22 +140,12 @@ def GENhighlight(output_dir, batch_num):
             doc.close()
 
 
-#batch_dir = r"G:\PDF DATA\2024\11\12712\CASE DATA\test-dir"
-#output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
-#batch_num = 12756
 
-#r prefix makes it so python does not interpret backslashes as line breaks
-#GENrename(batch_dir)
-#GENbinder(batch_dir, output_dir, batch_num)
-#GENcontrols(output_dir, batch_num)
-##WIP##GENhighlight(output_dir, batch_num)##WIP##
-
-
-
-
-
-
-#delete pages
-# doc = pymupdf.open("test.pdf") # open a document
-# doc.delete_page(0) # delete the 1st page of the document
-# doc.save("test-deleted-page-one.pdf") # save the document
+if __name__ == "__main__":
+    batch_dir = r"G:\PDF DATA\2024\11\12712\CASE DATA\test-dir"
+    output_dir = r"C:\Users\e314883\Desktop\python pdf\op_tests"
+    batch_num = 12756
+    GENrename(batch_dir)
+    GENbinder(batch_dir, output_dir, batch_num)
+    GENcontrols(output_dir, batch_num)
+    ##WIP##GENhighlight(output_dir, batch_num)##WIP##

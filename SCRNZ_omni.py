@@ -8,8 +8,7 @@ Created on Mon Dec 23 18:36:25 2024
 import os
 import fitz
 import re
-#for testing
-#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA\for testing"
+
 
 def Zrename(batch_dir):
     # Define case number patterns
@@ -149,25 +148,12 @@ def Zcontrols(output_dir, batch_num):
     except ValueError:
         print("--error-- could not find control data")
 
+if __name__ == "__main__":
+    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\BATCH PACK DATA"
+    output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA\--binder files--"
+    batch_num = 12778
 
+    Zrename(batch_dir)
+    Zbinder(batch_dir, output_dir, batch_num)
+    Zcontrols(output_dir, batch_num)
 
-#testing comments
-#batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\BATCH PACK DATA"
-#output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA\--binder files--"
-#batch_num = 12778
-
-#r prefix makes it so python does not interpret backslashes as line breaks
-#Zrename(batch_dir)
-#Zbinder(batch_dir, output_dir, batch_num)
-#Zcontrols(output_dir, batch_num)
-
-
-
-
-
-
-
-#delete pages
-# doc = pymupdf.open("test.pdf") # open a document
-# doc.delete_page(0) # delete the 1st page of the document
-# doc.save("test-deleted-page-one.pdf") # save the document
