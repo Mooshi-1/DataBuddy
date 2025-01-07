@@ -6,7 +6,7 @@ Created on Fri Dec 27 14:41:10 2024
 """
 import os
 
-input_dir = r"G:\PDF DATA\2024\12\12757\CASE DATA"
+input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
 
 def scrambler(input_dir):
     counter = 000

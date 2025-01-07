@@ -1,8 +1,6 @@
 import os
 import re
 import shutil
-#testing comment below
-#input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12773\CASE DATA"
 
 folder_pattern = re.compile(r'([A-Za-z]{0,2}\d+-\d)')
 
@@ -32,9 +30,6 @@ def move_contents(src_dir, dest_dir):
         shutil.move(src_path, dest_path)
 
 
-#testing comment below
-#Shuttle(input_dir)
-
 def binder_dir(input_dir):
     binder_path = os.path.join(input_dir, "--binder files--")
     if not os.path.exists(binder_path):
@@ -42,8 +37,7 @@ def binder_dir(input_dir):
         print(f"made directory {binder_path}")
     return binder_path
 
-#binder_dir(input_dir)
-#input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12777\CASE DATA"
+
 
 def ShuttleHome(input_dir):
     #list contents
@@ -53,6 +47,7 @@ def ShuttleHome(input_dir):
         
         #look for pdfs, extract last 4 of case number as string
         if contents.endswith('.pdf'):
+            #print("found a pdf")
             try:
                 number = str(contents.split('_')[0].split('-')[1])
             except Exception as e:
@@ -70,7 +65,7 @@ def ShuttleHome(input_dir):
                     except Exception as e:
                         print(e)
                         break                            
-#ShuttleHome(input_dir)
+
 
 def FindBatch(data_dir, batch_num):
     
@@ -95,4 +90,8 @@ def FindBatch(data_dir, batch_num):
                     print(f"QC Directory = {qc_dir}")
                     return case_dir, qc_dir
     return None, None
-                    
+
+if __name__ == "__main__":
+    input_dir = r"G:\PDF DATA\2024\12\12773\CASE DATA"
+
+    ShuttleHome(input_dir)

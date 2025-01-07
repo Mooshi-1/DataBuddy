@@ -32,16 +32,16 @@ def LCMSrename(batch_dir):
             if "Insight MTS Report - Summary" in lines:
                 sample_name_index = lines.index("Sample Name")
                 case_number_1 = lines[sample_name_index + 1]
-                print(f"{case_number_1}")
+                #print(f"{case_number_1}")
             elif "Insight MTS Report - Detail" in lines:
                 sample_name_index = lines.index("Sample Name")
                 case_number_2 = lines[sample_name_index + 1]
-                print(f"{case_number_2}")
+                #print(f"{case_number_2}")
             elif "Shimadzu 8060NX LCMS Batch Table" in lines:
                 if new_filename == None:
-                    new_filename = "Sequence_1.pdf"
+                    new_filename = "Sequence_01.pdf"
                 else:
-                    new_filename = "Sequence_2.pdf"
+                    new_filename = "Sequence_02.pdf"
             else:
                 print("case number not found for {filename}")
 
