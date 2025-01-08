@@ -17,6 +17,7 @@ import fitz  # PyMuPDF
 import os
 import re
 
+from objects import QCTYPE, QC
 
 
 def LCQUANTrename(batch_dir):
@@ -45,20 +46,17 @@ def LCQUANTrename(batch_dir):
             if quant_method in lines:
                 sample_name_index = lines.index("Sample Name")
                 case_number_1 = lines[sample_name_index + 1]
+                #trim characters off case number string
                 case_number_1 = case_number_1[2:]
                 print(f"{case_number_1}")
-                #': DILN BLOOD 1:1'
-                #current string
-                #need to trim
-            elif "Insight MTS Report - Detail" in lines:
-                sample_name_index = lines.index("Sample Name")
-                case_number_2 = lines[sample_name_index + 1]
-                print(f"{case_number_2}")
-            elif "Shimadzu 8060NX LCMS Batch Table" in lines:
-                if new_filename == None:
-                    new_filename = "Sequence_1.pdf"
-                else:
-                    new_filename = "Sequence_2.pdf"
+
+                #create objects from here, assign QCTYPE
+                #verify that these distinct factors will work
+                if "CTRL" in lines:
+                    QC(QCTYPE.CTL, None, pdf_path)
+                elif "SR" in lines:
+                    QC(QCTYPE.SR, None, pdf_path)
+
             else:
                 print("case number not found for {filename}")
 
