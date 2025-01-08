@@ -8,6 +8,8 @@ class QCTYPE(Enum):
     SH = 'shooter'
     MOA = 'method of addition'
 
+def QC_handler(QC):
+    
 #enum example
 #can use this to create other objects
 # def text_node_to_html_node(text_node):
@@ -34,4 +36,5 @@ class QC:
         self.worksheet = worksheet
         self.path = path
 
+example = QC(QCTYPE.SR, None, pdf_path)
 #any subclasses needed?
