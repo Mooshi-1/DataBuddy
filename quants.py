@@ -17,11 +17,11 @@ import fitz  # PyMuPDF
 import os
 import re
 
-from objects import QCTYPE, QC
+from objects import QCTYPE, QC, Sample
 
 
 def LCQUANTrename(batch_dir):
-    #iterate through directory defined by filepath
+    # Iterate through directory defined by filepath
     for filename in os.listdir(batch_dir):
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(batch_dir, filename)        
@@ -32,33 +32,48 @@ def LCQUANTrename(batch_dir):
             text = page.get_text()
             #print(text)
             lines = text.split('\n')
-
-
+            
             case_number_1 = None
-            case_number_2 = None
-            new_filename = None
-            quant_method = None
             
             quant_method = lines[3]
-            #currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
-
-            #find case number using sample name index + 1
-            if quant_method in lines:
+            # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
+            try:
+                # Find case number using sample name index + 1
                 sample_name_index = lines.index("Sample Name")
                 case_number_1 = lines[sample_name_index + 1]
-                #trim characters off case number string
+                # Trim characters off case number string
                 case_number_1 = case_number_1[2:]
                 print(f"{case_number_1}")
 
-                #create objects from here, assign QCTYPE
-                #verify that these distinct factors will work
-                if "CTRL" in lines:
-                    QC(QCTYPE.CTL, None, pdf_path)
-                elif "SR" in lines:
-                    QC(QCTYPE.SR, None, pdf_path)
+                # Extract table data
+                table_data = []
+                capture = False
+                for line in lines:
+                    if "Quantitative Results: ISTDs" in line or "Quantitative Results: Analytes" in line:
+                        capture = True
+                    elif capture and line.strip() == "":
+                        capture = False
+                    elif capture:
+                        table_data.append(line.strip())
+                print(f"Extracted table data: {table_data}")
 
-            else:
-                print("case number not found for {filename}")
+                # Create Sample object and assign QCTYPE
+                if "CTRL" in lines:
+                    sample = Sample(case_number_1, QCTYPE.CTL, table_data, pdf_path)
+                elif "SR" in lines:
+                    sample = Sample(case_number_1, QCTYPE.SR, table_data, pdf_path)
+                else:
+                    sample = Sample(case_number_1, None, table_data, pdf_path)
+                print(f"Created sample: {sample}")
+
+            except Exception as e:
+                print(f"Error finding case number or extracting table data: {e}")
+# class Sample:
+#     def __init__(self, ID, type, results, path):
+#         self.ID = ID
+#         self.type = type
+#         self.results = results
+#         self.path = path
 
             # Close the document
             doc.close()
