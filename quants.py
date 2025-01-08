@@ -20,7 +20,8 @@ import re
 from objects import QCTYPE, QC, Sample
 
 
-def LCQUANTrename(batch_dir):
+def SHIMADZU_SAMPLEINIT(batch_dir):
+    samples = [] #will hold sample objects created here
     # Iterate through directory defined by filepath
     for filename in os.listdir(batch_dir):
         if filename.endswith(".pdf"):
@@ -49,13 +50,18 @@ def LCQUANTrename(batch_dir):
                 table_data = []
                 capture = False
                 for line in lines:
+                    #start collecting here
                     if "Quantitative Results: ISTDs" in line or "Quantitative Results: Analytes" in line:
                         capture = True
+                    #stop collecting here
                     elif capture and line.strip() == "":
                         capture = False
+                    #if capture = true, append the data
                     elif capture:
                         table_data.append(line.strip())
-                print(f"Extracted table data: {table_data}")
+                print(f"Extracted table data: {len(table_data)} characters")
+
+
 
                 # Create Sample object and assign QCTYPE
                 if "CTRL" in lines:
@@ -65,6 +71,9 @@ def LCQUANTrename(batch_dir):
                 else:
                     sample = Sample(case_number_1, None, table_data, pdf_path)
                 print(f"Created sample: {sample}")
+
+                # cleaned_data = sample.get_cleaned_data()
+                # print(f"Cleaned data: {cleaned_data}")
 
             except Exception as e:
                 print(f"Error finding case number or extracting table data: {e}")
@@ -105,4 +114,4 @@ def LCQUANTrename(batch_dir):
 
 if __name__ == "__main__":
     batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024"
-    LCQUANTrename(batch_dir)
+    SHIMADZU_SAMPLEINIT(batch_dir)

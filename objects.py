@@ -8,12 +8,11 @@ class QCTYPE(Enum):
     SH = 'shooter'
     MOA = 'method of addition'
 
-def QC_handler(Sample):
+def QC_handler(self):
     if self.type == QCTYPE.SR:
         pass
     raise Exception("Invalid QC")
     
-
 #define QC objects
 class Sample:
     def __init__(self, ID, type, results, path):
@@ -21,6 +20,10 @@ class Sample:
         self.type = type
         self.results = results
         self.path = path
+        self.cleaned_results = self.clean_data()
+
+    def clean_data(self):
+        pass
 
 class QC(Sample):
     def __init__(self, ID, type, results, path):
