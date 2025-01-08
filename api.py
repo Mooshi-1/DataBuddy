@@ -97,3 +97,74 @@ def push_data():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# # create persistent api for run counter
+# Step 1: Create the Flask API
+# First, you'll set up a Flask application to handle GET and POST requests for the run count.
+app.py
+
+from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///run_count.db'
+db = SQLAlchemy(app)
+
+class RunCount(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    count = db.Column(db.Integer, default=0)
+
+db.create_all()
+
+@app.route('/get-count', methods=['GET'])
+def get_count():
+    run_count = RunCount.query.get(1)
+    if not run_count:
+        run_count = RunCount(id=1, count=0)
+        db.session.add(run_count)
+        db.session.commit()
+    
+    return jsonify({'count': run_count.count})
+
+@app.route('/increment-count', methods=['POST'])
+def increment_count():
+    run_count = RunCount.query.get(1)
+    if not run_count:
+        run_count = RunCount(id=1, count=0)
+        db.session.add(run_count)
+    
+    run_count.count += 1
+    db.session.commit()
+    
+    return jsonify({'count': run_count.count})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+# run python app.py to start the server
+
+# Step 3: Interacting with the API from a Python Script
+# You can now create a Python script to interact with this API. Here's an example of how to fetch and increment the run count:
+
+import requests
+
+# Define the API endpoints
+get_count_url = 'http://127.0.0.1:5000/get-count'
+increment_count_url = 'http://127.0.0.1:5000/increment-count'
+
+# Fetch the current run count
+response = requests.get(get_count_url)
+if response.status_code == 200:
+    count = response.json().get('count', 0)
+    print(f'Current run count: {count}')
+else:
+    print(f'Error fetching count: {response.status_code}')
+
+# Increment the run count
+response = requests.post(increment_count_url)
+if response.status_code == 200:
+    new_count = response.json().get('count', 0)
+    print(f'New run count: {new_count}')
+else:
+    print(f'Error incrementing count: {response.status_code}')
