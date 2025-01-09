@@ -46,7 +46,7 @@ class Sample:
 #     {"drug name": "codeine", "area counts": 7000000, "retention time": "2.5 min", "concentration": "0.10 mg/L"},
 
     def __repr__(self):
-        return f"{self.ID}, QC={self.type}, +.results, +.path"
+        return f"{self.ID}, QC={self.type}, {self.results} results, +.path"
 
 class QC(Sample):
     def __init__(self, ID, type, results, path):

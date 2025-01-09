@@ -15,6 +15,9 @@ initialize from parent class and add any variables that it needs
 only need to do this if the class needs additional arguments
 ex: SR control should check for its 2 related cases
 -need to work out details and what variables are needed
+SR()
+MOA()
+DILN()
 
 pdf_rename()
 rename file using sample name
@@ -29,6 +32,15 @@ cal_curve()
 create cal curve
 order - shooter, neg, 1-6
 
+ctl_set()
+create list of controls
+order controls with lambda
+calculate 50-200% range
+dilution control???
+
+batch_pack()
+bind
+curve + cal_curve + diln_ctl + ctl_set + seq
 
 
 
