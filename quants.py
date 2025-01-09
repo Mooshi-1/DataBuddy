@@ -5,14 +5,6 @@ Created on Tue Dec 31 16:20:55 2024
 @author: e314883
 """
 
-#quants
-#exceptions to think about
-#name casefiles 1 and 2 like LCMSMS
-#sometimes single injections
-
-#spiked recovery (3 files, +%R pdf)
-#L0 - L6 on 
-
 import fitz  # PyMuPDF
 import os
 import re
@@ -44,7 +36,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 case_number = lines[sample_name_index + 1]
                 # Trim characters off case number string
                 case_number = case_number[2:]
-                print(f"{case_number}")
+                #print(f"{case_number}")
 
                 # Extract table data
                 ISTDs_data = []
@@ -53,7 +45,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 capture_analytes = False
 
                 for line in lines:
-                    #alternate collection windows
+                    #differentiate collection windows
                     if "Quantitative Results: ISTDs" in line:
                         capture_ISTDs = True
                         capture_analytes = False
@@ -69,16 +61,21 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                         ISTDs_data.append(line.strip())
                     elif capture_analytes:
                         analytes_data.append(line.strip())
-                print(f"Extracted table data: {len(ISTDs_data)} and {len(analytes_data)}")
+                #print(f"Extracted table data: {len(ISTDs_data)} and {len(analytes_data)}")
 
                 format_ISTDs = table_converter(ISTDs_data)
                 format_analytes = table_converter(analytes_data)
 
+                #change case number if it already exists as an object
+                duplicate_count = 1
+                while any(case_number == sample.ID for sample in samples):
+                    case_number += f"_{duplicate_count}"
+                    duplicate_count += 1
+                    #print(f"recognized duplicate, new ID: {case_number}")
+
+                #create sample object
                 case_number = Sample(case_number, pdf_path, None, format_ISTDs, format_analytes)
-                print(f"Created sample: {case_number}")
-                if case_number in samples:
-                    case_number.ID += "_2"
-                    print(f"recognized duplicate")
+                #append to list
                 samples.append(case_number)
 
             except Exception as e:
@@ -91,30 +88,26 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 case_number = "curve"
                 case_number = Sample(case_number, pdf_path, QCTYPE.CUR, None)
 
-
             doc.close()  
 
-    #return list of sample objects        
+    #return list of sample objects
+    print(f"{len(samples)} total samples initialized")        
     return samples
-            
-# class Sample:
-#     def __init__(self, ID, type, results, path):
-#         self.ID = ID
-#         self.type = type
-#         self.results = results
-#         self.path = path
 
             
 def pdf_rename(samples):
+    def sanitize_filename(filename):
+        return re.sub(r'[\\/*?:"<>|]', "_", filename)
+
     for sample in samples:
         # Define the new filename
-        new_filename = f"{sample.ID}.pdf"
+        new_filename = sanitize_filename(f"{sample.ID}.pdf")
         new_path = os.path.join(os.path.dirname(sample.path), new_filename)
 
         # Rename the file
         try:
             os.rename(sample.path, new_path)
-            print(f"{sample.ID} has been renamed to {new_filename}")
+            #print(f"{sample.ID} has been renamed to {new_filename}")
 
         except PermissionError as e:
             print(f"PermissionError: {e}")
@@ -133,7 +126,7 @@ def pdf_rename(samples):
 
 
 if __name__ == "__main__":
-    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024"
+    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA"
 
     samples = SHIMADZU_SAMPLEINIT(batch_dir)
     pdf_rename(samples)

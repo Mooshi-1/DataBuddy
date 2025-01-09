@@ -1,10 +1,4 @@
 SHIMADZU_SAMPLEINIT()
-store case numbers as objects including
-case ID, path, QC type, and values
-object name is Sample
-return list of Samples
--need to trim / make values readable
-double check that these are working
 -handle curve
 -handle sequence
 
@@ -19,14 +13,11 @@ SR()
 MOA()
 DILN()
 
-pdf_rename()
-rename file using sample name
-DONE
-
 determine what to bind
 case_bind()
 if sample in sample_duplicate:
 sample + sample_duplicate
+account for samples in single
 
 cal_curve()
 create cal curve
@@ -42,9 +33,13 @@ batch_pack()
 bind
 curve + cal_curve + diln_ctl + ctl_set + seq
 
+find_analyte_errors(self, other)
+if len(self.analytes) != len(other.analytes)
+print(analyte mismatch)
+#example, cocaine found in 1 duplicate but not the other
 
-
-
+find_ISTD_errors(self, other)
+same as analyte
 
 export to csv
 export to fillable pdf

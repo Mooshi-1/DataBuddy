@@ -37,11 +37,12 @@ class Sample:
         self.results_analyte = results_analyte if results_analyte is not None else []
 
     def __eq__(self, other):
-        return self.ID == other.ID and \
-            self.type == other.type and \
-            self.results_ISTD == other.results_ISTD and \
-            self.results_analyte == other.results_analyte and \
-            self.path == other.path
+        if isinstance(other, Sample):
+            return self.ID == other.ID
+        return False
+    
+    def __hash__(self):
+        return hash(self.ID)
 
     def compare_qc(self, other):
         return self.type == other.type
@@ -77,8 +78,10 @@ def table_converter(table):
     transposed_table = list(zip(*data))
 
     #debug print statements
-    for row in transposed_table:
-        print(", ".join(row))
+    #for row in transposed_table:
+        #print(", ".join(row))
     #print(transposed_table)
 
     return transposed_table
+
+

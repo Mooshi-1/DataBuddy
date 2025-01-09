@@ -92,6 +92,6 @@ def FindBatch(data_dir, batch_num):
     return None, None
 
 if __name__ == "__main__":
-    input_dir = r"G:\PDF DATA\2024\12\12773\CASE DATA"
+    input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA"
 
-    ShuttleHome(input_dir)
+    Shuttle(input_dir)
