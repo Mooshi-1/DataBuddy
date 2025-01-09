@@ -5,6 +5,7 @@ Created on Mon Dec 23 12:21:22 2024
 @author: e314883
 """
 #pyinstaller main.py -- to package .exe file
+#make shortcut from dist folder
 #export QC data to pdf
 #handle reinjects
 #integrate sequence generation from test batch
@@ -104,7 +105,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         batch_num = input("Enter the batch number: ")
         method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS, quants): ")
-        input("Reminder: Unable to handle reinjects. Bind your sequence manually. Press Enter to continue...")
+        input("Reminder: Unable to handle reinjects. Bind your sequence manually. Existing bound files will be overwritten. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch_num = sys.argv[1]

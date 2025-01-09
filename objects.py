@@ -29,28 +29,56 @@ def case_handler(self, other):
     
 #define QC objects
 class Sample:
-    def __init__(self, ID, path, type=None, results=None):
+    def __init__(self, ID, path, type=None, results_ISTD=None, results_analyte=None):
         self.ID = ID
         self.path = path
         self.type = type if type is not None else []
-        self.results = results
+        self.results_ISTD = results_ISTD if results_ISTD is not None else []
+        self.results_analyte = results_analyte if results_analyte is not None else []
+
+    def __eq__(self, other):
+        return self.ID == other.ID and \
+            self.type == other.type and \
+            self.results_ISTD == other.results_ISTD and \
+            self.results_analyte == other.results_analyte and \
+            self.path == other.path
+
+    def compare_qc(self, other):
+        return self.type == other.type
         
-        self.cleaned_results = self.clean_data()
-
-    def clean_data(self):
-        pass
-#         # Storing data as a list of dictionaries
-#get it to look like this
-# data = [
-#     {"drug name": "morphine", "area counts": 6000000, "retention time": "0.23 min", "concentration": "0.03 mg/L"},
-#     {"drug name": "codeine", "area counts": 7000000, "retention time": "2.5 min", "concentration": "0.10 mg/L"},
-
     def __repr__(self):
-        return f"{self.ID}, QC={self.type}, {self.results} results, +.path"
+        return f"{self.ID}, QC={self.type}, {len(self.results_ISTD)} ISTD {len(self.results_analyte)} analyte, +.path"
 
 class QC(Sample):
-    def __init__(self, ID, type, results, path):
-        super().__init__(ID, type, results, path)
+    def __init__(self, ID, path, type, results_ISTD, results_analyte):
+        super().__init__(ID, path, type, results_ISTD, results_analyte)
 
-#example = Sample(QCTYPE.SR, None, pdf_path)
-#any subclasses needed?
+def table_converter(table):
+    #prep new columns
+    keywords = ["ID#", "Name", "Ret. Time (min)", "Area", "Quant Ion (m/z)", "Conc.", "Unit", "Mode"]
+    columns = {key: [] for key in keywords}
+    current_keyword = None
+
+    #populate sublists based on keywords
+    for line in table:
+        if line in keywords:
+            current_keyword = line
+        if current_keyword:
+            columns[current_keyword].append(line)
+
+    #ensure that all lists are same length by appending empty strings
+    max_length = max([len(columns[key]) for key in keywords])
+    for key in keywords:
+        while len(columns[key]) < max_length:
+            columns[key].append("")
+
+    #create list of sublists to transpose, then zip
+    data = [columns[key] for key in keywords]
+    transposed_table = list(zip(*data))
+
+    #debug print statements
+    for row in transposed_table:
+        print(", ".join(row))
+    #print(transposed_table)
+
+    return transposed_table

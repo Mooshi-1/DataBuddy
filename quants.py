@@ -17,7 +17,7 @@ import fitz  # PyMuPDF
 import os
 import re
 
-from objects import QCTYPE, QC, Sample
+from objects import QCTYPE, QC, Sample, table_converter
 
 
 def SHIMADZU_SAMPLEINIT(batch_dir):
@@ -47,26 +47,37 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 print(f"{case_number}")
 
                 # Extract table data
-                # maybe try to sort the table data?? needs work. self.values is a mess
-                table_data = []
-                capture = False
+                ISTDs_data = []
+                analytes_data = []
+                capture_ISTDs = False
+                capture_analytes = False
+
                 for line in lines:
-                    #start collecting here
-                    if "Quantitative Results: ISTDs" in line or "Quantitative Results: Analytes" in line:
-                        capture = True
+                    #alternate collection windows
+                    if "Quantitative Results: ISTDs" in line:
+                        capture_ISTDs = True
+                        capture_analytes = False
+                    elif "Quantitative Results: Analytes" in line:
+                        capture_ISTDs = False
+                        capture_analytes = True
                     #stop collecting here
-                    elif capture and line.strip() == "":
-                        capture = False
+                    elif (capture_ISTDs or capture_analytes) and line.strip() == "":
+                        capture_ISTDs = False
+                        capture_analytes = False
                     #if capture = true, append the data
-                    elif capture:
-                        table_data.append(line.strip())
-                print(f"Extracted table data: {len(table_data)} characters")
+                    elif capture_ISTDs:
+                        ISTDs_data.append(line.strip())
+                    elif capture_analytes:
+                        analytes_data.append(line.strip())
+                print(f"Extracted table data: {len(ISTDs_data)} and {len(analytes_data)}")
 
+                format_ISTDs = table_converter(ISTDs_data)
+                format_analytes = table_converter(analytes_data)
 
-                case_number = Sample(case_number, pdf_path, None, table_data)
+                case_number = Sample(case_number, pdf_path, None, format_ISTDs, format_analytes)
                 print(f"Created sample: {case_number}")
                 if case_number in samples:
-                    case_number.name += "_duplicate"
+                    case_number.ID += "_2"
                     print(f"recognized duplicate")
                 samples.append(case_number)
 
@@ -79,6 +90,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             if "QTABUSE CAL REPORT" in lines:
                 case_number = "curve"
                 case_number = Sample(case_number, pdf_path, QCTYPE.CUR, None)
+
 
             doc.close()  
 
@@ -96,13 +108,13 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
 def pdf_rename(samples):
     for sample in samples:
         # Define the new filename
-        new_filename = f"{sample.name}.pdf"
+        new_filename = f"{sample.ID}.pdf"
         new_path = os.path.join(os.path.dirname(sample.path), new_filename)
 
         # Rename the file
         try:
             os.rename(sample.path, new_path)
-            print(f"{sample.name} has been renamed to {new_filename}")
+            print(f"{sample.ID} has been renamed to {new_filename}")
 
         except PermissionError as e:
             print(f"PermissionError: {e}")
