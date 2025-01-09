@@ -25,11 +25,24 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             text = page.get_text()
             #print(text)
             lines = text.split('\n')
+            print(lines)
             
+            if "                Shimadzu 8060-LCMS" in lines:
+                Sequence = Sample("Sequence", pdf_path, QCTYPE.SEQ, None, None)
+                samples.append(Sequence)
+                doc.close()
+                break
+            if "Calibration Curve Report" in lines:
+                Curve = Sample("Curve", pdf_path, QCTYPE.CUR, None, None)
+                samples.append(Curve)
+                doc.close()
+                break
+
             case_number = None
             
             quant_method = lines[3]
             # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
+
             try:
                 # Find case number using sample name index + 1
                 sample_name_index = lines.index("Sample Name")
@@ -45,6 +58,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 capture_analytes = False
 
                 for line in lines:
+
                     #differentiate collection windows
                     if "Quantitative Results: ISTDs" in line:
                         capture_ISTDs = True
@@ -81,12 +95,6 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             except Exception as e:
                 print(f"FAILED TO INIT SAMPLE {filename}: {e}")
 
-            if "SHIMADZU 8060 SEQUENCE" in lines:
-                case_number = "sequence"
-                case_number = Sample(case_number, pdf_path, QCTYPE.SEQ, None)
-            if "QTABUSE CAL REPORT" in lines:
-                case_number = "curve"
-                case_number = Sample(case_number, pdf_path, QCTYPE.CUR, None)
 
             doc.close()  
 
@@ -126,7 +134,7 @@ def pdf_rename(samples):
 
 
 if __name__ == "__main__":
-    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA"
+    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA\2024-03233"
 
     samples = SHIMADZU_SAMPLEINIT(batch_dir)
     pdf_rename(samples)
