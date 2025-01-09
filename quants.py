@@ -72,6 +72,14 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
 
             except Exception as e:
                 print(f"FAILED TO INIT SAMPLE {filename}: {e}")
+
+            if "SHIMADZU 8060 SEQUENCE" in lines:
+                case_number = "sequence"
+                case_number = Sample(case_number, pdf_path, QCTYPE.SEQ, None)
+            if "QTABUSE CAL REPORT" in lines:
+                case_number = "curve"
+                case_number = Sample(case_number, pdf_path, QCTYPE.CUR, None)
+
             doc.close()  
 
     #return list of sample objects        
@@ -85,32 +93,35 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
 #         self.path = path
 
             
+def pdf_rename(samples):
+    for sample in samples:
+        # Define the new filename
+        new_filename = f"{sample.name}.pdf"
+        new_path = os.path.join(os.path.dirname(sample.path), new_filename)
 
+        # Rename the file
+        try:
+            os.rename(sample.path, new_path)
+            print(f"{sample.name} has been renamed to {new_filename}")
 
-""""
-            # Define the new filename
-            if case_number_1:
-                new_filename = f"{case_number_1}_1.pdf"
-            if case_number_2:
-                new_filename = f"{case_number_2}_2.pdf"
-            new_path = os.path.join(os.path.dirname(pdf_path), new_filename)
+        except PermissionError as e:
+            print(f"PermissionError: {e}")
+            continue
+        except FileExistsError as e:
+            print(f"File Exists Error: {e}")
+            continue
+        except FileNotFoundError as e:
+            print(f"File Not Found Error: {e}")
+            continue
 
-            # Rename the file
-            try:
-                os.rename(pdf_path, new_path)
-                print(f"{filename} has been renamed to {new_filename}")
+        # Rename the sample object
+        sample.path = new_path
 
-            except PermissionError as e:
-                print(f"PermissionError: {e}")
-                continue
-            except FileExistsError as e:
-                print(f"File Exists Error: {e}")
-                continue
-            except FileNotFoundError as e:
-                print(f"File Not Found Error: {e}")
-                continue
-"""
+    print("naming complete")
+
 
 if __name__ == "__main__":
     batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024"
-    SHIMADZU_SAMPLEINIT(batch_dir)
+
+    samples = SHIMADZU_SAMPLEINIT(batch_dir)
+    pdf_rename(samples)

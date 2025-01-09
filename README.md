@@ -10,7 +10,7 @@ init objects in objects.py
 quant workflow working to account for QC
 
 version history -
-
+1.05 - removed many prints, cleanup, working on QC INIT
 1.04 - bugfixes, cleanup
 1.03 - LCMSMS, bugfixes
 1.02 - bugfixes, shuttle/shuttlehome

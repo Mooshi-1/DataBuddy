@@ -4,14 +4,33 @@ case ID, path, QC type, and values
 object name is Sample
 return list of Samples
 -need to trim / make values readable
+double check that these are working
+-handle curve
+-handle sequence
+
 
 create subclasses
 different types of QC
 initialize from parent class and add any variables that it needs
+only need to do this if the class needs additional arguments
 ex: SR control should check for its 2 related cases
 -need to work out details and what variables are needed
 
+pdf_rename()
 rename file using sample name
+DONE
+
+determine what to bind
+case_bind()
+if sample in sample_duplicate:
+sample + sample_duplicate
+
+cal_curve()
+create cal curve
+order - shooter, neg, 1-6
+
+
+
 
 
 

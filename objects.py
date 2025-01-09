@@ -7,6 +7,8 @@ class QCTYPE(Enum):
     CAL = 'calibrator'
     SH = 'shooter'
     MOA = 'method of addition'
+    SEQ = 'sequence'
+    CUR = 'curve'
 
     #can add multiple 
     #type=[QCTYPE.SR, QCTYPE.DL, etc]
