@@ -34,19 +34,20 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             #print(text)
             lines = text.split('\n')
             
-            case_number_1 = None
+            case_number = None
             
             quant_method = lines[3]
             # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
             try:
                 # Find case number using sample name index + 1
                 sample_name_index = lines.index("Sample Name")
-                case_number_1 = lines[sample_name_index + 1]
+                case_number = lines[sample_name_index + 1]
                 # Trim characters off case number string
-                case_number_1 = case_number_1[2:]
-                print(f"{case_number_1}")
+                case_number = case_number[2:]
+                print(f"{case_number}")
 
                 # Extract table data
+                # maybe try to sort the table data?? needs work. self.values is a mess
                 table_data = []
                 capture = False
                 for line in lines:
@@ -62,21 +63,20 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 print(f"Extracted table data: {len(table_data)} characters")
 
 
-
-                # Create Sample object and assign QCTYPE
-                if "CTRL" in lines:
-                    sample = Sample(case_number_1, QCTYPE.CTL, table_data, pdf_path)
-                elif "SR" in lines:
-                    sample = Sample(case_number_1, QCTYPE.SR, table_data, pdf_path)
-                else:
-                    sample = Sample(case_number_1, None, table_data, pdf_path)
-                print(f"Created sample: {sample}")
-
-                # cleaned_data = sample.get_cleaned_data()
-                # print(f"Cleaned data: {cleaned_data}")
+                case_number = Sample(case_number, pdf_path, None, table_data)
+                print(f"Created sample: {case_number}")
+                if case_number in samples:
+                    case_number.name += "_duplicate"
+                    print(f"recognized duplicate")
+                samples.append(case_number)
 
             except Exception as e:
-                print(f"Error finding case number or extracting table data: {e}")
+                print(f"FAILED TO INIT SAMPLE {filename}: {e}")
+            doc.close()  
+
+    #return list of sample objects        
+    return samples
+            
 # class Sample:
 #     def __init__(self, ID, type, results, path):
 #         self.ID = ID
@@ -84,8 +84,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
 #         self.results = results
 #         self.path = path
 
-            # Close the document
-            doc.close()
+            
 
 
 """"

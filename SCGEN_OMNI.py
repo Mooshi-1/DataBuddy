@@ -44,7 +44,7 @@ def GENrename(batch_dir):
             # Rename the file
             try:
                 os.rename(pdf_path, new_path)
-                print(f"{filename} has been renamed to {new_filename}")
+                #print(f"{filename} has been renamed to {new_filename}")
             except PermissionError as e:
                 print(f"--PermissionError--: {e}")
                 continue

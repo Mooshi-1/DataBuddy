@@ -18,6 +18,8 @@ import searcher
 import SCRNZ_omni
 import SCGEN_OMNI
 import SCLCMSMS_OMNI
+import quants
+
 
 ascii_art = """
  .
@@ -37,7 +39,7 @@ ascii_art = """
   888     d88' d8(  888    888 . d8(  888        888    .88P  888   888   888  888   888  888    .o  888     
  o888bood8P'   `Y888""8o   "888" `Y888""8o      o888bood8P'  o888o o888o o888o `Y8bod88P" `Y8bod8P' d888b    
  .
-Version 1.03 - 01/07/2025
+Version 1.05 - 01/09/2025
 """
 
 def main(batch_num, method):
@@ -79,7 +81,20 @@ def main(batch_num, method):
         SCLCMSMS_OMNI.LCMSrename(qc_dir)
         SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
         SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
-        
+
+    if method == "quants":
+        quants.SHIMADZU_SAMPLEINIT(case_dir)
+        #
+        #
+        #
+        #
+        #
+        response = input("Press 1 to retry fillout, press 2 to output csv")
+        if response == "1":
+            print(response)
+            pass
+            #aux func
+            
     #return files to individual directory
     searcher.ShuttleHome(case_dir)
     
@@ -88,8 +103,8 @@ if __name__ == "__main__":
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 3:
         batch_num = input("Enter the batch number: ")
-        method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS): ")
-        input("Reminder: Unable to handle reinjects. Press Enter to continue...")
+        method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS, quants): ")
+        input("Reminder: Unable to handle reinjects. Bind your sequence manually. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch_num = sys.argv[1]

@@ -38,16 +38,16 @@ def Zrename(batch_dir):
                 sample_name_index = lines.index("Sample Name")
                 MH_case_number = lines[sample_name_index + 1]
                 MH_case_number = MH_case_number.upper()
-                print(f"MH found {MH_case_number}")
+                #print(f"MH found {MH_case_number}")
                 
             elif lines[0].startswith("GC/MS Analysis"):
                 if case_pattern.search(lines[0]):
                     AM_case_number = case_pattern.search(lines[0]).group().strip()
-                    print(f"AM matched {AM_case_number}")
+                    #print(f"AM matched {AM_case_number}")
 
                 if control_pattern.search(lines[0]):
                     AM_case_number = control_pattern.search(lines[0]).group().strip()
-                    print(f"control matched {AM_case_number}")
+                    #print(f"control matched {AM_case_number}")
 
 
             # Close the document
@@ -69,7 +69,7 @@ def Zrename(batch_dir):
             # Rename the file
             try:
                 os.rename(pdf_path, new_path)
-                print(f"{filename} has been renamed to {new_filename}")
+                #print(f"{filename} has been renamed to {new_filename}")
 
             except PermissionError as e:
                 print(f"PermissionError: {e}")
