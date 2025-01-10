@@ -10,7 +10,7 @@ import os
 import re
 
 from objects import QCTYPE, QC, Sample, table_converter
-from QUANTMAIN import batch, output_dir
+#still need to import batch and batch_dir
 
 
 
