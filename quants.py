@@ -9,7 +9,6 @@ import os
 import re
 
 from objects import QCTYPE, Sample, table_converter
-import qc
 
 def SHIMADZU_SAMPLEINIT(batch_dir):
     samples = [] #will hold sample objects created here
@@ -31,13 +30,13 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             try:
                 #take care of special cases
                 if " 0:Unknown " in lines:
-                    Sequence = Sample("Sequence", pdf_path, {QCTYPE.SEQ}, None, None)
+                    Sequence = Sample("Sequence", pdf_path, "seq", {QCTYPE.SEQ}, None, None)
                     print("found sequence")
                     samples.append(Sequence)
                     doc.close()
                     continue
                 if "Calibration Curve Report" in lines:
-                    Curve = Sample("Curve", pdf_path, {QCTYPE.CUR}, None, None)
+                    Curve = Sample("Curve", pdf_path, "curve", {QCTYPE.CUR}, None, None)
                     print("found curve")
                     samples.append(Curve)
                     doc.close()

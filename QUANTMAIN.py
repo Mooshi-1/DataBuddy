@@ -70,12 +70,26 @@ def main(batch, method):
     for sample in all_samples:
         sample.assign_type()
     
-    qc.QC_handler(all_samples)
+    print(len(all_samples))
+    cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases, cases, curve, MOA_cases, sequence = qc.QC_handler(all_samples)
+    print(len(cal_curve)) #6
+    print(len(neg_ctl)) #1
+    print(len(shooter)) #3
+    print(len(controls)) #4
+    print(len(dil_controls)) #1
+    print(len(SR_cases)) #0
+    print(len(cases)) #20
+    print(len(curve)) #1
+    print(len(MOA_cases)) #12
+    print(len(sequence)) #1
+    print(cases)
+
+    qc.sort_samples(cal_curve)
 
 
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references
-    quants.compare_and_bind_duplicates(all_samples, output_dir, batch)
+    quants.compare_and_bind_duplicates(cases, output_dir, batch)
 
     print("complete")
 

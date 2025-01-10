@@ -74,29 +74,6 @@ class Sample:
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
 
-    def QC_handler(self):
-        cal_curve = []
-        neg_ctl = []
-        shooter = []
-        controls = []
-        dil_controls = []
-        SR_cases = []
-
-        if self.type == {QCTYPE.CAL}:
-            cal_curve.append(self)
-        if self.type == {QCTYPE.SH}: 
-            shooter.append(self)
-        if self.type == {QCTYPE.NEG}:
-            neg_ctl.append(self)
-        if self.type == {QCTYPE.CTL}:
-            controls.append(self)
-        if self.type.issuperset({QCTYPE.DL,QCTYPE.CTL}):
-            dil_controls.append(self)
-        if QCTYPE.SR in self.type:
-            SR_cases.append(self)
-
-
-
     # matched_pairs = []
     # num_samples = len(samples)
     # for i in range(num_samples):
@@ -166,4 +143,3 @@ if __name__ == "__main__":
 
     for sample in samples:
         sample.assign_type()
-        cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases = sample.QC_handler()
