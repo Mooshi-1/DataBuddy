@@ -25,25 +25,28 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             text = page.get_text()
             #print(text)
             lines = text.split('\n')
-            print(lines)
-            
-            if "                Shimadzu 8060-LCMS" in lines:
-                Sequence = Sample("Sequence", pdf_path, QCTYPE.SEQ, None, None)
-                samples.append(Sequence)
-                doc.close()
-                break
-            if "Calibration Curve Report" in lines:
-                Curve = Sample("Curve", pdf_path, QCTYPE.CUR, None, None)
-                samples.append(Curve)
-                doc.close()
-                break
+            #print(lines)
 
             case_number = None
-            
-            quant_method = lines[3]
+        
+            #quant_method = lines[3]
             # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
 
             try:
+                #take care of special cases
+                if " 0:Unknown " in lines:
+                    Sequence = Sample("Sequence", pdf_path, QCTYPE.SEQ, None, None)
+                    print("found sequence")
+                    samples.append(Sequence)
+                    doc.close()
+                    continue
+                if "Calibration Curve Report" in lines:
+                    Curve = Sample("Curve", pdf_path, QCTYPE.CUR, None, None)
+                    print("found curve")
+                    samples.append(Curve)
+                    doc.close()
+                    continue
+
                 # Find case number using sample name index + 1
                 sample_name_index = lines.index("Sample Name")
                 case_number = lines[sample_name_index + 1]
@@ -91,6 +94,8 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 case_number = Sample(case_number, pdf_path, None, format_ISTDs, format_analytes)
                 #append to list
                 samples.append(case_number)
+            
+
 
             except Exception as e:
                 print(f"FAILED TO INIT SAMPLE {filename}: {e}")
@@ -134,7 +139,16 @@ def pdf_rename(samples):
 
 
 if __name__ == "__main__":
-    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA\2024-03233"
+    batch_dirs = [
+        r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\BATCH PACK DATA",
+        r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA",
+    ]
 
-    samples = SHIMADZU_SAMPLEINIT(batch_dir)
-    pdf_rename(samples)
+    all_samples = []
+
+    for batch_dir in batch_dirs:
+        print(f"checking {batch_dir}")
+        samples = SHIMADZU_SAMPLEINIT(batch_dir)
+        all_samples.extend(samples)
+
+    pdf_rename(all_samples)
