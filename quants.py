@@ -9,6 +9,7 @@ import os
 import re
 
 from objects import QCTYPE, Sample, table_converter
+import qc
 
 def SHIMADZU_SAMPLEINIT(batch_dir):
     samples = [] #will hold sample objects created here

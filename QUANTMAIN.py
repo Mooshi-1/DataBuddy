@@ -17,6 +17,7 @@ import os
 
 import searcher
 import quants
+import qc
 
 
 ascii_art = """
@@ -68,9 +69,9 @@ def main(batch, method):
 
     for sample in all_samples:
         sample.assign_type()
-        #print(sample.path)
+    
+    qc.QC_handler(all_samples)
 
-    print(all_samples)
 
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references

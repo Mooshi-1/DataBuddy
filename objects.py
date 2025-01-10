@@ -76,25 +76,22 @@ class Sample:
 
     def QC_handler(self):
         cal_curve = []
-        shooter_neg = []
+        neg_ctl = []
+        shooter = []
         controls = []
         dil_controls = []
         SR_cases = []
 
-
         if self.type == {QCTYPE.CAL}:
             cal_curve.append(self)
-            print(cal_curve)
-            print("found cal")
-        if self.type == {QCTYPE.SH} or self.type == {QCTYPE.NEG}:
-            shooter_neg.append(self)
-            print(shooter_neg)
-            print("found shooter/neg")
+        if self.type == {QCTYPE.SH}: 
+            shooter.append(self)
+        if self.type == {QCTYPE.NEG}:
+            neg_ctl.append(self)
         if self.type == {QCTYPE.CTL}:
             controls.append(self)
         if self.type.issuperset({QCTYPE.DL,QCTYPE.CTL}):
             dil_controls.append(self)
-            print("added to dil controls")
         if QCTYPE.SR in self.type:
             SR_cases.append(self)
 
@@ -112,16 +109,6 @@ class Sample:
     # for sample1, sample2 in matched_pairs:
     #     obj_binder(sample1, sample2, output_dir, batch)
 
-
-#     if self.type == QCTYPE.SR:
-#         pass
-#         #function to check dependent cases and fill out worksheet
-    
-#     #brain/liver/gastric/blood? method of addition
-#     if self.type == [QCTYPE.MOA, QCTYPE.]:
-#         pass
-#         #function to assemble surve
-#     raise Exception("Invalid QC")
 
     def __eq__(self, other):
         return self.base == other.base
@@ -179,5 +166,4 @@ if __name__ == "__main__":
 
     for sample in samples:
         sample.assign_type()
-        sample.QC_handler()
-    print(samples)
+        cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases = sample.QC_handler()
