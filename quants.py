@@ -113,6 +113,8 @@ def pdf_rename(samples):
     print("naming complete")
 
 def obj_binder(sample1, sample2, output_dir, batch):
+    #output warning if analytes or ISTDs are not equal
+    find_misidentification(sample1, sample2)
     #open docs and insert
     doc1 = fitz.open(sample1.path)
     doc2 = fitz.open(sample2.path)
@@ -127,7 +129,7 @@ def obj_binder(sample1, sample2, output_dir, batch):
     #maybe I need to init a new object here...? will see if this causes issues
 
 def compare_and_bind_duplicates(samples, output_dir, batch):
-    # Create a dictionary to map sample IDs without the suffix to their corresponding samples
+    # Create a list of matched pairs
     matched_pairs = []
     num_samples = len(samples)
     for i in range(num_samples):
@@ -137,8 +139,15 @@ def compare_and_bind_duplicates(samples, output_dir, batch):
             QCTYPE.SH not in samples[i].type and QCTYPE.SH not in samples[j].type:
                 #print(samples[i], samples[j])
                 matched_pairs.append((samples[i], samples[j]))
+    # send matched pair list to obj_binder
     for sample1, sample2 in matched_pairs:
         obj_binder(sample1, sample2, output_dir, batch)
+
+def find_misidentification(self, other):
+    if len(self.results_analyte) != len(other.results_analyte):
+        print(f"--WARNING--: {self.base} does not have the same number of analytes reported as duplicate")
+    if len(self.results_ISTD) != len(other.results_ISTD):
+        print(f"--WARNING--: {self.base} does not have the same number of ISTDs reported as duplicate")
 
 
 
