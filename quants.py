@@ -59,9 +59,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 analytes_data = []
                 capture_ISTDs = False
                 capture_analytes = False
-
                 for line in lines:
-
                     #differentiate collection windows
                     if "Quantitative Results: ISTDs" in line:
                         capture_ISTDs = True
@@ -79,7 +77,6 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                     elif capture_analytes:
                         analytes_data.append(line.strip())
                 #print(f"Extracted table data: {len(ISTDs_data)} and {len(analytes_data)}")
-
                 format_ISTDs = table_converter(ISTDs_data)
                 format_analytes = table_converter(analytes_data)
 
@@ -94,13 +91,9 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 case_number = Sample(case_number, pdf_path, None, format_ISTDs, format_analytes)
                 #append to list
                 samples.append(case_number)
-            
-
 
             except Exception as e:
                 print(f"FAILED TO INIT SAMPLE {filename}: {e}")
-
-
             doc.close()  
 
     #return list of sample objects
@@ -167,8 +160,7 @@ def obj_binder(samples):
 
 if __name__ == "__main__":
     batch_dirs = [
-        r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\BATCH PACK DATA",
-        r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA",
+        r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA"
     ]
 
     all_samples = []
@@ -179,3 +171,9 @@ if __name__ == "__main__":
         all_samples.extend(samples)
 
     pdf_rename(all_samples)
+
+    for sample in all_samples:
+        print(sample.ID)
+        print(sample.type)
+        sample.assign_type()
+        print(f"new types added {sample.type}")

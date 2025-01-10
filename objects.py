@@ -1,4 +1,5 @@
 from enum import Enum
+import re
 
 class QCTYPE(Enum):
     SR = 'spiked recovery'
@@ -9,6 +10,7 @@ class QCTYPE(Enum):
     MOA = 'method of addition'
     SEQ = 'sequence'
     CUR = 'curve'
+    NEG = 'negative'
 
     #can add multiple 
     #type=[QCTYPE.SR, QCTYPE.DL, etc]
@@ -42,8 +44,43 @@ class Sample:
         self.results_analyte = results_analyte if results_analyte is not None else []
 
     def assign_type(self):
-        check = self.ID.split("_")[0]
-        print(check)
+        big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
+        dilution = re.compile(r'x[1-9]')
+        MOA = ["BRN", "LIV", "GLG"]
+        SR = "_SR"
+        CAL = "CAL"
+        CTL = "CTL"
+        SH = "SHOOTER"
+        NEG = "NEG"
+
+        if self.type == QCTYPE.SEQ or self.type == QCTYPE.CUR:
+            return
+
+        if big_dilution.search(self.ID):
+            self.type.append(QCTYPE.MOA)
+            self.type.append(QCTYPE.DL)
+
+        if dilution.search(self.ID):
+            self.type.append(QCTYPE.DL)
+    
+        for types in MOA:
+            if types in self.ID:
+                self.type.append(QCTYPE.MOA)
+
+        if SR in self.ID:
+            self.type.append(QCTYPE.SR)
+
+        if CAL in self.ID:
+            self.type.append(QCTYPE.CAL)
+
+        if CTL in self.ID:
+            self.type.append(QCTYPE.CTL)
+
+        if SH in self.ID:
+            self.type.append(QCTYPE.SH)
+        
+        if NEG in self.ID:
+            self.type.append(QCTYPE.NEG)
 
 
     def __eq__(self, other):
@@ -93,14 +130,15 @@ def table_converter(table):
     #for row in transposed_table:
         #print(", ".join(row))
     #print(transposed_table)
-
     return transposed_table
 
 
 if __name__ == "__main__":
     tester1 = Sample("24-3456_IVBGT_x10", r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA/24-3456_IVBGT_x10.pdf", None, ["Morphine", "Codeine"], ["Morphine", "Codeine"])
     tester2 = Sample("24-3456_IVBGT_x10_1", r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA/24-3456_IVBGT_x10_1.pdf", None, ["Morphine", "Codeine"], ["Morphine", "Codeine"])
-    samples = [tester1, tester2]
+    tester3 = Sample("24-3560_BRNCUP_x2_L1", r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA/24-3560_BRNCUP_x2_L1.pdf", None, ["Morphine", "Codeine"], ["Morphine", "Codeine"])
+    samples = [tester1, tester2, tester3]
 
-    tester1.assign_type()
-    print(tester1)
+    for sample in samples:
+        sample.assign_type()
+    print(samples)
