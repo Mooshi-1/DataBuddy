@@ -1,4 +1,4 @@
 
 add simple rename loop into main function
 
-in new sequence gen make _SINGLE flag
+in new sequence gen make _SINGLE flag for quants
