@@ -47,8 +47,8 @@ def main(batch, method):
     #     raise Exception("Unable to locate batch directory")                
     
     #create binder output
-    case_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA'
-    batch_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/BATCH PACK DATA'
+    case_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\CASE DATA'
+    batch_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\BATCH PACK DATA'
 
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
@@ -71,7 +71,7 @@ def main(batch, method):
 
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references
-    quants.compare_and_bind_samples(all_samples, output_dir, batch)
+    quants.compare_and_bind_duplicates(all_samples, output_dir, batch)
 
     print("complete")
 

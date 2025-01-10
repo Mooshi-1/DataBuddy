@@ -81,18 +81,18 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 format_ISTDs = table_converter(ISTDs_data)
                 format_analytes = table_converter(analytes_data)
 
-                case_number = f"{case_number}_0"
+                case_ID = f"{case_number}_0"
                 #change case number if it already exists as an object
                 duplicate_count = 1
-                while any(case_number == sample.ID for sample in samples):
-                    case_number = f"{case_number.rsplit('_', 1)[0]}_{duplicate_count}"
+                while any(case_ID == sample.ID for sample in samples):
+                    case_ID = f"{case_ID.rsplit('_', 1)[0]}_{duplicate_count}"
                     duplicate_count += 1
-                    #print(f"recognized duplicate, new ID: {case_number}")
+                    #print(f"recognized duplicate, new ID: {case_ID}")
                 
                 #create sample object
-                case_number = Sample(case_number, pdf_path, None, format_ISTDs, format_analytes)
+                case_ID = Sample(case_ID, pdf_path, case_number, None, format_ISTDs, format_analytes)
                 #append to list
-                samples.append(case_number)
+                samples.append(case_ID)
 
             except Exception as e:
                 print(f"FAILED TO INIT SAMPLE {filename}: {e}")
@@ -127,7 +127,7 @@ def pdf_rename(samples):
             print(f"File Not Found Error: {e}")
             continue
 
-        # Rename the sample object
+        # keep sample.path up to date
         sample.path = new_path
 
     print("naming complete")
@@ -137,32 +137,21 @@ def obj_binder(sample1, sample2, output_dir, batch):
     doc1 = fitz.open(sample1.path)
     doc2 = fitz.open(sample2.path)
     doc1.insert_pdf(doc2)
-    #modify name
-    base_id = sample1.ID.rsplit('_', 1)[0]
-
-    output_path = os.path.join(output_dir, f"{base_id}_{batch}.pdf")
+    output_path = os.path.join(output_dir, f"{sample1.base}_{batch}.pdf")
     #save
     doc1.save(output_path)
     print(f"Successfully bound {sample1.ID} and {sample2.ID} into {output_path}")
 
-def compare_and_bind_samples(samples, output_dir, batch):
+def compare_and_bind_duplicates(samples, output_dir, batch):
     # Create a dictionary to map sample IDs without the suffix to their corresponding samples
-    sample_dict = {}
-    for sample in samples:
-        if sample.type != {QCTYPE.SH}:
-            base_id = sample.ID.rsplit('_', 1)[0]
-            if base_id not in sample_dict:
-                sample_dict[base_id] = {}
-            sample_dict[base_id][sample.ID] = sample
-
-    # Iterate through the dictionary to find and bind corresponding samples
-    for base_id, sample_versions in sample_dict.items():
-        if f"{base_id}_0" in sample_versions and f"{base_id}_1" in sample_versions:
-            first_rpt = sample_versions[f"{base_id}_0"]
-            second_rpt = sample_versions[f"{base_id}_1"]
-
-            # Perform the binding operation
-            obj_binder(first_rpt, second_rpt, output_dir, batch)
+    matched_pairs = []
+    num_samples = len(samples)
+    for i in range(num_samples):
+        for j in range(i + 1, num_samples):
+            if samples[i] == samples[j] and i.QCTYPE != QCTYPE.SH:
+                matched_pairs.append((samples[i], samples[j]))
+    for sample1, sample2 in matched_pairs:
+        obj_binder(sample1, sample2, output_dir, batch)
 
 if __name__ == "__main__":
     global batch
@@ -187,7 +176,7 @@ if __name__ == "__main__":
 
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references
-    compare_and_bind_samples(all_samples)
+    compare_and_bind_duplicates(all_samples)
 
     print("complete")
 

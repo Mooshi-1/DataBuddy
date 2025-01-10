@@ -45,9 +45,10 @@ def case_handler(self, other):
     
 #define QC objects
 class Sample:
-    def __init__(self, ID, path, type=None, results_ISTD=None, results_analyte=None):
+    def __init__(self, ID, path, base, type=None, results_ISTD=None, results_analyte=None):
         self.ID = ID
         self.path = path
+        self.base = base
         self.type = set(type) if type is not None else set()
         self.results_ISTD = results_ISTD if results_ISTD is not None else []
         self.results_analyte = results_analyte if results_analyte is not None else []
@@ -97,16 +98,11 @@ class Sample:
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
 
-    # def find_pairs(self, other):
-    #     parent = self.ID.rsplit("_", 1)[0]
-    #     if f"{parent}_1" == other.ID:
-    #         obj_binder(self, other)
 
 
     def __eq__(self, other):
-        if isinstance(other, Sample):
-            return self.ID == other.ID
-        return False
+        return self.base == other.base
+
     
     def __hash__(self):
         return hash(self.ID)
@@ -119,9 +115,9 @@ class Sample:
     
     
 
-class QC(Sample):
-    def __init__(self, ID, path, type, results_ISTD, results_analyte):
-        super().__init__(ID, path, type, results_ISTD, results_analyte)
+# class QC(Sample):
+#     def __init__(self, ID, path, type, results_ISTD, results_analyte):
+#         super().__init__(ID, path, type, results_ISTD, results_analyte)
 
 def table_converter(table):
     #prep new columns
