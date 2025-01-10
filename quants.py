@@ -4,14 +4,11 @@ Created on Tue Dec 31 16:20:55 2024
 
 @author: e314883
 """
-
 import fitz  # PyMuPDF
 import os
 import re
 
-from objects import QCTYPE, QC, Sample, table_converter
-
-
+from objects import QCTYPE, Sample, table_converter
 
 def SHIMADZU_SAMPLEINIT(batch_dir):
     samples = [] #will hold sample objects created here
@@ -20,16 +17,13 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(batch_dir, filename)        
             doc = fitz.open(pdf_path)
-
             # Extract text from the first page
             page = doc[0]
             text = page.get_text()
             #print(text)
             lines = text.split('\n')
             #print(lines)
-
             case_number = None
-        
             #quant_method = lines[3]
             # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
 
@@ -47,14 +41,12 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                     samples.append(Curve)
                     doc.close()
                     continue
-
                 # Find case number using sample name index + 1
                 sample_name_index = lines.index("Sample Name")
                 case_number = lines[sample_name_index + 1]
                 # Trim characters off case number string
                 case_number = case_number[2:]
                 #print(f"{case_number}")
-
                 # Extract table data
                 ISTDs_data = []
                 analytes_data = []
@@ -93,7 +85,6 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 case_ID = Sample(case_ID, pdf_path, case_number, None, format_ISTDs, format_analytes)
                 #append to list
                 samples.append(case_ID)
-
             except Exception as e:
                 print(f"FAILED TO INIT SAMPLE {filename}: {e}")
             doc.close()  
@@ -106,30 +97,19 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
 def pdf_rename(samples):
     def sanitize_filename(filename):
         return re.sub(r'[\\/*?:"<>|]', "_", filename)
-
     for sample in samples:
         # Define the new filename
         new_filename = sanitize_filename(f"{sample.ID}.pdf")
         new_path = os.path.join(os.path.dirname(sample.path), new_filename)
-
         # Rename the file
         try:
             os.rename(sample.path, new_path)
             #print(f"{sample.ID} has been renamed to {new_filename}")
-
-        except PermissionError as e:
-            print(f"PermissionError: {e}")
+        except (PermissionError, FileExistsError, FileNotFoundError) as e:
+            print(f"--error--: {e}")
             continue
-        except FileExistsError as e:
-            print(f"File Exists Error: {e}")
-            continue
-        except FileNotFoundError as e:
-            print(f"File Not Found Error: {e}")
-            continue
-
         # keep sample.path up to date
         sample.path = new_path
-
     print("naming complete")
 
 def obj_binder(sample1, sample2, output_dir, batch):
@@ -141,6 +121,10 @@ def obj_binder(sample1, sample2, output_dir, batch):
     #save
     doc1.save(output_path)
     print(f"Successfully bound {sample1.ID} and {sample2.ID} into {output_path}")
+    #update path
+    sample1.path = output_path
+    #print(sample1.path)
+    #maybe I need to init a new object here...? will see if this causes issues
 
 def compare_and_bind_duplicates(samples, output_dir, batch):
     # Create a dictionary to map sample IDs without the suffix to their corresponding samples
@@ -148,10 +132,17 @@ def compare_and_bind_duplicates(samples, output_dir, batch):
     num_samples = len(samples)
     for i in range(num_samples):
         for j in range(i + 1, num_samples):
-            if samples[i] == samples[j] and i.QCTYPE != QCTYPE.SH:
+            #check if self.base is equal and exclude QCTYPE.SH
+            if samples[i] == samples[j] and \
+            QCTYPE.SH not in samples[i].type and QCTYPE.SH not in samples[j].type:
+                #print(samples[i], samples[j])
                 matched_pairs.append((samples[i], samples[j]))
     for sample1, sample2 in matched_pairs:
         obj_binder(sample1, sample2, output_dir, batch)
+
+
+
+
 
 if __name__ == "__main__":
     global batch

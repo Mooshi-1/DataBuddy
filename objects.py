@@ -21,9 +21,6 @@ class QCTYPE(Enum):
     CUR = 'curve'
     NEG = 'negative'
 
-    #can add multiple 
-    #type=[QCTYPE.SR, QCTYPE.DL, etc]
-
 
 
 # def QC_handler(samples):
@@ -98,11 +95,8 @@ class Sample:
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
 
-
-
     def __eq__(self, other):
         return self.base == other.base
-
     
     def __hash__(self):
         return hash(self.ID)
@@ -112,7 +106,6 @@ class Sample:
         
     def __repr__(self):
         return f"{self.ID}, QC={self.type}, {len(self.results_ISTD)} ISTD {len(self.results_analyte)} analyte, +.path"
-    
     
 
 # class QC(Sample):

@@ -63,11 +63,14 @@ def main(batch, method):
         samples = quants.SHIMADZU_SAMPLEINIT(dirs)
         all_samples.extend(samples)
 
+
     quants.pdf_rename(all_samples)
 
     for sample in all_samples:
         sample.assign_type()
         #print(sample.path)
+
+    print(all_samples)
 
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references

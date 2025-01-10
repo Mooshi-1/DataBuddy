@@ -1,11 +1,3 @@
-SHIMADZU_SAMPLEINIT()
-done?
-
-CHANGE DIR TO --BINDER_FILES--
-MAKE MAIN function
-global batch_dir
-global batch_num
-global output_dir
 
 case_bind()
 manage binding things other than _0 and _1 samples
