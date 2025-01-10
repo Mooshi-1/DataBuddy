@@ -1,20 +1,14 @@
 SHIMADZU_SAMPLEINIT()
 done?
 
-create subclasses
-different types of QC
-initialize from parent class and add any variables that it needs
-only need to do this if the class needs additional arguments
-ex: SR control should check for its 2 related cases
--need to work out details and what variables are needed
-SR()
-MOA()
-DILN()
+CHANGE DIR TO --BINDER_FILES--
+MAKE MAIN function
+global batch_dir
+global batch_num
+global output_dir
 
-determine what to bind
 case_bind()
-if sample in sample_duplicate:
-sample + sample_duplicate
+manage binding things other than _0 and _1 samples
 account for samples in single
 
 cal_curve()

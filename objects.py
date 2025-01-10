@@ -1,5 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thurs 01/09/2025
+
+@author: Giachetti
+"""
+
+
 from enum import Enum
 import re
+
 
 class QCTYPE(Enum):
     SR = 'spiked recovery'
@@ -39,7 +48,7 @@ class Sample:
     def __init__(self, ID, path, type=None, results_ISTD=None, results_analyte=None):
         self.ID = ID
         self.path = path
-        self.type = type if type is not None else []
+        self.type = set(type) if type is not None else set()
         self.results_ISTD = results_ISTD if results_ISTD is not None else []
         self.results_analyte = results_analyte if results_analyte is not None else []
 
@@ -47,6 +56,7 @@ class Sample:
         big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
         dilution = re.compile(r'x[1-9]')
         MOA = ["BRN", "LIV", "GLG"]
+        MOA_cal = ["_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR = "_SR"
         CAL = "CAL"
         CTL = "CTL"
@@ -57,30 +67,40 @@ class Sample:
             return
 
         if big_dilution.search(self.ID):
-            self.type.append(QCTYPE.MOA)
-            self.type.append(QCTYPE.DL)
+            self.type.add(QCTYPE.MOA)
+            self.type.add(QCTYPE.DL)
 
         if dilution.search(self.ID):
-            self.type.append(QCTYPE.DL)
+            self.type.add(QCTYPE.DL)
+
+        for cal in MOA_cal:
+            if cal in self.ID:
+                self.type.add(QCTYPE.CAL)
+                self.type.add(QCTYPE.MOA)
     
         for types in MOA:
             if types in self.ID:
-                self.type.append(QCTYPE.MOA)
+                self.type.add(QCTYPE.MOA)
 
         if SR in self.ID:
-            self.type.append(QCTYPE.SR)
+            self.type.add(QCTYPE.SR)
 
         if CAL in self.ID:
-            self.type.append(QCTYPE.CAL)
+            self.type.add(QCTYPE.CAL)
 
         if CTL in self.ID:
-            self.type.append(QCTYPE.CTL)
+            self.type.add(QCTYPE.CTL)
 
         if SH in self.ID:
-            self.type.append(QCTYPE.SH)
+            self.type.add(QCTYPE.SH)
         
         if NEG in self.ID:
-            self.type.append(QCTYPE.NEG)
+            self.type.add(QCTYPE.NEG)
+
+    # def find_pairs(self, other):
+    #     parent = self.ID.rsplit("_", 1)[0]
+    #     if f"{parent}_1" == other.ID:
+    #         obj_binder(self, other)
 
 
     def __eq__(self, other):

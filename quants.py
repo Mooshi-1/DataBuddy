@@ -10,6 +10,8 @@ import os
 import re
 
 from objects import QCTYPE, QC, Sample, table_converter
+from QUANTMAIN import batch, output_dir
+
 
 
 def SHIMADZU_SAMPLEINIT(batch_dir):
@@ -35,13 +37,13 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             try:
                 #take care of special cases
                 if " 0:Unknown " in lines:
-                    Sequence = Sample("Sequence", pdf_path, QCTYPE.SEQ, None, None)
+                    Sequence = Sample("Sequence", pdf_path, {QCTYPE.SEQ}, None, None)
                     print("found sequence")
                     samples.append(Sequence)
                     doc.close()
                     continue
                 if "Calibration Curve Report" in lines:
-                    Curve = Sample("Curve", pdf_path, QCTYPE.CUR, None, None)
+                    Curve = Sample("Curve", pdf_path, {QCTYPE.CUR}, None, None)
                     print("found curve")
                     samples.append(Curve)
                     doc.close()
@@ -80,13 +82,14 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 format_ISTDs = table_converter(ISTDs_data)
                 format_analytes = table_converter(analytes_data)
 
+                case_number = f"{case_number}_0"
                 #change case number if it already exists as an object
                 duplicate_count = 1
                 while any(case_number == sample.ID for sample in samples):
-                    case_number += f"_{duplicate_count}"
+                    case_number = f"{case_number.rsplit('_', 1)[0]}_{duplicate_count}"
                     duplicate_count += 1
                     #print(f"recognized duplicate, new ID: {case_number}")
-
+                
                 #create sample object
                 case_number = Sample(case_number, pdf_path, None, format_ISTDs, format_analytes)
                 #append to list
@@ -130,35 +133,42 @@ def pdf_rename(samples):
 
     print("naming complete")
 
-def obj_binder(samples):
-    #iterate through list of samples
+def obj_binder(sample1, sample2):
+    #open docs and insert
+    doc1 = fitz.open(sample1.path)
+    doc2 = fitz.open(sample2.path)
+    doc1.insert_pdf(doc2)
+    #modify name
+    base_id = sample1.ID.rsplit('_', 1)[0]
+
+    output_path = os.path.join(output_dir, f"{base_id}_{batch}.pdf")
+    #save
+    doc1.save(output_path)
+    print(f"Successfully bound {sample1.ID} and {sample2.ID} into {output_path}")
+
+def compare_and_bind_samples(samples):
+    # Create a dictionary to map sample IDs without the suffix to their corresponding samples
+    sample_dict = {}
     for sample in samples:
-        if QCTYPE==None:
-            pass
+        if sample.type != {QCTYPE.SH}:
+            base_id = sample.ID.rsplit('_', 1)[0]
+            if base_id not in sample_dict:
+                sample_dict[base_id] = {}
+            sample_dict[base_id][sample.ID] = sample
 
+    # Iterate through the dictionary to find and bind corresponding samples
+    for base_id, sample_versions in sample_dict.items():
+        if f"{base_id}_0" in sample_versions and f"{base_id}_1" in sample_versions:
+            first_rpt = sample_versions[f"{base_id}_0"]
+            second_rpt = sample_versions[f"{base_id}_1"]
 
-
-
-        # #check base-acid pairs -- do nothing if base-acid pair does not exist
-        # if filename.endswith(" B.pdf"):
-        #     #cuts off " B" and defines that as sample - comes back in save file
-        #     sample = filename.rsplit(" B.pdf", 1)[0]
-        #     base = filename
-        #     acid = f"{sample} A.pdf"
-            
-        #     #bind acid into base and save file with batch number
-        #     if base in os.listdir(batch_dir) \
-        #     and acid in os.listdir(batch_dir):
-        #         base_doc = fitz.open(os.path.join(batch_dir,base))
-        #         acid_doc = fitz.open(os.path.join(batch_dir,acid))
-        #         base_doc.insert_pdf(acid_doc)
-        #         base_doc.save(os.path.join(output_dir, f"{sample}_{batch_num}.pdf"))
-        #         print(f"successfully bound {sample}")
-        #     else:
-        #         print(f"--error-- cannot locate all documents for {filename}")
-
+            # Perform the binding operation
+            obj_binder(first_rpt, second_rpt)
 
 if __name__ == "__main__":
+    global batch
+    batch = 12786
+    
     batch_dirs = [
         r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA"
     ]
@@ -173,7 +183,12 @@ if __name__ == "__main__":
     pdf_rename(all_samples)
 
     for sample in all_samples:
-        print(sample.ID)
-        print(sample.type)
         sample.assign_type()
-        print(f"new types added {sample.type}")
+        #print(sample.path)
+
+    #make sure this is at the end
+    #changes self.path of a single repeat and may cause issues for other references
+    compare_and_bind_samples(all_samples)
+
+    print("complete")
+

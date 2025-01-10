@@ -30,13 +30,14 @@ def move_contents(src_dir, dest_dir):
         shutil.move(src_path, dest_path)
 
 
-def binder_dir(input_dir):
-    binder_path = os.path.join(input_dir, "--binder files--")
-    if not os.path.exists(binder_path):
+def binder_dir(input_dir, counter=0):
+    binder_path = os.path.join(input_dir, f"--binder files--" if counter == 0 else f"--binder files{counter}--")
+    if os.path.exists(binder_path):
+        return binder_dir(input_dir, counter + 1)
+    else:
         os.makedirs(binder_path)
         print(f"made directory {binder_path}")
-    return binder_path
-
+        return binder_path
 
 
 def ShuttleHome(input_dir):

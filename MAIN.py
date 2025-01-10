@@ -19,7 +19,6 @@ import searcher
 import SCRNZ_omni
 import SCGEN_OMNI
 import SCLCMSMS_OMNI
-import quants
 
 
 ascii_art = """
@@ -82,19 +81,6 @@ def main(batch_num, method):
         SCLCMSMS_OMNI.LCMSrename(qc_dir)
         SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
         SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
-
-    if method == "quants":
-        quants.SHIMADZU_SAMPLEINIT(case_dir)
-        #
-        #
-        #
-        #
-        #
-        response = input("Press 1 to retry fillout, press 2 to output csv")
-        if response == "1":
-            print(response)
-            pass
-            #aux func
             
     #return files to individual directory
     searcher.ShuttleHome(case_dir)
