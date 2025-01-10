@@ -1,7 +1,5 @@
 SHIMADZU_SAMPLEINIT()
--handle curve
--handle sequence
-
+done?
 
 create subclasses
 different types of QC

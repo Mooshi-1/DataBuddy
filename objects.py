@@ -13,14 +13,19 @@ class QCTYPE(Enum):
     #can add multiple 
     #type=[QCTYPE.SR, QCTYPE.DL, etc]
 
-def QC_handler(self):
-    if self.type == QCTYPE.SR:
-        pass
-        #function to check dependent cases and fill out worksheet
-    if self.type == [QCTYPE.MOA]:
-        pass
-        #function to assemble surve
-    raise Exception("Invalid QC")
+
+
+# def QC_handler(samples):
+
+#     if self.type == QCTYPE.SR:
+#         pass
+#         #function to check dependent cases and fill out worksheet
+    
+#     #brain/liver/gastric/blood? method of addition
+#     if self.type == [QCTYPE.MOA, QCTYPE.]:
+#         pass
+#         #function to assemble surve
+#     raise Exception("Invalid QC")
 
 def case_handler(self, other):
     if self.ID == other.ID:
@@ -36,6 +41,11 @@ class Sample:
         self.results_ISTD = results_ISTD if results_ISTD is not None else []
         self.results_analyte = results_analyte if results_analyte is not None else []
 
+    def assign_type(self):
+        check = self.ID.split("_")[0]
+        print(check)
+
+
     def __eq__(self, other):
         if isinstance(other, Sample):
             return self.ID == other.ID
@@ -49,6 +59,8 @@ class Sample:
         
     def __repr__(self):
         return f"{self.ID}, QC={self.type}, {len(self.results_ISTD)} ISTD {len(self.results_analyte)} analyte, +.path"
+    
+    
 
 class QC(Sample):
     def __init__(self, ID, path, type, results_ISTD, results_analyte):
@@ -85,3 +97,10 @@ def table_converter(table):
     return transposed_table
 
 
+if __name__ == "__main__":
+    tester1 = Sample("24-3456_IVBGT_x10", r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA/24-3456_IVBGT_x10.pdf", None, ["Morphine", "Codeine"], ["Morphine", "Codeine"])
+    tester2 = Sample("24-3456_IVBGT_x10_1", r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA/24-3456_IVBGT_x10_1.pdf", None, ["Morphine", "Codeine"], ["Morphine", "Codeine"])
+    samples = [tester1, tester2]
+
+    tester1.assign_type()
+    print(tester1)

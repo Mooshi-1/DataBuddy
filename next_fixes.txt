@@ -1,2 +1,4 @@
 make --binder_files2-- directory if binderfiles already exists
 remove warning from main()
+
+rename loop into main function

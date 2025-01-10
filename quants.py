@@ -137,6 +137,33 @@ def pdf_rename(samples):
 
     print("naming complete")
 
+def obj_binder(samples):
+    #iterate through list of samples
+    for sample in samples:
+        if QCTYPE==None:
+            pass
+
+
+
+
+        # #check base-acid pairs -- do nothing if base-acid pair does not exist
+        # if filename.endswith(" B.pdf"):
+        #     #cuts off " B" and defines that as sample - comes back in save file
+        #     sample = filename.rsplit(" B.pdf", 1)[0]
+        #     base = filename
+        #     acid = f"{sample} A.pdf"
+            
+        #     #bind acid into base and save file with batch number
+        #     if base in os.listdir(batch_dir) \
+        #     and acid in os.listdir(batch_dir):
+        #         base_doc = fitz.open(os.path.join(batch_dir,base))
+        #         acid_doc = fitz.open(os.path.join(batch_dir,acid))
+        #         base_doc.insert_pdf(acid_doc)
+        #         base_doc.save(os.path.join(output_dir, f"{sample}_{batch_num}.pdf"))
+        #         print(f"successfully bound {sample}")
+        #     else:
+        #         print(f"--error-- cannot locate all documents for {filename}")
+
 
 if __name__ == "__main__":
     batch_dirs = [
