@@ -90,8 +90,8 @@ if __name__ == "__main__":
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 3:
         batch_num = input("Enter the batch number: ")
-        method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS, quants): ")
-        input("Reminder: Unable to handle reinjects. Bind your sequence manually. Existing bound files will be overwritten. Press Enter to continue...")
+        method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS): ")
+        input("Reminder: Unable to handle reinjects. Bind your sequence manually. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch_num = sys.argv[1]

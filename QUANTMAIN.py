@@ -17,7 +17,6 @@ import os
 
 import searcher
 import quants
-import objects
 
 
 ascii_art = """
@@ -35,7 +34,7 @@ ascii_art = """
 Version 1.05 - 01/09/2025
 """
 
-def main(method):
+def main(batch, method):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
@@ -50,12 +49,12 @@ def main(method):
     #create binder output
     case_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA'
     batch_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/BATCH PACK DATA'
-    global output_dir
+
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
 
 
-    batch_dirs = [case_dir, batch_dir]
+    batch_dirs = [batch_dir, case_dir]
 
     all_samples = []
 
@@ -72,7 +71,7 @@ def main(method):
 
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references
-    quants.compare_and_bind_samples(all_samples)
+    quants.compare_and_bind_samples(all_samples, output_dir, batch)
 
     print("complete")
 
@@ -88,7 +87,6 @@ if __name__ == "__main__":
     print(ascii_art)
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 3:
-        global batch
         batch = input("Enter the batch number: ")
         method = input("Enter the method (SHIMADZU): ")
         input("Reminder: Unable to handle reinjects. Bind your sequence manually. Existing bound files will be overwritten. Press Enter to continue...")
@@ -98,6 +96,6 @@ if __name__ == "__main__":
         method = sys.argv[2]
 
     # Call the main function with the provided or inputted arguments
-    main(method)
+    main(batch, method)
 
     input("Press Enter to exit...")

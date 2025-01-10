@@ -1,6 +1,4 @@
-make --binder_files2-- directory if binderfiles already exists
-remove warning from main()
-be careful about global batch in quants
-maybe set global batch in screen files as well
 
 add simple rename loop into main function
+
+in new sequence gen make _SINGLE flag

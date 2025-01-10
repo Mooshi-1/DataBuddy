@@ -10,7 +10,6 @@ import os
 import re
 
 from objects import QCTYPE, QC, Sample, table_converter
-#still need to import batch and batch_dir
 
 
 
@@ -133,7 +132,7 @@ def pdf_rename(samples):
 
     print("naming complete")
 
-def obj_binder(sample1, sample2):
+def obj_binder(sample1, sample2, output_dir, batch):
     #open docs and insert
     doc1 = fitz.open(sample1.path)
     doc2 = fitz.open(sample2.path)
@@ -146,7 +145,7 @@ def obj_binder(sample1, sample2):
     doc1.save(output_path)
     print(f"Successfully bound {sample1.ID} and {sample2.ID} into {output_path}")
 
-def compare_and_bind_samples(samples):
+def compare_and_bind_samples(samples, output_dir, batch):
     # Create a dictionary to map sample IDs without the suffix to their corresponding samples
     sample_dict = {}
     for sample in samples:
@@ -163,7 +162,7 @@ def compare_and_bind_samples(samples):
             second_rpt = sample_versions[f"{base_id}_1"]
 
             # Perform the binding operation
-            obj_binder(first_rpt, second_rpt)
+            obj_binder(first_rpt, second_rpt, output_dir, batch)
 
 if __name__ == "__main__":
     global batch
