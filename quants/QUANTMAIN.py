@@ -16,8 +16,9 @@ import sys
 import os
 
 import searcher
-import quants
-import qc
+import shimadzu_init
+import sample_sorter
+import aux
 
 
 ascii_art = """
@@ -47,48 +48,63 @@ def main(batch, method):
     # if case_dir and qc_dir == None:
     #     raise Exception("Unable to locate batch directory")                
     
-    #create binder output
+        
+    #move files from individual folders
+    # searcher.Shuttle(case_dir)
+    
+    #delete these later
     case_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\CASE DATA'
     batch_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\BATCH PACK DATA'
-
+   
+    #create binder output
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
 
 
     batch_dirs = [batch_dir, case_dir]
 
+    #init list to store sample class
     all_samples = []
-
+    #check CASE DATA and BATCH PACK DATA
     for dirs in batch_dirs:
         print(f"checking {dirs}")
-        samples = quants.SHIMADZU_SAMPLEINIT(dirs)
+        samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)
 
-
-    quants.pdf_rename(all_samples)
+    aux.pdf_rename(all_samples)
 
     for sample in all_samples:
         sample.assign_type()
     
     print(len(all_samples))
-    cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases, cases, curve, MOA_cases, sequence = qc.QC_handler(all_samples)
+
+    #convert all samples into individual lists. len(all samples) == len(all lists)
+    (
+        cal_curve,
+        neg_ctl,
+        shooter,
+        controls,
+        dil_controls,
+        SR_cases,
+        cases,
+        curve,
+        MOA_cases,
+        sequence
+    ) = sample_sorter.sample_handler(all_samples)
 
     #anything I want to do with lists here? export??
 
-    
-    batch_pack = qc.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
-    quants.list_binder(batch_pack, output_dir, batch)
+    #organize batch pack
+    batch_pack = aux.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
+    #send batch pack to binder
+    aux.list_binder(batch_pack, output_dir, batch)
     #make sure this is at the end
     #changes self.path of a single repeat and may cause issues for other references
-    quants.compare_and_bind_duplicates(cases, output_dir, batch)
+    #maybe pass through additional argument? to change the name?
+    aux.compare_and_bind_duplicates(cases, output_dir, batch)
 
     print("complete")
 
-    
-    #move files from individual folders
-    # searcher.Shuttle(case_dir)
-
-            
     #return files to individual directory
     #searcher.ShuttleHome(case_dir)
     

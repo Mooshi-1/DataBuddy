@@ -2,10 +2,12 @@
 """
 Created on Thurs 01/09/2025
 
-@author: Giachetti
+@author: ADG
 """
 from enum import Enum
 import re
+
+##class definitions, then broader sort functions
 
 class QCTYPE(Enum):
     SR = 'spiked recovery'
@@ -17,7 +19,6 @@ class QCTYPE(Enum):
     SEQ = 'sequence'
     CUR = 'curve'
     NEG = 'negative'
-
     
 #define QC objects
 class Sample:
@@ -31,90 +32,118 @@ class Sample:
 
     def assign_type(self):
         big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
-        dilution = re.compile(r'x[1-9]')
+        dilution = re.compile(r'x(10|[1-9]')
         MOA_type = ["BRN", "LIV", "GLG"]
-        MOA_cal = ["_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
+        MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR = "_SR"
         CAL = "CAL"
         CTL = "CTL"
         SH = "SHOOTER"
         NEG = "NEG"
-
+        #assign QCTYPE by various means. must be of Sample class
         if self.type == QCTYPE.SEQ or self.type == QCTYPE.CUR:
-            return
-
+            return #assigned at init, could always create logic
         if big_dilution.search(self.ID):
             self.type.add(QCTYPE.MOA)
             self.type.add(QCTYPE.DL)
-
         if dilution.search(self.ID):
             self.type.add(QCTYPE.DL)
-
         for cal in MOA_cal:
             if cal in self.ID:
                 self.type.add(QCTYPE.CAL)
                 self.type.add(QCTYPE.MOA)
-    
         for types in MOA_type:
             if types in self.ID:
                 self.type.add(QCTYPE.MOA)
-
         if SR in self.ID:
             self.type.add(QCTYPE.SR)
-
         if CAL in self.ID:
             self.type.add(QCTYPE.CAL)
-
         if CTL in self.ID:
             self.type.add(QCTYPE.CTL)
-
         if SH in self.ID:
             self.type.add(QCTYPE.SH)
-        
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
 
+    #ID is unique so using self.base for comparisons -- duplicate checker uses this
     def __eq__(self, other):
         return self.base == other.base
-    
+    #currently unused
     def __hash__(self):
         return hash(self.ID)
-
+    #currently unused
     def compare_qc(self, other):
         return self.type == other.type
-        
+    #used for debugging at the moment, does not include self.base
     def __repr__(self):
         return f"{self.ID}, QC={self.type}, {len(self.results_ISTD)} ISTD {len(self.results_analyte)} analyte, +.path"
-    
 
-def table_converter(table):
-    #prep new columns
-    keywords = ["ID#", "Name", "Ret. Time (min)", "Area", "Quant Ion (m/z)", "Conc.", "Unit", "Mode"]
-    columns = {key: [] for key in keywords}
-    current_keyword = None
+##below is not part of class
 
-    #populate sublists based on keywords
-    for line in table:
-        if line in keywords:
-            current_keyword = line
-        if current_keyword:
-            columns[current_keyword].append(line)
+#general purpose sorting, calibrators, numerical sequences
+def general_sort_key(sample):
+    # extract numerical parts for sorting
+    remove_suffix = re.sub(r'_0$', '', sample.ID)
+    parts = re.findall(r'\d+', remove_suffix)
+    parts = [int(part) for part in parts]
+    return parts
+def sort_samples(list):
+    list.sort(key=general_sort_key)
 
-    #ensure that all lists are same length by appending empty strings
-    max_length = max([len(columns[key]) for key in keywords])
-    for key in keywords:
-        while len(columns[key]) < max_length:
-            columns[key].append("")
+#ensures low then high control for quant batches
+def control_sort_key(sample):
+    #sorts low 1 - high 1 - low 2 etc 
+    match = re.match(r'(LOW|HIGH) CTL (\d+)', sample.base)
+    if match:
+        control_type, num = match.groups()
+        #assign weight so low comes first
+        weight = 0 if control_type == 'LOW' else 1
+        return (int(num), weight)
+    return (sample.base,)
+def sort_controls(list):
+    list.sort(key=control_sort_key)
 
-    #create list of sublists to transpose, then zip
-    data = [columns[key] for key in keywords]
-    transposed_table = list(zip(*data))
+#assigns samples into lists - must have sample.type
+def sample_handler(all_samples):
+    cal_curve = []
+    neg_ctl = []
+    shooter = []
+    controls = []
+    dil_controls = []
+    SR_cases = []
+    cases = []
+    curve = []
+    MOA_cases = []
+    sequence = []
+    for sample in all_samples:
+        if sample.type == {QCTYPE.CAL}:
+            cal_curve.append(sample)
+        elif sample.type == {QCTYPE.SEQ}:
+            sequence.append(sample)
+        elif sample.type == {QCTYPE.CUR}:
+            curve.append(sample)
+        elif sample.type == {QCTYPE.SH}: 
+            shooter.append(sample)
+        elif sample.type.issuperset({QCTYPE.NEG,QCTYPE.CTL}):
+            neg_ctl.append(sample)
+        elif sample.type == {QCTYPE.CTL}:
+            controls.append(sample)
+        elif sample.type.issuperset({QCTYPE.DL,QCTYPE.CTL}):
+            dil_controls.append(sample)
+        elif QCTYPE.SR in sample.type:
+            SR_cases.append(sample)
+        elif QCTYPE.MOA in sample.type:
+            MOA_cases.append(sample)
+        else:
+            cases.append(sample)
+    #note that controls got a seperate sort method
+    #return sorted lists
+    sort_samples(cal_curve); sort_samples(neg_ctl); sort_samples(shooter)
+    sort_controls(controls); sort_samples(dil_controls); sort_samples(SR_cases)
+    sort_samples(cases); sort_samples(curve); sort_samples(MOA_cases); sort_samples(sequence)
 
-    #debug print statements
-    #for row in transposed_table:
-        #print(", ".join(row))
-    #print(transposed_table)
-    return transposed_table
+    return cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases, cases, curve, MOA_cases, sequence
 
 
 if __name__ == "__main__":

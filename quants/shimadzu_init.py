@@ -8,9 +8,10 @@ import fitz  # PyMuPDF
 import os
 import re
 
-from objects import QCTYPE, Sample, table_converter
+from aux import table_converter
+from sample_sorter import QCTYPE, Sample
 
-def SHIMADZU_SAMPLEINIT(batch_dir):
+def LC_quant_init(batch_dir):
     samples = [] #will hold sample objects created here
     # Iterate through directory defined by filepath
     for filename in os.listdir(batch_dir):
@@ -30,7 +31,7 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
             try:
                 #take care of special cases
                 if " 0:Unknown " in lines:
-                    Sequence = Sample("Sequence", pdf_path, "seq", {QCTYPE.SEQ}, None, None)
+                    Sequence = Sample("Sequence", pdf_path, "sequence", {QCTYPE.SEQ}, None, None)
                     print("found sequence")
                     samples.append(Sequence)
                     doc.close()
@@ -86,91 +87,16 @@ def SHIMADZU_SAMPLEINIT(batch_dir):
                 #append to list
                 samples.append(case_ID)
             except Exception as e:
-                print(f"FAILED TO INIT SAMPLE {filename}: {e}")
+                print(f"--ERROR-- FAILED TO INIT SAMPLE (VERY BAD) {filename}: {e}")
             doc.close()  
 
     #return list of sample objects
     print(f"{len(samples)} total samples initialized")        
     return samples
 
-            
-def pdf_rename(samples):
-    def sanitize_filename(filename):
-        return re.sub(r'[\\/*?:"<>|]', "_", filename)
-    for sample in samples:
-        # Define the new filename
-        new_filename = sanitize_filename(f"{sample.ID}.pdf")
-        new_path = os.path.join(os.path.dirname(sample.path), new_filename)
-        # Rename the file
-        try:
-            os.rename(sample.path, new_path)
-            #print(f"{sample.ID} has been renamed to {new_filename}")
-        except (PermissionError, FileExistsError, FileNotFoundError) as e:
-            print(f"--error--: {e}")
-            continue
-        # keep sample.path up to date
-        sample.path = new_path
-    print("naming complete")
-
-def obj_binder(sample1, sample2, output_dir, batch):
-    #output warning if analytes or ISTDs are not equal
-    find_misidentification(sample1, sample2)
-    #open docs and insert
-    doc1 = fitz.open(sample1.path)
-    doc2 = fitz.open(sample2.path)
-    doc1.insert_pdf(doc2)
-    output_path = os.path.join(output_dir, f"{sample1.base}_{batch}.pdf")
-    #save
-    doc1.save(output_path)
-    print(f"Successfully bound {sample1.ID} and {sample2.ID} into {output_path}")
-    #update path
-    sample1.path = output_path
-    #print(sample1.path)
-    #maybe I need to init a new object here...? will see if this causes issues
-
-def compare_and_bind_duplicates(samples, output_dir, batch):
-    # Create a list of matched pairs
-    matched_pairs = []
-    num_samples = len(samples)
-    for i in range(num_samples):
-        for j in range(i + 1, num_samples):
-            if samples[i] == samples[j]:
-                #print(samples[i], samples[j])
-                matched_pairs.append((samples[i], samples[j]))
-    # send matched pair list to obj_binder
-    for sample1, sample2 in matched_pairs:
-        obj_binder(sample1, sample2, output_dir, batch)
-    #MAYBE CAN POP SAMPLE OUT OF CASES LIST HERE??? FIND OUT HOW TO GET SINGLES
-
-def find_misidentification(self, other):
-    if len(self.results_analyte) != len(other.results_analyte):
-        print(f"--WARNING--: {self.base} does not have the same number of analytes reported as duplicate")
-    if len(self.results_ISTD) != len(other.results_ISTD):
-        print(f"--WARNING--: {self.base} does not have the same number of ISTDs reported as duplicate")
-
-def list_binder(list, output_dir, batch):
-    if len(list) < 2:
-        print(f"Cannot bindd - 1 sample in list {list}")
-    doc1 = fitz.open(list[0].path)
-    for sample in list[1:]:
-        doc2 = fitz.open(sample.path)
-        doc1.insert_pdf(doc2)
-        doc2.close()
-
-    output_path = os.path.join(output_dir, f"{list[0].base}_{batch}.pdf")
-    doc1.save(output_path)
-    print("completed binding list")
-
-    #updated path, again, maybe this causes problems
-    list[0].path = output_path
-    doc1.close()
-
-
-
-
 
 if __name__ == "__main__":
-    global batch
+
     batch = 12786
     
     batch_dirs = [
@@ -184,15 +110,6 @@ if __name__ == "__main__":
         samples = SHIMADZU_SAMPLEINIT(batch_dir)
         all_samples.extend(samples)
 
-    pdf_rename(all_samples)
-
     for sample in all_samples:
         sample.assign_type()
-        #print(sample.path)
-
-    #make sure this is at the end
-    #changes self.path of a single repeat and may cause issues for other references
-    compare_and_bind_duplicates(all_samples)
-
-    print("complete")
 
