@@ -32,7 +32,7 @@ class Sample:
 
     def assign_type(self):
         big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
-        dilution = re.compile(r'x(10|[1-9]')
+        dilution = re.compile(r'x(10|[1-9])')
         MOA_type = ["BRN", "LIV", "GLG"]
         MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR = "_SR"
@@ -77,7 +77,7 @@ class Sample:
         return self.type == other.type
     #used for debugging at the moment, does not include self.base
     def __repr__(self):
-        return f"{self.ID}, QC={self.type}, {len(self.results_ISTD)} ISTD {len(self.results_analyte)} analyte, +.path"
+        return f"({self.ID}, {self.type}, {self.base}, {self.results_ISTD}, {self.results_analyte}, r{self.path})"
 
 ##below is not part of class
 

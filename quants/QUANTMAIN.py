@@ -51,10 +51,10 @@ def main(batch, method):
         
     #move files from individual folders
     # searcher.Shuttle(case_dir)
-    
+
     #delete these later
-    case_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\CASE DATA'
-    batch_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\BATCH PACK DATA'
+    case_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/BATCH PACK DATA'
+    batch_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA'
    
     #create binder output
     output_dir = searcher.binder_dir(case_dir)
@@ -93,6 +93,10 @@ def main(batch, method):
     ) = sample_sorter.sample_handler(all_samples)
 
     #anything I want to do with lists here? export??
+    print(MOA_cases)
+    print("^^MOA_CASES, VVV case")
+    for case in MOA_cases:
+        print(case)
 
     #organize batch pack
     batch_pack = aux.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
@@ -117,7 +121,7 @@ if __name__ == "__main__":
         input("Reminder: Unable to handle reinjects. Bind your sequence manually. Existing bound files will be overwritten. Press Enter to continue...")
     else:
         # Use CLI provided arguments
-        batch_num = sys.argv[1]
+        batch = sys.argv[1]
         method = sys.argv[2]
 
     # Call the main function with the provided or inputted arguments
