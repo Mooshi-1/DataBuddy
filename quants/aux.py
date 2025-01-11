@@ -7,6 +7,7 @@ Created on Tue Dec 31 2024
 import os
 import re
 import fitz  # type: ignore # PyMuPDF
+from sample_sorter import QCTYPE
 
 ##renamer functions
 def pdf_rename(samples):
@@ -21,7 +22,7 @@ def pdf_rename(samples):
             os.rename(sample.path, new_path)
             #print(f"{sample.ID} has been renamed to {new_filename}")
         except (PermissionError, FileExistsError, FileNotFoundError) as e:
-            print(f"--error--: {e}")
+            print(f"--error--: {e}, while renaming {sample.path} to {new_path}")
             continue
         # keep sample.path up to date
         sample.path = new_path
@@ -62,7 +63,8 @@ def compare_and_bind_duplicates(samples, output_dir, batch):
 #used to take list of objects and bind them together (batch pack)
 def list_binder(list, output_dir, batch):
     if len(list) < 2:
-        print(f"Cannot bindd - 1 sample in list {list}")
+        print(f"Cannot bind - 1 sample in list {list}")
+        return
     doc1 = fitz.open(list[0].path)
     for sample in list[1:]:
         doc2 = fitz.open(sample.path)
@@ -121,3 +123,48 @@ def batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_con
 
     batch_pack = curve + shooter + neg_ctl + cal_curve + controls + sequence
     return batch_pack
+
+
+def MOA_slicer(list):
+    sliced_lists = []
+    current_slice = []
+
+    for obj in list:
+        if QCTYPE.CAL not in obj.type:
+            if current_slice:
+                sliced_lists.append(current_slice) 
+            current_slice = []
+            current_slice.append(obj)
+        current_slice.append(obj)    
+
+    if current_slice:
+        sliced_lists.append(current_slice)
+
+    return sliced_lists
+
+
+#MOA slicer ##doesn't work quite right, but the idea is there
+#NOT IN USE
+def sublist_slicer(list):
+    sliced_lists = []
+    current_slice = []
+
+    def identify_cal(base_id):
+        return base_id.rsplit('_',1)[-1].startswith('L')
+
+    for obj in list:
+        base_id = obj.base
+        print(f"checking object {obj.base}")
+        if current_slice:
+# Check if transition happens from ID ending with _L# to one without it or vice versa 
+            if not identify_cal(current_slice[-1].base) and identify_cal(base_id):
+                sliced_lists.append(current_slice)
+                current_slice = []
+                print("created new slice")
+        current_slice.append(obj)
+        print(f"appended {obj.base}")
+
+    if current_slice:
+        sliced_lists.append(current_slice)
+
+    return sliced_lists

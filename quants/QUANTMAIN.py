@@ -71,7 +71,7 @@ def main(batch, method):
         samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)
 
-    aux.pdf_rename(all_samples)
+    #aux.pdf_rename(all_samples)
 
     for sample in all_samples:
         sample.assign_type()
@@ -93,10 +93,13 @@ def main(batch, method):
     ) = sample_sorter.sample_handler(all_samples)
 
     #anything I want to do with lists here? export??
-    print(MOA_cases)
-    print("^^MOA_CASES, VVV case")
+
     for case in MOA_cases:
         print(case)
+
+    sliced_MOA = aux.MOA_slicer(MOA_cases)
+    for case_list in sliced_MOA:
+        aux.list_binder(case_list, output_dir, batch)
 
     #organize batch pack
     batch_pack = aux.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)

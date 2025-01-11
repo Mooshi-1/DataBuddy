@@ -75,9 +75,13 @@ class Sample:
     #currently unused
     def compare_qc(self, other):
         return self.type == other.type
-    #used for debugging at the moment, does not include self.base
+    #used for debugging
     def __repr__(self):
-        return f"({self.ID}, {self.type}, {self.base}, {self.results_ISTD}, {self.results_analyte}, r{self.path})"
+        return f"({self.ID}, {self.type}, {self.base}, {self.results_ISTD}, {self.results_analyte}, r{self.path!r})"
+    #used for quick checks
+    def __str__(self):
+        return f"({self.base}, {self.type}, analytes={len(self.results_analyte)}, ISTDs={len(self.results_ISTD)})"
+    
 
 ##below is not part of class
 
