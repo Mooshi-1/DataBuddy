@@ -2,7 +2,7 @@
 
 #get data in this format
 
-import pandas as pd
+import pandas as pd # type: ignore
 
 # Storing data as a list of dictionaries
 data = [

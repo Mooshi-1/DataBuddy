@@ -1,2 +1,2 @@
-import fitz
+import fitz  # type: ignore # PyMuPDF
 print(fitz.__file__)

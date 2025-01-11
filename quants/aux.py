@@ -6,7 +6,7 @@ Created on Tue Dec 31 2024
 """
 import os
 import re
-import fitz
+import fitz  # type: ignore # PyMuPDF
 
 ##renamer functions
 def pdf_rename(samples):

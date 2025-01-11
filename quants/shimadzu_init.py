@@ -4,7 +4,7 @@ Created on Tue Dec 31 16:20:55 2024
 
 @author: e314883
 """
-import fitz  # PyMuPDF
+import fitz  # type: ignore # PyMuPDF
 import os
 import re
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     for batch_dir in batch_dirs:
         print(f"checking {batch_dir}")
-        samples = SHIMADZU_SAMPLEINIT(batch_dir)
+        samples = LC_quant_init(batch_dir)
         all_samples.extend(samples)
 
     for sample in all_samples:
