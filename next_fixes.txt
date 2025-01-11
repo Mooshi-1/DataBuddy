@@ -1,4 +1,4 @@
 
-add simple rename loop into main function
+incorporate sequence and reinjects into screens
 
-in new sequence gen make _SINGLE flag for quants
+work on sequence gen

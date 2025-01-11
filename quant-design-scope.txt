@@ -1,29 +1,19 @@
 
 case_bind()
-manage binding things other than _0 and _1 samples
 account for samples in single
+get SR sample bound to case in output_dir
 
-cal_curve()
-create cal curve
-order - shooter, neg, 1-6
+MOA_Bind()
+split MOA list and send to list binder
 
 ctl_set()
-create list of controls
-order controls with lambda
-calculate 50-200% range
-dilution control???
+calculate 50-200% range for ISAR
+insert dilution control???
 
-batch_pack()
-bind
-curve + cal_curve + diln_ctl + ctl_set + seq
+batch_pack() 
+set name of final file
 
-find_analyte_errors(self, other)
-if len(self.analytes) != len(other.analytes)
-print(analyte mismatch)
-#example, cocaine found in 1 duplicate but not the other
-
-find_ISTD_errors(self, other)
-same as analyte
+organize functions in .py files so it's easier to find things
 
 export to csv
 export to fillable pdf

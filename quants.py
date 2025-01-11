@@ -134,20 +134,36 @@ def compare_and_bind_duplicates(samples, output_dir, batch):
     num_samples = len(samples)
     for i in range(num_samples):
         for j in range(i + 1, num_samples):
-            #check if self.base is equal and exclude QCTYPE.SH
-            if samples[i] == samples[j] and \
-            QCTYPE.SH not in samples[i].type and QCTYPE.SH not in samples[j].type:
+            if samples[i] == samples[j]:
                 #print(samples[i], samples[j])
                 matched_pairs.append((samples[i], samples[j]))
     # send matched pair list to obj_binder
     for sample1, sample2 in matched_pairs:
         obj_binder(sample1, sample2, output_dir, batch)
+    #MAYBE CAN POP SAMPLE OUT OF CASES LIST HERE??? FIND OUT HOW TO GET SINGLES
 
 def find_misidentification(self, other):
     if len(self.results_analyte) != len(other.results_analyte):
         print(f"--WARNING--: {self.base} does not have the same number of analytes reported as duplicate")
     if len(self.results_ISTD) != len(other.results_ISTD):
         print(f"--WARNING--: {self.base} does not have the same number of ISTDs reported as duplicate")
+
+def list_binder(list, output_dir, batch):
+    if len(list) < 2:
+        print(f"Cannot bindd - 1 sample in list {list}")
+    doc1 = fitz.open(list[0].path)
+    for sample in list[1:]:
+        doc2 = fitz.open(sample.path)
+        doc1.insert_pdf(doc2)
+        doc2.close()
+
+    output_path = os.path.join(output_dir, f"{list[0].base}_{batch}.pdf")
+    doc1.save(output_path)
+    print("completed binding list")
+
+    #updated path, again, maybe this causes problems
+    list[0].path = output_path
+    doc1.close()
 
 
 

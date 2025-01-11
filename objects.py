@@ -74,19 +74,6 @@ class Sample:
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
 
-    # matched_pairs = []
-    # num_samples = len(samples)
-    # for i in range(num_samples):
-    #     for j in range(i + 1, num_samples):
-    #         #check if self.base is equal and exclude QCTYPE.SH
-    #         if samples[i] == samples[j] and \
-    #         QCTYPE.SH not in samples[i].type and QCTYPE.SH not in samples[j].type:
-    #             #print(samples[i], samples[j])
-    #             matched_pairs.append((samples[i], samples[j]))
-    # for sample1, sample2 in matched_pairs:
-    #     obj_binder(sample1, sample2, output_dir, batch)
-
-
     def __eq__(self, other):
         return self.base == other.base
     
@@ -99,10 +86,6 @@ class Sample:
     def __repr__(self):
         return f"{self.ID}, QC={self.type}, {len(self.results_ISTD)} ISTD {len(self.results_analyte)} analyte, +.path"
     
-
-# class QC(Sample):
-#     def __init__(self, ID, path, type, results_ISTD, results_analyte):
-#         super().__init__(ID, path, type, results_ISTD, results_analyte)
 
 def table_converter(table):
     #prep new columns
