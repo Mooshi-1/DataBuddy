@@ -34,15 +34,18 @@ def obj_binder(sample1, sample2, output_dir, batch):
     #output warning if analytes or ISTDs are not equal
     find_misidentification(sample1, sample2)
     #open docs and insert
-    doc1 = fitz.open(sample1.path)
-    doc2 = fitz.open(sample2.path)
-    doc1.insert_pdf(doc2)
-    output_path = os.path.join(output_dir, f"{sample1.base}_{batch}.pdf")
-    #save
-    doc1.save(output_path)
-    print(f"Successfully bound {sample1.ID} and {sample2.ID} into {output_path}")
+    try:
+        doc1 = fitz.open(sample1.path)
+        doc2 = fitz.open(sample2.path)
+        doc1.insert_pdf(doc2)
+        output_path = os.path.join(output_dir, f"{sample1.base}_{batch}.pdf")
+        #save
+        doc1.save(output_path)
+        print(f"Successfully saved {sample1.base}_{batch}")
+    except (PermissionError, FileExistsError, FileNotFoundError) as e:
+        print(f"--error--: {e}, while renaming {sample1.path}")
     #update path
-    sample1.path = output_path
+    #sample1.path = output_path
     #print(sample1.path)
     #maybe I need to init a new object here...? will see if this causes issues
 
@@ -60,8 +63,9 @@ def compare_and_bind_duplicates(samples, output_dir, batch):
         obj_binder(sample1, sample2, output_dir, batch)
     #MAYBE CAN POP SAMPLE OUT OF CASES LIST HERE??? FIND OUT HOW TO GET SINGLES
 
-#used to take list of objects and bind them together (batch pack)
-def list_binder(list, output_dir, batch):
+#used to take list of objects and bind them together (batch pack, MSA cases)
+#added optional name parameter, used specifically in batch pack
+def list_binder(list, output_dir, batch, name=None):
     if len(list) < 2:
         print(f"Cannot bind - 1 sample in list {list}")
         return
@@ -71,12 +75,11 @@ def list_binder(list, output_dir, batch):
         doc1.insert_pdf(doc2)
         doc2.close()
 
-    output_path = os.path.join(output_dir, f"{list[0].base}_{batch}.pdf")
+    filename = name if name else list[0].base
+    output_path = os.path.join(output_dir, f"{filename}_{batch}.pdf")
     doc1.save(output_path)
-    print("completed binding list")
+    print(f"completed binding multiple files - {filename}_{batch}")
 
-    #updated path, again, maybe this causes problems
-    list[0].path = output_path
     doc1.close()
 
 
@@ -117,14 +120,20 @@ def find_misidentification(self, other):
         print(f"--WARNING--: {self.base} does not have the same number of ISTDs reported as duplicate")
 
 
-#create batch pack
+#create batch pack list - send to binder
 def batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls):
     #get dil_controls inserted properly
+    if len(controls) <=2:
+        batch_pack = curve + shooter + neg_ctl + cal_curve + controls + dil_controls + sequence
+        return batch_pack
+    else:
+        controls_split_1 = controls[:2]
+        controls_split_2 = controls[2:]
+        batch_pack = curve + shooter + neg_ctl + cal_curve + controls_split_1 + dil_controls + controls_split_2 + sequence
+        return batch_pack
 
-    batch_pack = curve + shooter + neg_ctl + cal_curve + controls + sequence
-    return batch_pack
-
-
+#currently only functions when L0 sample does not have an L suffix
+#if it has L# in name the sample_sorter will asiggn QCTYPE.CAL to obj.type
 def MOA_slicer(list):
     sliced_lists = []
     current_slice = []
@@ -135,15 +144,30 @@ def MOA_slicer(list):
                 sliced_lists.append(current_slice) 
             current_slice = []
             current_slice.append(obj)
-        current_slice.append(obj)    
+        current_slice.append(obj)
 
     if current_slice:
         sliced_lists.append(current_slice)
 
     return sliced_lists
 
+def insert_SR(SR_cases, output_dir, batch):
+    for SR in SR_cases:
+        filename = SR.base
+    #iterate through output_dir
+    #find filename in directory
+    #send both files to binder obj1 obj2 ... SR = obj 2
+    for contents in os.path(output_dir):
+        if contents.endswith('.pdf'):
+            if contents in filename:
+                print(f"sending {SR.base} to binder")
+                obj_binder(contents, filename, output_dir, batch)
+                return
+    f"aux.insert_SR function activated but unable to find file"
+    return
 
-#MOA slicer ##doesn't work quite right, but the idea is there
+
+#sublist slicer ##doesn't work quite right, but the idea is there
 #NOT IN USE
 def sublist_slicer(list):
     sliced_lists = []

@@ -94,8 +94,6 @@ def main(batch, method):
 
     #anything I want to do with lists here? export??
 
-    for case in MOA_cases:
-        print(case)
 
     sliced_MOA = aux.MOA_slicer(MOA_cases)
     for case_list in sliced_MOA:
@@ -104,11 +102,15 @@ def main(batch, method):
     #organize batch pack
     batch_pack = aux.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
     #send batch pack to binder
-    aux.list_binder(batch_pack, output_dir, batch)
-    #make sure this is at the end
+    aux.list_binder(batch_pack, output_dir, batch, "BATCH_PACK")
+
     #changes self.path of a single repeat and may cause issues for other references
     #maybe pass through additional argument? to change the name?
+
     aux.compare_and_bind_duplicates(cases, output_dir, batch)
+
+    if SR_cases is not None:
+        aux.insert_SR(SR_cases, output_dir, batch)
 
     print("complete")
 

@@ -1,19 +1,16 @@
-
 case_bind()
 account for samples in single
-get SR sample bound to case in output_dir
+MSA needs id mismatch check between samples
 
-MOA_Bind()
-split MOA list and send to list binder
+find batch with SR and finish up function
+get SR sample bound to case in output_dir - prob regex match
+possibly need to fuck with shuttle / shuttle home and do a name check - make sure that the _0's it will add will not interfere with self.base
+I think it's fine though?
+
 
 ctl_set()
 calculate 50-200% range for ISAR
-insert dilution control???
 
-batch_pack() 
-set name of final file
-
-organize functions in .py files so it's easier to find things
 
 export to csv
 export to fillable pdf
