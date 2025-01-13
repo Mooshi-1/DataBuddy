@@ -151,6 +151,23 @@ def MOA_slicer(list):
 
     return sliced_lists
 
+#need to test this 
+def find_sr(cases, SR_cases):
+    sliced_lists = []
+    print(f"{len(SR_cases)} SR cases found. attempting to find related cases")
+    for SR in SR_cases:
+        current_slice = []
+        for case in cases:
+            if case.base in SR.base:
+            #if case in SR:
+                print(f'match found, appended {case}')
+                current_slice.append(case)
+        current_slice.append(SR)
+        sliced_lists.append(current_slice)
+    return sliced_lists
+
+
+#this not gonna work - need to adjust SR_cases to include associated cases and throw to list binder
 def insert_SR(SR_cases, output_dir, batch):
     for SR in SR_cases:
         filename = SR.base
@@ -192,3 +209,10 @@ def sublist_slicer(list):
         sliced_lists.append(current_slice)
 
     return sliced_lists
+
+
+if __name__ == '__main__':
+    SR_cases = ['24-3301_MKB_SR', '24-3303_MKO_SR']
+    cases = ['24-3301_MKB', '24-3303_MKO', '24-3301_MKB', '24-3303_MKO']
+
+    find_sr(cases, SR_cases, None, None)

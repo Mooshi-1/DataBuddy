@@ -71,7 +71,7 @@ def main(batch, method):
         samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)
 
-    #aux.pdf_rename(all_samples)
+    aux.pdf_rename(all_samples)
 
     for sample in all_samples:
         sample.assign_type()
@@ -92,25 +92,26 @@ def main(batch, method):
         sequence
     ) = sample_sorter.sample_handler(all_samples)
 
-    #anything I want to do with lists here? export??
 
+    aux.compare_and_bind_duplicates(cases, output_dir, batch)
 
-    sliced_MOA = aux.MOA_slicer(MOA_cases)
-    for case_list in sliced_MOA:
-        aux.list_binder(case_list, output_dir, batch)
+    if MOA_cases is not None:
+        sliced_MOA = aux.MOA_slicer(MOA_cases)
+        for case_list in sliced_MOA:
+            aux.list_binder(case_list, output_dir, batch)
+
+    #unable to pass dynamic name parameter through  here... make sure this runs after compare_and_bind_duplicates unless changed
+    #otherwise likely will have an issue where compare_and_bind and list_binder will output the same name here 
+    if SR_cases is not None:
+        sliced_SR = aux.find_sr(cases, SR_cases)
+        for case_list in sliced_SR:
+            aux.list_binder(case_list, output_dir, batch)
 
     #organize batch pack
     batch_pack = aux.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
     #send batch pack to binder
     aux.list_binder(batch_pack, output_dir, batch, "BATCH_PACK")
 
-    #changes self.path of a single repeat and may cause issues for other references
-    #maybe pass through additional argument? to change the name?
-
-    aux.compare_and_bind_duplicates(cases, output_dir, batch)
-
-    if SR_cases is not None:
-        aux.insert_SR(SR_cases, output_dir, batch)
 
     print("complete")
 
