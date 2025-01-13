@@ -8,7 +8,7 @@ import fitz  # type: ignore # PyMuPDF
 import os
 import re
 
-from aux import table_converter
+from aux_func import table_converter
 from sample_sorter import QCTYPE, Sample
 
 def LC_quant_init(batch_dir):
@@ -91,7 +91,7 @@ def LC_quant_init(batch_dir):
             doc.close()  
 
     #return list of sample objects
-    print(f"{len(samples)} total samples initialized")        
+    print(f"{len(samples)} samples initialized from directory {batch_dir}")        
     return samples
 
 

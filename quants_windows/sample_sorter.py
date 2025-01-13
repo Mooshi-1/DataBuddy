@@ -31,8 +31,8 @@ class Sample:
         self.results_analyte = results_analyte if results_analyte is not None else []
 
     def assign_type(self):
-        big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
-        dilution = re.compile(r'x(10|[1-9])')
+        big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})', re.IGNORECASE)
+        dilution = re.compile(r'x(10|[1-9])', re.IGNORECASE)
         MOA_type = ["BRN", "LIV", "GLG"]
         MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR = "_SR"
@@ -55,7 +55,7 @@ class Sample:
         for types in MOA_type:
             if types in self.ID:
                 self.type.add(QCTYPE.MOA)
-        if SR in self.ID:
+        if '_x%R' in self.ID:
             self.type.add(QCTYPE.SR)
         if CAL in self.ID:
             self.type.add(QCTYPE.CAL)
@@ -143,9 +143,12 @@ def sample_handler(all_samples):
             cases.append(sample)
     #note that controls got a seperate sort method
     #return sorted lists
-    sort_samples(cal_curve); sort_samples(neg_ctl); sort_samples(shooter)
-    sort_controls(controls); sort_samples(dil_controls); sort_samples(SR_cases)
-    sort_samples(cases); sort_samples(curve); sort_samples(MOA_cases); sort_samples(sequence)
+    try:
+        sort_samples(cal_curve); sort_samples(neg_ctl); sort_samples(shooter)
+        sort_controls(controls); sort_samples(dil_controls); sort_samples(SR_cases)
+        sort_samples(cases); sort_samples(curve); sort_samples(MOA_cases); sort_samples(sequence)
+    except Exception as e:
+        print(f"error sorting files | {e}")
 
     return cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases, cases, curve, MOA_cases, sequence
 

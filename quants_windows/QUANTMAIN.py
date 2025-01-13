@@ -18,7 +18,7 @@ import os
 import searcher
 import shimadzu_init
 import sample_sorter
-import aux
+import aux_func
 
 
 ascii_art = """
@@ -33,35 +33,35 @@ ascii_art = """
  
 (((((((QUANTS -- PRELIM TESTING))))))) 
 
-Version 1.05 - 01/09/2025
+Version 1.0 - 01/13/2025
 """
 
 def main(batch, method):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
-    # data_dir = r"G:\PDF DATA"
-    # print(f"Starting in: {data_dir}")
+    data_dir = r"G:\PDF DATA"
+    print(f"Starting in: {data_dir}")
     
     #call FindBatch function to locate directories
-    # case_dir, qc_dir = searcher.FindBatch(data_dir, batch)
-    # if case_dir and qc_dir == None:
-    #     raise Exception("Unable to locate batch directory")                
+    case_dir, qc_dir = searcher.FindBatch(data_dir, batch)
+    if case_dir is None and qc_dir is None:
+        raise Exception("Unable to locate batch directory")                
     
         
     #move files from individual folders
-    # searcher.Shuttle(case_dir)
+    searcher.Shuttle(case_dir)
 
     #delete these later
-    case_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/BATCH PACK DATA'
-    batch_dir = r'/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA'
+    #case_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\CASE DATA'
+    #batch_dir = r'C:\Users\e314883\Desktop\locked_git_repo\12786\BATCH PACK DATA'
    
     #create binder output
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
 
 
-    batch_dirs = [batch_dir, case_dir]
+    batch_dirs = [case_dir, qc_dir]
 
     #init list to store sample class
     all_samples = []
@@ -71,12 +71,12 @@ def main(batch, method):
         samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)
 
-    aux.pdf_rename(all_samples)
+    aux_func.pdf_rename(all_samples)
 
     for sample in all_samples:
         sample.assign_type()
     
-    print(len(all_samples))
+    print(f"{len(all_samples)} total pdf files -- QC assigned -- proceeding to sort/bind")
 
     #convert all samples into individual lists. len(all samples) == len(all lists)
     (
@@ -93,42 +93,42 @@ def main(batch, method):
     ) = sample_sorter.sample_handler(all_samples)
 
     #send case-list to binder, bind duplicates -- return list of singles
-    leftovers = aux.compare_and_bind_duplicates(cases, output_dir, batch)
+    leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
 
     #need something to change the name of leftovers and move it to the binder folder
-    if leftovers is not None:
-        aux.move_singles(leftovers, output_dir, batch)
+    if len(leftovers) > 0:
+        aux_func.move_singles(leftovers, output_dir, batch)
 
-    if MOA_cases is not None:
-        sliced_MOA = aux.MOA_slicer(MOA_cases)
+    if len(MOA_cases) > 0:
+        sliced_MOA = aux_func.MOA_slicer(MOA_cases)
         for case_list in sliced_MOA:
-            aux.list_binder(case_list, output_dir, batch)
+            aux_func.list_binder(case_list, output_dir, batch)
 
     #unable to pass dynamic name parameter through  here... make sure this runs after compare_and_bind_duplicates unless changed
     #otherwise likely will have an issue where compare_and_bind and list_binder will output the same name here 
-    if SR_cases is not None:
-        sliced_SR = aux.find_sr(cases, SR_cases)
+    if len(SR_cases) > 0:
+        sliced_SR = aux_func.find_sr(cases, SR_cases)
         for case_list in sliced_SR:
-            aux.list_binder(case_list, output_dir, batch)
+            aux_func.list_binder(case_list, output_dir, batch)
 
     #organize batch pack
-    batch_pack = aux.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
+    batch_pack = aux_func.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
     #send batch pack to binder
-    aux.list_binder(batch_pack, output_dir, batch, "BATCH_PACK")
+    aux_func.list_binder(batch_pack, output_dir, batch, method)
 
 
     print("complete")
 
     #return files to individual directory
-    #searcher.ShuttleHome(case_dir)
+    searcher.ShuttleHome(case_dir)
     
 if __name__ == "__main__":
     print(ascii_art)
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 3:
         batch = input("Enter the batch number: ")
-        method = input("Enter the method (SHIMADZU): ")
-        input("Reminder: Unable to handle reinjects. Bind your sequence manually. Existing bound files will be overwritten. Press Enter to continue...")
+        method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ")
+        input("Reminder: Unable to handle reinjects. Remove other forms/ICARS from main directories. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]

@@ -162,7 +162,8 @@ def find_sr(cases, SR_cases):
     for SR in SR_cases:
         current_slice = []
         for case in cases:
-            if case.base in SR.base:
+            #split ID to account for current naming
+            if case.base.rsplit('_', 1)[0] in SR.base.rsplit('_', 1)[0]:
             #if case in SR:
                 print(f'match found, appended {case}')
                 current_slice.append(case)

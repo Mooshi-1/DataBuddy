@@ -51,7 +51,7 @@ def main(batch_num, method, flag=None):
     
     #call FindBatch function to locate directories
     case_dir, qc_dir = searcher.FindBatch(data_dir, batch_num)
-    if case_dir and qc_dir == None:
+    if case_dir is None and qc_dir is None:
         raise Exception("Unable to locate batch directory")
 
     def renamer_mode(case_dir, qc_dir, method):
