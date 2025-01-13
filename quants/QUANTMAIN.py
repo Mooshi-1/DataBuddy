@@ -92,8 +92,11 @@ def main(batch, method):
         sequence
     ) = sample_sorter.sample_handler(all_samples)
 
+    #send case-list to binder, bind duplicates -- return list of singles
+    leftovers = aux.compare_and_bind_duplicates(cases, output_dir, batch)
 
-    aux.compare_and_bind_duplicates(cases, output_dir, batch)
+    #need something to change the name of leftovers and move it to the binder folder
+    aux.move_singles(leftovers, output_dir, batch)
 
     if MOA_cases is not None:
         sliced_MOA = aux.MOA_slicer(MOA_cases)

@@ -7,6 +7,7 @@ Created on Tue Dec 31 2024
 import os
 import re
 import fitz  # type: ignore # PyMuPDF
+from shutil import copyfile
 from sample_sorter import QCTYPE
 
 ##renamer functions
@@ -44,24 +45,27 @@ def obj_binder(sample1, sample2, output_dir, batch):
         print(f"Successfully saved {sample1.base}_{batch}")
     except (PermissionError, FileExistsError, FileNotFoundError) as e:
         print(f"--error--: {e}, while renaming {sample1.path}")
-    #update path
-    #sample1.path = output_path
-    #print(sample1.path)
-    #maybe I need to init a new object here...? will see if this causes issues
+
 
 def compare_and_bind_duplicates(samples, output_dir, batch):
+    leftovers = samples.copy()
     # Create a list of matched pairs
     matched_pairs = []
     num_samples = len(samples)
     for i in range(num_samples):
         for j in range(i + 1, num_samples):
             if samples[i] == samples[j]:
-                #print(samples[i], samples[j])
                 matched_pairs.append((samples[i], samples[j]))
+                leftovers.remove(samples[i])
+                leftovers.remove(samples[j])
+ 
     # send matched pair list to obj_binder
     for sample1, sample2 in matched_pairs:
+        #print(sample1, sample2)
         obj_binder(sample1, sample2, output_dir, batch)
-    #MAYBE CAN POP SAMPLE OUT OF CASES LIST HERE??? FIND OUT HOW TO GET SINGLES
+    
+    print (f"{len(leftovers)} samples found without a duplicate.")
+    return leftovers
 
 #used to take list of objects and bind them together (batch pack, MSA cases)
 #added optional name parameter, used specifically in batch pack
@@ -166,7 +170,18 @@ def find_sr(cases, SR_cases):
         sliced_lists.append(current_slice)
     return sliced_lists
 
+#need to test this
+def move_singles(list, output_dir, batch):
+    for single in list:
+        file_rename = os.path.join(output_dir, f"{single.ID}_{batch}.pdf")
+        try:
+            copyfile(single.path, file_rename)
+        except Exception as e:
+            print(f"error moving/naming single inject {single: {e}}")
 
+
+
+#note in use
 #this not gonna work - need to adjust SR_cases to include associated cases and throw to list binder
 def insert_SR(SR_cases, output_dir, batch):
     for SR in SR_cases:
@@ -215,4 +230,7 @@ if __name__ == '__main__':
     SR_cases = ['24-3301_MKB_SR', '24-3303_MKO_SR']
     cases = ['24-3301_MKB', '24-3303_MKO', '24-3301_MKB', '24-3303_MKO']
 
-    find_sr(cases, SR_cases, None, None)
+    #find_sr(cases, SR_cases)
+
+    samples = ['24-3301_MKB', '24-3303_MKO', '24-3301_MKB', '24-3303_MKO', '24-3302_TEST']
+    compare_and_bind_duplicates(samples,None,None)
