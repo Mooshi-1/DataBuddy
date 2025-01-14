@@ -88,6 +88,7 @@ def LC_quant_init(batch_dir):
                 samples.append(case_ID)
             except Exception as e:
                 print(f"--ERROR-- FAILED TO INIT SAMPLE (VERY BAD) {filename}: {e}")
+                continue
             doc.close()  
 
     #return list of sample objects
