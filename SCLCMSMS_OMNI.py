@@ -28,23 +28,28 @@ def LCMSrename(batch_dir):
             case_number_2 = None
             new_filename = None
             
-            #find case number using sample name index + 1
-            if "Insight MTS Report - Summary" in lines:
-                sample_name_index = lines.index("Sample Name")
-                case_number_1 = lines[sample_name_index + 1]
-                #print(f"{case_number_1}")
-            elif "Insight MTS Report - Detail" in lines:
-                sample_name_index = lines.index("Sample Name")
-                case_number_2 = lines[sample_name_index + 1]
-                #print(f"{case_number_2}")
-            elif "Shimadzu 8060NX LCMS Batch Table" in lines:
-                if new_filename == None:
-                    new_filename = "Sequence_01.pdf"
+            try:
+                #find case number using sample name index + 1
+                if "Insight MTS Report - Summary" in lines:
+                    sample_name_index = lines.index("Sample Name")
+                    case_number_1 = lines[sample_name_index + 1]
+                    #print(f"{case_number_1}")
+                elif "Insight MTS Report - Detail" in lines:
+                    sample_name_index = lines.index("Sample Name")
+                    case_number_2 = lines[sample_name_index + 1]
+                    #print(f"{case_number_2}")
+                elif "Shimadzu 8060NX LCMS Batch Table" in lines:
+                    if new_filename == None:
+                        new_filename = "Sequence_01.pdf"
+                    else:
+                        new_filename = "Sequence_02.pdf"
                 else:
-                    new_filename = "Sequence_02.pdf"
-            else:
-                print("case number not found for {filename}")
-
+                    print("case number not found for {filename}")
+            except (ValueError, IndexError):
+                print(f"invalid sample {filename}")
+                doc.close()
+                continue
+                
             # Close the document
             doc.close()
 

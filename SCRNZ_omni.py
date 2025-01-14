@@ -34,21 +34,26 @@ def Zrename(batch_dir):
             MH_case_number = None
             AM_case_number = None
             
-            if "GC-MS-NPD Analysis Report" in lines:
-                sample_name_index = lines.index("Sample Name")
-                MH_case_number = lines[sample_name_index + 1]
-                MH_case_number = MH_case_number.upper()
-                #print(f"MH found {MH_case_number}")
-                
-            elif lines[0].startswith("GC/MS Analysis"):
-                if case_pattern.search(lines[0]):
-                    AM_case_number = case_pattern.search(lines[0]).group().strip()
-                    #print(f"AM matched {AM_case_number}")
+            try:
+                if "GC-MS-NPD Analysis Report" in lines:
+                    sample_name_index = lines.index("Sample Name")
+                    MH_case_number = lines[sample_name_index + 1]
+                    MH_case_number = MH_case_number.upper()
+                    #print(f"MH found {MH_case_number}")
+                    
+                elif lines[0].startswith("GC/MS Analysis"):
+                    if case_pattern.search(lines[0]):
+                        AM_case_number = case_pattern.search(lines[0]).group().strip()
+                        #print(f"AM matched {AM_case_number}")
 
-                if control_pattern.search(lines[0]):
-                    AM_case_number = control_pattern.search(lines[0]).group().strip()
-                    #print(f"control matched {AM_case_number}")
-
+                    if control_pattern.search(lines[0]):
+                        AM_case_number = control_pattern.search(lines[0]).group().strip()
+                        #print(f"control matched {AM_case_number}")
+                        
+            except (ValueError, IndexError): 
+                print(f"invalid sample {filename}")
+                doc.close() 
+                continue
 
             # Close the document
             doc.close()

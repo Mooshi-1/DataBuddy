@@ -8,7 +8,7 @@ def Shuttle(input_dir):
     for folders in os.listdir(input_dir):
         path_folders = os.path.join(input_dir, folders)
         if os.path.isdir(path_folders) and folder_pattern.match(folders):
-            print(f"Checking contents of directory: {folders}")
+            #print(f"Checking contents of directory: {folders}")
             move_contents(path_folders, input_dir)
 
 def move_contents(src_dir, dest_dir):
@@ -21,13 +21,14 @@ def move_contents(src_dir, dest_dir):
             continue
         #add 3 digit counter to files
         base_name, extension = os.path.splitext(item)
-        dest_path = os.path.join(dest_dir, f"{base_name}_{counter:03d}{extension}")
+        dest_path = os.path.join(dest_dir, f"{base_name}{extension}")
         while os.path.exists(dest_path):
             counter +=1
             dest_path = os.path.join(dest_dir, f"{base_name}_{counter:03d}{extension}")
         
-        print(f"Moving file: {item} to {dest_dir}")
+        #print(f"Moving file: {item} to {dest_dir}")
         shutil.move(src_path, dest_path)
+    print("completed move")
 
 
 def binder_dir(input_dir, counter=0):
