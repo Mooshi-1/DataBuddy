@@ -43,7 +43,12 @@ def LC_quant_init(batch_dir):
                     doc.close()
                     continue
                 # Find case number using sample name index + 1
-                sample_name_index = lines.index("Sample Name")
+                try:
+                    sample_name_index = lines.index("Sample Name")
+                except ValueError:
+                    print(f"invalid sample {filename}")
+                    doc.close
+                    continue
                 case_number = lines[sample_name_index + 1]
                 # Trim characters off case number string
                 case_number = case_number[2:]
@@ -88,6 +93,7 @@ def LC_quant_init(batch_dir):
                 samples.append(case_ID)
             except Exception as e:
                 print(f"--ERROR-- FAILED TO INIT SAMPLE (VERY BAD) {filename}: {e}")
+                doc.close()
                 continue
             doc.close()  
 
