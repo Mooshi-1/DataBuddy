@@ -53,7 +53,7 @@ def ShuttleHome(input_dir):
             try:
                 number = str(contents.split('_')[0].split('-')[1])
             except Exception as e:
-                print(f"invalid case number | {e}")
+                print(f"could not find folder for {contents}")
                 continue
             #check folders and look for case number in folder
             for folder in os.listdir(input_dir):
@@ -63,10 +63,11 @@ def ShuttleHome(input_dir):
                     try:
                         shutil.move(content_path, os.path.join(folder_path, contents))
                         #print(f"moved {contents} to {folder}")
-                        break
+                        continue
                     except Exception as e:
                         print(e)
-                        break                            
+                        continue  
+    print("completed moving data files to individual directories")                    
 
 
 def FindBatch(data_dir, batch_num):

@@ -42,7 +42,7 @@ def obj_binder(sample1, sample2, output_dir, batch):
         output_path = os.path.join(output_dir, f"{sample1.base}_{batch}.pdf")
         #save
         doc1.save(output_path)
-        print(f"Successfully saved {sample1.base}_{batch}")
+        #print(f"Successfully saved {sample1.base}_{batch}")
     except (PermissionError, FileExistsError, FileNotFoundError) as e:
         print(f"--error--: {e}, while renaming {sample1.path}")
 

@@ -35,7 +35,7 @@ class Sample:
         dilution = re.compile(r'x(10|[1-9])', re.IGNORECASE)
         MOA_type = ["BRN", "LIV", "GLG"]
         MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
-        SR = "_SR"
+        SR_type = ["_SR", '_x%R', '_%R']
         CAL = "CAL"
         CTL = "CTL"
         SH = "SHOOTER"
@@ -55,8 +55,9 @@ class Sample:
         for types in MOA_type:
             if types in self.ID:
                 self.type.add(QCTYPE.MOA)
-        if '_x%R' in self.ID:
-            self.type.add(QCTYPE.SR)
+        for vars in SR_type:
+            if vars in self.ID:
+                self.type.add(QCTYPE.SR)
         if CAL in self.ID:
             self.type.add(QCTYPE.CAL)
         if CTL in self.ID:
