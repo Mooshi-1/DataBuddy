@@ -10,3 +10,19 @@ export to csv
 export to fillable pdf
 fillpdf, pypdfform, 
 point it to LF form and have it make a copy, rename to case number, input data
+
+
+add serum QC.TYPE
+create new list for serums, shooter, neg, controls
+add after bloods for batch pack but before sequence
+acetaminophen runs sep serum curve
+
+
+fix single inject having _0 from .ID
+add date to batch pack
+test on QTABUSE batch 12809
+
+exclude dilution controls for LJ printout
+(if len controls < 4)
+no ISAR for MSA batch
+

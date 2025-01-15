@@ -33,7 +33,7 @@ ascii_art = """
  
 (((((((QUANTS -- PRELIM TESTING))))))) 
 
-Version 1.0 - 01/13/2025
+Version 1.07 - 01/15/2025
 """
 
 def main(batch, method):

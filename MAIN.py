@@ -39,7 +39,7 @@ ascii_art = """
   888     d88' d8(  888    888 . d8(  888        888    .88P  888   888   888  888   888  888    .o  888     
  o888bood8P'   `Y888""8o   "888" `Y888""8o      o888bood8P'  o888o o888o o888o `Y8bod88P" `Y8bod8P' d888b    
  .
-Version 1.06 - 01/10/2025
+Version 1.07 - 01/15/2025
 """
 
 def main(batch_num, method, flag=None):
