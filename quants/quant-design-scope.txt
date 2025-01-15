@@ -17,12 +17,11 @@ create new list for serums, shooter, neg, controls
 add after bloods for batch pack but before sequence
 acetaminophen runs sep serum curve
 
-
-fix single inject having _0 from .ID
-add date to batch pack
-test on QTABUSE batch 12809
+test date on batch pack
 
 exclude dilution controls for LJ printout
 (if len controls < 4)
 no ISAR for MSA batch
 
+joe emailed ISAR sheet and template for LJ
+figure out how to zip(area, form)

@@ -9,6 +9,7 @@ import re
 import fitz  # type: ignore # PyMuPDF
 from shutil import copyfile
 from sample_sorter import QCTYPE
+import time
 #import sys
 
 ##renamer functions
@@ -79,12 +80,19 @@ def list_binder(list, output_dir, batch, name=None):
         doc2 = fitz.open(sample.path)
         doc1.insert_pdf(doc2)
         doc2.close()
+    #only activate if name is passed into function
+    if name is not None:
+        formatted_date = time.strftime("%m%d%y", time.localtime())
+        output_path = os.path.join(output_dir, f"{name}_{batch}_{formatted_date}.pdf")
+        doc1.save(output_path)
+        print(f"completed binding Batch Pack - {name}_{batch}_{formatted_date}")
 
-    filename = name if name else list[0].base
-    output_path = os.path.join(output_dir, f"{filename}_{batch}.pdf")
-    doc1.save(output_path)
-    print(f"completed binding multiple files - {filename}_{batch}")
-
+    else:
+        filename = name if name else list[0].base
+        output_path = os.path.join(output_dir, f"{filename}_{batch}.pdf")
+        doc1.save(output_path)
+        print(f"completed binding multiple files - {filename}_{batch}")
+        
     doc1.close()
 
 
@@ -175,27 +183,27 @@ def find_sr(cases, SR_cases):
 #need to test this
 def move_singles(list, output_dir, batch):
     for single in list:
-        file_rename = os.path.join(output_dir, f"{single.ID}_{batch}.pdf")
+        file_rename = os.path.join(output_dir, f"{single.base}_{batch}.pdf")
         try:
             copyfile(single.path, file_rename)
         except Exception as e:
             print(f"error moving/naming single inject {single: {e}}")
 
 
-def redirect_stdout(file, text):
-    original_stdout = sys.stdout
-    #'w' = write mode
-    with open(file, 'a') as f:
-        sys.stdout = f
-        print(text)
-        sys.stdout = original_stdout
+# def redirect_stdout(file, text):
+#     original_stdout = sys.stdout
+#     #'w' = write mode
+#     with open(file, 'a') as f:
+#         sys.stdout = f
+#         print(text)
+#         sys.stdout = original_stdout
 
-#set as global variables to make this work, do not call this function
-def redirect_all(file):
-    sys.stdout = open(file, 'a')
-    #at end...
-    sys.stdout.close()
-    sys.stdout = sys.__stdout__
+# #set as global variables to make this work, do not call this function
+# def redirect_all(file):
+#     sys.stdout = open(file, 'a')
+#     #at end...
+#     sys.stdout.close()
+#     sys.stdout = sys.__stdout__
 
 
 
