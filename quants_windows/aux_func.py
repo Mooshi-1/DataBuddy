@@ -9,6 +9,7 @@ import re
 import fitz  # type: ignore # PyMuPDF
 from shutil import copyfile
 from sample_sorter import QCTYPE
+#import sys
 
 ##renamer functions
 def pdf_rename(samples):
@@ -181,50 +182,24 @@ def move_singles(list, output_dir, batch):
             print(f"error moving/naming single inject {single: {e}}")
 
 
+def redirect_stdout(file, text):
+    original_stdout = sys.stdout
+    #'w' = write mode
+    with open(file, 'a') as f:
+        sys.stdout = f
+        print(text)
+        sys.stdout = original_stdout
 
-#note in use
-#this not gonna work - need to adjust SR_cases to include associated cases and throw to list binder
-def insert_SR(SR_cases, output_dir, batch):
-    for SR in SR_cases:
-        filename = SR.base
-    #iterate through output_dir
-    #find filename in directory
-    #send both files to binder obj1 obj2 ... SR = obj 2
-    for contents in os.path(output_dir):
-        if contents.endswith('.pdf'):
-            if contents in filename:
-                print(f"sending {SR.base} to binder")
-                obj_binder(contents, filename, output_dir, batch)
-                return
-    f"aux.insert_SR function activated but unable to find file"
-    return
+#set as global variables to make this work, do not call this function
+def redirect_all(file):
+    sys.stdout = open(file, 'a')
+    #at end...
+    sys.stdout.close()
+    sys.stdout = sys.__stdout__
 
 
-#sublist slicer ##doesn't work quite right, but the idea is there
-#NOT IN USE
-def sublist_slicer(list):
-    sliced_lists = []
-    current_slice = []
 
-    def identify_cal(base_id):
-        return base_id.rsplit('_',1)[-1].startswith('L')
 
-    for obj in list:
-        base_id = obj.base
-        print(f"checking object {obj.base}")
-        if current_slice:
-# Check if transition happens from ID ending with _L# to one without it or vice versa 
-            if not identify_cal(current_slice[-1].base) and identify_cal(base_id):
-                sliced_lists.append(current_slice)
-                current_slice = []
-                print("created new slice")
-        current_slice.append(obj)
-        print(f"appended {obj.base}")
-
-    if current_slice:
-        sliced_lists.append(current_slice)
-
-    return sliced_lists
 
 
 if __name__ == '__main__':

@@ -40,21 +40,21 @@ def main(batch, method):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
-    #data_dir = r"G:\PDF DATA"
-    #print(f"Starting in: {data_dir}")
+    data_dir = r"G:\PDF DATA"
+    print(f"Starting in: {data_dir}")
     
     #call FindBatch function to locate directories
-    #case_dir, qc_dir = searcher.FindBatch(data_dir, batch)
-    #if case_dir is None and qc_dir is None:
-        #raise Exception("Unable to locate batch directory")                
+    case_dir, qc_dir = searcher.FindBatch(data_dir, batch)
+    if case_dir is None and qc_dir is None:
+        raise Exception("Unable to locate batch directory")                
     
         
     #move files from individual folders
-    #searcher.Shuttle(case_dir)
+    searcher.Shuttle(case_dir)
 
     #delete these later
-    case_dir = r'/mnt/c/Users/Mooshi/Desktop/work-locked/private/12786/CASE DATA'
-    qc_dir = r'/mnt/c/Users/Mooshi/Desktop/work-locked/private/12786/BATCH PACK DATA'
+    #case_dir = r'/mnt/c/Users/Mooshi/Desktop/work-locked/private/12786/CASE DATA'
+    #qc_dir = r'/mnt/c/Users/Mooshi/Desktop/work-locked/private/12786/BATCH PACK DATA'
    
     #create binder output
     output_dir = searcher.binder_dir(case_dir)
