@@ -19,6 +19,7 @@ class QCTYPE(Enum):
     SEQ = 'sequence'
     CUR = 'curve'
     NEG = 'negative'
+    SER = 'serum'
     
 #define QC objects
 class Sample:
@@ -31,11 +32,12 @@ class Sample:
         self.results_analyte = results_analyte if results_analyte is not None else []
 
     def assign_type(self):
-        big_dilution = re.compile(r'x(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})', re.IGNORECASE)
-        dilution = re.compile(r'x(10|[1-9])', re.IGNORECASE)
+        big_dilution = re.compile(r'X(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
+        dilution = re.compile(r'X(10|[1-9])')
         MOA_type = ["BRN", "LIV", "GLG"]
         MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR_type = ["_SR", '_x%R', '_%R']
+        serum = ["SERUM"," S"]
         CAL = "CAL"
         CTL = "CTL"
         SH = "SHOOTER"
@@ -66,6 +68,9 @@ class Sample:
             self.type.add(QCTYPE.SH)
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
+        for spelling in serum:
+            if spelling in self.ID:
+                self.type.add(QCTYPE.SER)
 
     #ID is unique so using self.base for comparisons -- duplicate checker uses this
     def __eq__(self, other):
@@ -121,6 +126,11 @@ def sample_handler(all_samples):
     curve = []
     MOA_cases = []
     sequence = []
+    serum_shooter = []
+    serum_neg = []
+    serum_controls = []
+    serum_dil_controls = []
+    serum_cal_curve = []
     for sample in all_samples:
         if sample.type == {QCTYPE.CAL}:
             cal_curve.append(sample)
@@ -140,20 +150,50 @@ def sample_handler(all_samples):
             SR_cases.append(sample)
         elif QCTYPE.MOA in sample.type:
             MOA_cases.append(sample)
+        #handle serum QC
+        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.SH}):
+            serum_shooter.append(sample)
+        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.NEG}):
+            serum_neg.append(sample)
+        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL}):
+            serum_controls.append(sample)
+        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL,QCTYPE.DL}):
+            serum_dil_controls.append(sample)
+        elif sample.type.issuperset({QCTYPE.CAL,QCTYPE.SER}):
+            serum_cal_curve.append(sample)
+        #all non-QC samples
         else:
             cases.append(sample)
     #note that controls got a seperate sort method
     #return sorted lists
+
+
     try:
         sort_samples(cal_curve); sort_samples(neg_ctl); sort_samples(shooter)
         sort_controls(controls); sort_samples(dil_controls); sort_samples(SR_cases)
         sort_samples(cases); sort_samples(curve); sort_samples(MOA_cases); sort_samples(sequence)
+        sort_controls(serum_controls); sort_samples(serum_dil_controls); sort_samples(serum_cal_curve)
     except Exception as e:
         print(f"error sorting files | {e}")
 
 
-    return cal_curve, neg_ctl, shooter, controls, dil_controls, SR_cases, cases, curve, MOA_cases, sequence
-
+    return (
+        cal_curve,
+        neg_ctl,
+        shooter,
+        controls,
+        dil_controls,
+        SR_cases,
+        cases,
+        curve,
+        MOA_cases,
+        sequence,
+        serum_shooter,
+        serum_neg,
+        serum_controls,
+        serum_dil_controls,
+        serum_cal_curve
+    )
 
 if __name__ == "__main__":
     #tester1 = Sample("24-3456_IVBGT_x10", r"/home/mooshi_1/workspace/github.com/Mooshi-1/Work/locked/private/12786/CASE DATA/24-3456_IVBGT_x10.pdf", None, ["Morphine", "Codeine"], ["Morphine", "Codeine"])

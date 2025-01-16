@@ -89,16 +89,21 @@ def main(batch, method):
         cases,
         curve,
         MOA_cases,
-        sequence
+        sequence,
+        serum_shooter,
+        serum_neg,
+        serum_controls,
+        serum_dil_controls,
+        serum_cal_curve
     ) = sample_sorter.sample_handler(all_samples)
 
     #send case-list to binder, bind duplicates -- return list of singles
     leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
 
-    #need something to change the name of leftovers and move it to the binder folder
+    #send singles to bind
     if len(leftovers) > 0:
         aux_func.move_singles(leftovers, output_dir, batch)
-
+    #split MOA cases and bind
     if len(MOA_cases) > 0:
         sliced_MOA = aux_func.MOA_slicer(MOA_cases)
         for case_list in sliced_MOA:
@@ -112,7 +117,12 @@ def main(batch, method):
             aux_func.list_binder(case_list, output_dir, batch)
 
     #organize batch pack
-    batch_pack = aux_func.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
+    if len(serum_controls) > 0:
+        print("serum QC detected -- appending batch pack")
+        batch_pack = aux_func.serum_batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls,
+                             serum_shooter,serum_neg,serum_controls,serum_dil_controls,serum_cal_curve)
+    else:
+        batch_pack = aux_func.batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls)
     #send batch pack to binder
     aux_func.list_binder(batch_pack, output_dir, batch, method)
 

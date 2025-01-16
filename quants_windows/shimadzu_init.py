@@ -51,7 +51,7 @@ def LC_quant_init(batch_dir):
                     continue
                 case_number = lines[sample_name_index + 1]
                 # Trim characters off case number string
-                case_number = case_number[2:]
+                case_number = case_number[2:].upper()
                 #print(f"{case_number}")
                 # Extract table data
                 ISTDs_data = []
