@@ -10,6 +10,7 @@ def Shuttle(input_dir):
         if os.path.isdir(path_folders) and folder_pattern.match(folders):
             #print(f"Checking contents of directory: {folders}")
             move_contents(path_folders, input_dir)
+    print("completed move")
 
 def move_contents(src_dir, dest_dir):
     counter = 0
@@ -28,7 +29,7 @@ def move_contents(src_dir, dest_dir):
         
         #print(f"Moving file: {item} to {dest_dir}")
         shutil.move(src_path, dest_path)
-    print("completed move")
+    
 
 
 def binder_dir(input_dir, counter=0):

@@ -33,7 +33,7 @@ ascii_art = """
  
 (((((((QUANTS -- PRELIM TESTING))))))) 
 
-Version 1.07 - 01/15/2025
+Version 1.07a - 01/16/2025
 """
 
 def main(batch, method):
@@ -70,6 +70,10 @@ def main(batch, method):
         print(f"checking {dirs}")
         samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)
+
+    if len(all_samples) == 0:
+        print("unable to find data -- is it in the CASE DATA and/or BATCH PACK DATA folder?")
+
 
     aux_func.pdf_rename(all_samples)
 

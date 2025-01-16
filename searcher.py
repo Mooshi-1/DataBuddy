@@ -29,7 +29,6 @@ def move_contents(src_dir, dest_dir):
 
         #print(f"Moving file: {item} to {dest_dir}")
         shutil.move(src_path, dest_path)
-    print("completed moving files from case directories to PDF CASE DATA")
 
 def binder_dir(input_dir, counter=0):
     binder_path = os.path.join(input_dir, f"--binder files--" if counter == 0 else f"--binder files{counter}--")
