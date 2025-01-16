@@ -71,6 +71,7 @@ class Sample:
         for spelling in serum:
             if spelling in self.ID:
                 self.type.add(QCTYPE.SER)
+                #print(f"assigned serum {self.ID}, {self.type}")
 
     #ID is unique so using self.base for comparisons -- duplicate checker uses this
     def __eq__(self, other):
@@ -140,11 +141,12 @@ def sample_handler(all_samples):
             curve.append(sample)
         elif sample.type == {QCTYPE.SH}: 
             shooter.append(sample)
-        elif sample.type.issuperset({QCTYPE.NEG,QCTYPE.CTL}):
+        elif sample.type.issuperset({QCTYPE.NEG,QCTYPE.CTL}) and QCTYPE.SER not in sample.type:
             neg_ctl.append(sample)
+            #print(f"appended {sample}")
         elif sample.type == {QCTYPE.CTL}:
             controls.append(sample)
-        elif sample.type.issuperset({QCTYPE.DL,QCTYPE.CTL}):
+        elif sample.type.issuperset({QCTYPE.DL,QCTYPE.CTL}) and QCTYPE.SER not in sample.type:
             dil_controls.append(sample)
         elif QCTYPE.SR in sample.type:
             SR_cases.append(sample)
@@ -153,8 +155,9 @@ def sample_handler(all_samples):
         #handle serum QC
         elif sample.type.issuperset({QCTYPE.SER,QCTYPE.SH}):
             serum_shooter.append(sample)
-        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.NEG}):
+        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.NEG,QCTYPE.CTL}):
             serum_neg.append(sample)
+            #print(f"appended serum_neg {sample}")
         elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL}):
             serum_controls.append(sample)
         elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL,QCTYPE.DL}):
