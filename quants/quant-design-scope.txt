@@ -1,15 +1,16 @@
 case_bind()
 MSA needs id mismatch check between samples
-
+advanced functionality
 
 ctl_set()
 calculate 50-200% range for ISAR
-
+check cases against ISAR
+advanced functionality
 
 export to csv
 export to fillable pdf
-fillpdf, pypdfform, 
-point it to LF form and have it make a copy, rename to case number, input data
+
+openpyxl to output to specific cells
 
 
 add serum QC.TYPE

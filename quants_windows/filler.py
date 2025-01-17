@@ -38,12 +38,6 @@ def ISAR_fill(controls, batch, path):
     low2_dict = dict(zip(field_low2, value_low2))
     high2_dict = dict(zip(field_high2, value_high2))
 
-
-    # #find and import/copy ISAR for method
-    # def find_form(*args):
-    #     pass
-    # #make sure that it can find it even if revision changes
-
     pdf = FormWrapper(path)
 
     pdf.fill({'Batch': batch}, adobe_mode = True)
@@ -56,12 +50,17 @@ def ISAR_fill(controls, batch, path):
     with open(filled_pdf_path, "wb") as output:
         output.write(pdf.read())
 
+    print("ISAR filled and saved successfully!")
     # #calculate own -50 - 200% range unless can read from pdf
     # #don't forget about failed cases/analytes field
     #send ISAR results to txt or csv file
 
+def output_LJ(controls, batch, path):
+    pass
+
+
 if __name__ == '__main__':
-    controls = [
+    controls_ISTD = [
 [
         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
         ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
@@ -104,6 +103,9 @@ if __name__ == '__main__':
         ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
     ],
     ]
+    controls_analyte = [
+
+    ]
     batch = 111
     method = 'QTABUSE'
-    ISAR_fill(controls, batch, method)
+    #ISAR_fill(controls_ISTD, batch, method)
