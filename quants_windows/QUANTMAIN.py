@@ -104,13 +104,19 @@ def main(batch, method):
     ) = sample_sorter.sample_handler(all_samples)
 
     #grab ISAR from TP directory and put in output dir
-    if len(controls) >= 4:
-        print("getting blood ISAR")
-        searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_blood")
-    if len(serum_controls) >= 4:
-        print("getting serum ISAR")
-        searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
-
+    #then fill
+    try:
+        if len(controls) >= 4:
+            print("getting blood ISAR")
+            output_path = searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_blood")
+            filler.ISAR_fill(controls, batch, output_path)
+            
+        if len(serum_controls) >= 4:
+            print("getting serum ISAR")
+            searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
+            filler.ISAR_fill(controls,batch)
+    except Exception as e:
+        print(f"unable to retrieve/fill ISAR | {e}")
 
 
     #send case-list to binder, bind duplicates -- return list of singles

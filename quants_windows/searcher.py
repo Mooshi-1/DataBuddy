@@ -105,6 +105,7 @@ def copy_file(src_path, output_dir, filename):
         output_path = os.path.join(output_dir, f"{filename}_{counter}.pdf")
         counter += 1
     shutil.copy2(src_path, output_path)
+    return output_path
 
 if __name__ == "__main__":
     input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA"

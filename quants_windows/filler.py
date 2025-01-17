@@ -1,7 +1,6 @@
 from PyPDFForm import FormWrapper # type: ignore # pypdfform
 
-def ISAR_fill(controls, batch, method):
-    #change to controls.results_ISTD
+def ISAR_fill(controls, batch, path):
     low1 = controls[0]
     high1 = controls[1]
     low2 = controls[-1]
@@ -9,8 +8,8 @@ def ISAR_fill(controls, batch, method):
 
     #sort through ISAR_controls.results_ISTD and find values to pass
     def get_indexes(single_control):
-        for tuples in single_control:
-            return tuples.index('Area'), len(single_control)
+        for tuples in single_control.results_ISTD:
+            return tuples.index('Area'), len(single_control.results_ISTD)
     
     area_index, length = get_indexes(low1)
 
@@ -24,13 +23,13 @@ def ISAR_fill(controls, batch, method):
     value_low2 = []
     value_high2 = []
 
-    for tuples in low1[1:]:
+    for tuples in low1.results_ISTD[1:]:
         value_low1.append(tuples[area_index])
-    for tuples in high1[1:]:
+    for tuples in high1.results_ISTD[1:]:
         value_high1.append(tuples[area_index])
-    for tuples in low2[1:]:
+    for tuples in low2.results_ISTD[1:]:
         value_low2.append(tuples[area_index])
-    for tuples in high2[1:]:
+    for tuples in high2.results_ISTD[1:]:
         value_high2.append(tuples[area_index])
 
     # #map field name to value in dictionary
@@ -45,7 +44,7 @@ def ISAR_fill(controls, batch, method):
     #     pass
     # #make sure that it can find it even if revision changes
 
-    pdf = FormWrapper(r'C:\Users\e314883\Desktop\python pdf\quants_windows\pdf1.pdf')
+    pdf = FormWrapper(path)
 
     pdf.fill({'Batch': batch}, adobe_mode = True)
     pdf.fill(low1_dict, adobe_mode = True)
@@ -53,7 +52,7 @@ def ISAR_fill(controls, batch, method):
     pdf.fill(low2_dict, adobe_mode = True)
     pdf.fill(high2_dict, adobe_mode = True)
     
-    filled_pdf_path = (r'C:\Users\e314883\Desktop\python pdf\quants_windows\filled_pdf1.pdf')
+    filled_pdf_path = (path)
     with open(filled_pdf_path, "wb") as output:
         output.write(pdf.read())
 
