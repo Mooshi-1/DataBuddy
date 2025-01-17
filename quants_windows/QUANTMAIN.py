@@ -80,6 +80,7 @@ def main(batch, method):
 
     for sample in all_samples:
         sample.assign_type()
+        #print(sample)
     
     print(f"{len(all_samples)} total pdf files -- QC assigned -- proceeding to sort/bind")
 
@@ -103,7 +104,12 @@ def main(batch, method):
     ) = sample_sorter.sample_handler(all_samples)
 
     #grab ISAR from TP directory and put in output dir
-    searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR")
+    if len(controls) >= 4:
+        print("getting blood ISAR")
+        searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_blood")
+    if len(serum_controls) >= 4:
+        print("getting serum ISAR")
+        searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
 
 
 
@@ -115,8 +121,11 @@ def main(batch, method):
         aux_func.move_singles(leftovers, output_dir, batch)
     #split MOA cases and bind
     if len(MOA_cases) > 0:
+        #print(len(MOA_cases))
         sliced_MOA = aux_func.MOA_slicer(MOA_cases)
         for case_list in sliced_MOA:
+        #     for cases in case_list:
+        #         print(cases)
             aux_func.list_binder(case_list, output_dir, batch)
 
     #unable to pass dynamic name parameter through  here... make sure this runs after compare_and_bind_duplicates unless changed

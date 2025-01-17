@@ -169,15 +169,13 @@ def serum_batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,d
 def MOA_slicer(list):
     sliced_lists = []
     current_slice = []
-
     for obj in list:
         if QCTYPE.CAL not in obj.type:
             if current_slice:
                 sliced_lists.append(current_slice) 
             current_slice = []
-            current_slice.append(obj)
         current_slice.append(obj)
-
+        
     if current_slice:
         sliced_lists.append(current_slice)
 

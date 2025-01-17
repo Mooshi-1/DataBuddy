@@ -94,7 +94,7 @@ def LC_quant_init(batch_dir):
                 
                 #create sample object
                 case_ID = Sample(case_ID, pdf_path, case_number, None, format_ISTDs, format_analytes)
-                #append to list
+                #print(case_ID)
                 samples.append(case_ID)
             except Exception as e:
                 print(f"--ERROR-- FAILED TO INIT SAMPLE (VERY BAD) {filename}: {e}")

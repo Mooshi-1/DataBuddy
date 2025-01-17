@@ -33,7 +33,7 @@ class Sample:
 
     def assign_type(self):
         big_dilution = re.compile(r'X(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
-        dilution = re.compile(r'X(10|[1-9])')
+        dilution = re.compile(r'X(10|[0-9])')
         MOA_type = ["BRN", "LIV", "GLG"]
         MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR_type = ["_SR", '_x%R', '_%R']
