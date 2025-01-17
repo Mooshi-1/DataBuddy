@@ -10,6 +10,7 @@ advanced functionality
 export to csv
 export to fillable pdf
 
+import pandas or csv to output excel sheet
 openpyxl to output to specific cells
 
 
