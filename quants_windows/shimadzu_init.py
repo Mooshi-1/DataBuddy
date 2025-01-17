@@ -27,7 +27,9 @@ def LC_quant_init(batch_dir):
             case_number = None
             #quant_method = lines[3]
             # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
-
+            #init curves count to handle multiple curves
+            curves = {}
+            curve_count = 0
             try:
                 #take care of special cases
                 if " 0:Unknown " in lines:
@@ -37,9 +39,12 @@ def LC_quant_init(batch_dir):
                     doc.close()
                     continue
                 if "Calibration Curve Report" in lines:
-                    Curve = Sample("Curve", pdf_path, "curve", {QCTYPE.CUR}, None, None)
+                    #uses dictionary key to ensure unique object name
+                    curve_key = f"curve_{curve_count}"
+                    curves[curve_key] = Sample(curve_key, pdf_path, "curve", {QCTYPE.CUR}, None, None)
                     print("found curve")
-                    samples.append(Curve)
+                    samples.append(curves[curve_key])
+                    curve_count += 1
                     doc.close()
                     continue
                 # Find case number using sample name index + 1
