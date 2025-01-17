@@ -14,22 +14,25 @@ def Shuttle(input_dir):
 
 def move_contents(src_dir, dest_dir):
     counter = 0
-    for item in os.listdir(src_dir):
-        src_path = os.path.join(src_dir, item)
-        if os.path.isdir(src_path):
-            # Skip directories to avoid moving them inside input_dir
-            print(f"Skipping directory: {src_path}")
-            continue
-        #add 3 digit counter to files
-        base_name, extension = os.path.splitext(item)
-        dest_path = os.path.join(dest_dir, f"{base_name}{extension}")
-        while os.path.exists(dest_path):
-            counter +=1
-            dest_path = os.path.join(dest_dir, f"{base_name}_{counter:03d}{extension}")
-        
-        #print(f"Moving file: {item} to {dest_dir}")
-        shutil.move(src_path, dest_path)
-    
+    try:
+        for item in os.listdir(src_dir):
+            src_path = os.path.join(src_dir, item)
+            if os.path.isdir(src_path):
+                # Skip directories to avoid moving them inside input_dir
+                print(f"Skipping directory: {src_path}")
+                continue
+            #add 3 digit counter to files
+            base_name, extension = os.path.splitext(item)
+            dest_path = os.path.join(dest_dir, f"{base_name}{extension}")
+            while os.path.exists(dest_path):
+                counter +=1
+                dest_path = os.path.join(dest_dir, f"{base_name}_{counter:03d}{extension}")
+            
+            #print(f"Moving file: {item} to {dest_dir}")
+            shutil.move(src_path, dest_path)
+    except Exception as e:
+        print(e)
+
 
 
 def binder_dir(input_dir, counter=0):
@@ -94,6 +97,14 @@ def FindBatch(data_dir, batch_num):
                     print(f"QC Directory = {qc_dir}")
                     return case_dir, qc_dir
     return None, None
+
+def copy_file(src_path, output_dir, filename):
+    output_path = os.path.join(output_dir, f"{filename}.pdf")
+    counter = 1
+    while os.path.exists(output_path):
+        output_path = os.path.join(output_dir, f"{filename}_{counter}.pdf")
+        counter += 1
+    shutil.copy2(src_path, output_path)
 
 if __name__ == "__main__":
     input_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2025\01\12786\CASE DATA"

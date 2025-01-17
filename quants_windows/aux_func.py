@@ -211,8 +211,13 @@ def move_singles(list, output_dir, batch):
 def get_ISAR(method, TP_directory):
     for dir in os.listdir(TP_directory):
         if method in dir:
-            for dir2 in os.listdir(os.path.join(TP_directory, dir)):
-                print(dir2)
+            TP = os.path.join(TP_directory, dir)
+            #find TP folder
+    for root, dirs, files in os.walk(TP):
+        for file in files:
+            if "Area Response" in file:
+                source_path = os.path.join(root,file)
+                return source_path
 
 
 

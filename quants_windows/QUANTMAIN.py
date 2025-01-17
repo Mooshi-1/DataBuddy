@@ -19,7 +19,7 @@ import searcher
 import shimadzu_init
 import sample_sorter
 import aux_func
-
+import filler
 
 ascii_art = """
  .
@@ -40,6 +40,7 @@ def main(batch, method):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
+    TP_directory = r'G:\LABORATORY OPERATIONS\07 - TESTING PROCEDURES'
     data_dir = r"G:\PDF DATA"
     print(f"Starting in: {data_dir}")
     
@@ -100,6 +101,11 @@ def main(batch, method):
         serum_dil_controls,
         serum_cal_curve
     ) = sample_sorter.sample_handler(all_samples)
+
+    #grab ISAR from TP directory and put in output dir
+    searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR")
+
+
 
     #send case-list to binder, bind duplicates -- return list of singles
     leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
