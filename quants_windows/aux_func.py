@@ -199,7 +199,7 @@ def find_sr(cases, SR_cases):
         sliced_lists.append(current_slice)
     return sliced_lists
 
-#need to test this
+#works!
 def move_singles(list, output_dir, batch):
     for single in list:
         file_rename = os.path.join(output_dir, f"{single.base}_{batch}.pdf")
@@ -207,6 +207,14 @@ def move_singles(list, output_dir, batch):
             copyfile(single.path, file_rename)
         except Exception as e:
             print(f"error moving/naming single inject {single: {e}}")
+
+def get_ISAR(method, TP_directory):
+    for dir in os.listdir(TP_directory):
+        if method in dir:
+            for dir2 in os.listdir(os.path.join(TP_directory, dir)):
+                print(dir2)
+
+
 
 
 # def redirect_stdout(file, text):
@@ -230,10 +238,6 @@ def move_singles(list, output_dir, batch):
 
 
 if __name__ == '__main__':
-    SR_cases = ['24-3301_MKB_SR', '24-3303_MKO_SR']
-    cases = ['24-3301_MKB', '24-3303_MKO', '24-3301_MKB', '24-3303_MKO']
-
-    #find_sr(cases, SR_cases)
-
-    samples = ['24-3301_MKB', '24-3303_MKO', '24-3301_MKB', '24-3303_MKO', '24-3302_TEST']
-    compare_and_bind_duplicates(samples,None,None)
+    method = 'QTABUSE'
+    TP_directory = r'G:\LABORATORY OPERATIONS\07 - TESTING PROCEDURES'
+    get_ISAR(method, TP_directory)

@@ -1,59 +1,64 @@
-#import pypdfform # type: ignore # pypdfform
+from PyPDFForm import FormWrapper # type: ignore # pypdfform
 
 def ISAR_fill(controls, batch, method):
-    ISAR_controls = controls[:2] + controls[-2:]
-    #maybe keep controls split individually for simplicity?
+    #change to controls.results_ISTD
+    low1 = controls[0]
+    high1 = controls[1]
+    low2 = controls[-1]
+    high2 = controls[-2]
 
-    #sort through self.results_ISTD and find values to pass
-    def get_index(ISAR_controls):
-        for control in ISAR_controls:
-            for tuples in control:
-                return tuples.index('Area')
+    #sort through ISAR_controls.results_ISTD and find values to pass
+    def get_indexes(single_control):
+        for tuples in single_control:
+            return tuples.index('Area'), len(single_control)
     
-    area_index = get_index(ISAR_controls)
-    print(area_index)
+    area_index, length = get_indexes(low1)
 
-    area_list = []
+    field_low1 = [f'A{i}_L1_1' for i in range(1,length)]
+    field_high1 = [f'A{i}_L2_1' for i in range(1,length)]
+    field_low2 = [f'A{i}_L1_2' for i in range(1,length)]
+    field_high2 = [f'A{i}_L2_2' for i in range(1,length)]
 
-    for control in ISAR_controls:
-        for tuples in control[1:]:
-            area_list.append(tuples[area_index])
+    value_low1 = []
+    value_high1 = []
+    value_low2 = []
+    value_high2 = []
 
-    print(area_list)
-    #currently in 1 big list
-    # can create new list each time control gets iterated?
-
-
-
-    #define field names in the pdf
-    #give good thought to how we can adapt the field names for multiple methods
-    #probably set length based off of analytes in self.results_ISTD and then match field names to follow
-    #field_names = [f'field{i}' for i in range(1,11)]
+    for tuples in low1[1:]:
+        value_low1.append(tuples[area_index])
+    for tuples in high1[1:]:
+        value_high1.append(tuples[area_index])
+    for tuples in low2[1:]:
+        value_low2.append(tuples[area_index])
+    for tuples in high2[1:]:
+        value_high2.append(tuples[area_index])
 
     # #map field name to value in dictionary
-    # data_dict = dict(zip(field_names, sorted_ISAR))
-    # #or
-    # data_dict = {field: sorted_ISAR[i] for i, field in enumerate(field_names)}
-    # #enum(field_names) provides the index i and value field of each element in field_names
-    # #uses index to get element from sorted_ISAR and and field_names
+    low1_dict = dict(zip(field_low1, value_low1))
+    high1_dict = dict(zip(field_high1, value_high1))
+    low2_dict = dict(zip(field_low2, value_low2))
+    high2_dict = dict(zip(field_high2, value_high2))
 
 
     # #find and import/copy ISAR for method
     # def find_form(*args):
     #     pass
     # #make sure that it can find it even if revision changes
-    # pdf = pypdfform('ISAR.pdf')
 
-    # pdf.fill(data_dict)
+    pdf = FormWrapper(r'C:\Users\e314883\Desktop\python pdf\quants_windows\pdf1.pdf')
 
-    # with open('ISAR.pdf', 'wb') as output_pdf:
-    #     output_pdf.write(pdf.read())
-
+    pdf.fill({'Batch': batch}, adobe_mode = True)
+    pdf.fill(low1_dict, adobe_mode = True)
+    pdf.fill(high1_dict, adobe_mode = True)
+    pdf.fill(low2_dict, adobe_mode = True)
+    pdf.fill(high2_dict, adobe_mode = True)
+    
+    filled_pdf_path = (r'C:\Users\e314883\Desktop\python pdf\quants_windows\filled_pdf1.pdf')
+    with open(filled_pdf_path, "wb") as output:
+        output.write(pdf.read())
 
     # #calculate own -50 - 200% range unless can read from pdf
     # #don't forget about failed cases/analytes field
-    # #positive control matrix checkbox?
-
     #send ISAR results to txt or csv file
 
 if __name__ == '__main__':
