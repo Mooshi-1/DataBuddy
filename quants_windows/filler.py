@@ -1,12 +1,15 @@
 from PyPDFForm import FormWrapper # type: ignore # pypdfform
-import time
+#import time
 import pandas # type: ignore # pandas
 import os
+import warnings
 
-#remove after
-import sample_sorter
-import aux_func
-import shimadzu_init
+#testing imports
+# import sample_sorter
+# import aux_func
+# import shimadzu_init
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def ISAR_fill(controls, batch, path):
     low1 = controls[0]
@@ -80,8 +83,8 @@ def output_LJ(controls, serum_controls, batch, path):
 
         for low_result, high_result in zip(low_control.results_analyte[1:], high_control.results_analyte[1:]):
             analyte_name = low_result[name_index]
-            low_conc_value = low_result[conc_index]
-            high_conc_value = high_result[conc_index]
+            low_conc_value = float(low_result[conc_index])
+            high_conc_value = float(high_result[conc_index])
 
             if analyte_name not in analyte_dataframes:
                 analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
@@ -101,8 +104,8 @@ def output_LJ(controls, serum_controls, batch, path):
 
         for low_result_serum, high_result_serum in zip(low_serum_control.results_analyte[1:], high_serum_control.results_analyte[1:]):
             analyte_name = low_result_serum[name_index]
-            low_conc_value = low_result_serum[conc_index]
-            high_conc_value = high_result_serum[conc_index]
+            low_conc_value = float(low_result_serum[conc_index])
+            high_conc_value = float(high_result_serum[conc_index])
 
             if analyte_name not in analyte_dataframes:
                 analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
@@ -130,77 +133,77 @@ def output_LJ(controls, serum_controls, batch, path):
 
 
 if __name__ == '__main__':
-    controls_ISTD = [
-[
-        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
-        ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
-        ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
-        ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
-        ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
-        ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
-        ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
-        ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
-        ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
-    ],[
-        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
-        ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
-        ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
-        ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
-        ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
-        ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
-        ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
-        ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
-        ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
-    ],[
-        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
-        ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
-        ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
-        ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
-        ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
-        ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
-        ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
-        ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
-        ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
-    ],[
-        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
-        ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
-        ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
-        ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
-        ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
-        ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
-        ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
-        ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
-        ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
-    ],
-    ]
-    controls = [
-    sample_sorter.Sample('LOW CTL 1_0', r"G:/", 'LOW CTL 1', None, None, 
-[    
-        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', 'Conc.', 'Unit', 'Mode'),
-        ('2', 'Morphine', '0.413', '314808', '286.20>165.20', '0.017', 'mg/L', ''),
-        ('4', 'Codeine', '0.956', '224105', '300.20>165.20', '0.019', 'mg/L', ''),
-        ('6', '6-Acetylmorphine', '1.107', '152560', '328.20>165.20', '1.875', 'ng/mL', ''),
-        ('8', 'Benzoylecgonine', '1.554', '298989', '290.20>168.20', '0.079', 'mg/L', ''),
-        ('10', 'Cocaine', '1.888', '482118', '304.20>182.20', '0.020', 'mg/L', ''),
-        ('12', 'Cocaethylene', '2.020', '509149', '318.20>196.20', '0.021', 'mg/L', ''),
-        ('14', 'Fentanyl', '2.118', '957656', '337.20>188.20', '5.533', 'ng/mL', ''),
-        ('16', 'Alprazolam', '2.316', '328786', '309.20>281.20', '0.020', 'mg/L', '')
-    ]),
-    sample_sorter.Sample('HIGH CTL 1_0', r"G:/", 'HIGH CTL 1', None, None, 
-[
-        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', 'Conc.', 'Unit', 'Mode'),
-        ('2', 'Morphine', '0.415', '161400', '286.20>165.20', '0.008', 'mg/L', ''),
-        ('4', 'Codeine', '0.955', '135171', '300.20>165.20', '0.009', 'mg/L', ''),
-        ('6', '6-Acetylmorphine', '1.108', '86409', '328.20>165.20', '0.910', 'ng/mL', ''),
-        ('8', 'Benzoylecgonine', '1.559', '147846', '290.20>168.20', '0.039', 'mg/L', ''),
-        ('10', 'Cocaine', '1.894', '244909', '304.20>182.20', '0.010', 'mg/L', ''),
-        ('12', 'Cocaethylene', '2.027', '233458', '318.20>196.20', '0.010', 'mg/L', ''),
-        ('14', 'Fentanyl', '2.125', '794659', '337.20>188.20', '4.852', 'ng/mL', ''),
-        ('16', 'Alprazolam', '2.323', '166212', '309.20>281.20', '0.011', 'mg/L', '')
-    ])
-]
+#     controls_ISTD = [
+# [
+#         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
+#         ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
+#         ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
+#         ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
+#         ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
+#         ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
+#         ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
+#         ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
+#         ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
+#     ],[
+#         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
+#         ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
+#         ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
+#         ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
+#         ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
+#         ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
+#         ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
+#         ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
+#         ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
+#     ],[
+#         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
+#         ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
+#         ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
+#         ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
+#         ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
+#         ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
+#         ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
+#         ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
+#         ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
+#     ],[
+#         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),
+#         ('1', 'Morphine-D3', '0.412', '1600408', '289.20>165.20', '', '', ''),
+#         ('3', 'Codeine-D3', '0.945', '1295371', '303.20>165.20', '', '', ''),
+#         ('5', '6-Acetylmorphine-D3', '1.102', '853868', '331.20>165.20', '', '', ''),
+#         ('7', 'Benzoylecgonine-D3', '1.555', '1781774', '293.20>171.20', '', '', ''),
+#         ('9', 'Cocaine-D3', '1.892', '2836682', '307.20>185.20', '', '', ''),
+#         ('11', 'Cocaethylene-D3', '2.026', '2480191', '321.20>199.20', '', '', ''),
+#         ('13', 'Fentanyl-D5', '2.122', '2008895', '342.20>188.20', '', '', ''),
+#         ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
+#     ],
+#     ]
+#     controls = [
+#     sample_sorter.Sample('LOW CTL 1_0', r"G:/", 'LOW CTL 1', None, None, 
+# [    
+#         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', 'Conc.', 'Unit', 'Mode'),
+#         ('2', 'Morphine', '0.413', '314808', '286.20>165.20', '0.017', 'mg/L', ''),
+#         ('4', 'Codeine', '0.956', '224105', '300.20>165.20', '0.019', 'mg/L', ''),
+#         ('6', '6-Acetylmorphine', '1.107', '152560', '328.20>165.20', '1.875', 'ng/mL', ''),
+#         ('8', 'Benzoylecgonine', '1.554', '298989', '290.20>168.20', '0.079', 'mg/L', ''),
+#         ('10', 'Cocaine', '1.888', '482118', '304.20>182.20', '0.020', 'mg/L', ''),
+#         ('12', 'Cocaethylene', '2.020', '509149', '318.20>196.20', '0.021', 'mg/L', ''),
+#         ('14', 'Fentanyl', '2.118', '957656', '337.20>188.20', '5.533', 'ng/mL', ''),
+#         ('16', 'Alprazolam', '2.316', '328786', '309.20>281.20', '0.020', 'mg/L', '')
+#     ]),
+#     sample_sorter.Sample('HIGH CTL 1_0', r"G:/", 'HIGH CTL 1', None, None, 
+# [
+#         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', 'Conc.', 'Unit', 'Mode'),
+#         ('2', 'Morphine', '0.415', '161400', '286.20>165.20', '0.008', 'mg/L', ''),
+#         ('4', 'Codeine', '0.955', '135171', '300.20>165.20', '0.009', 'mg/L', ''),
+#         ('6', '6-Acetylmorphine', '1.108', '86409', '328.20>165.20', '0.910', 'ng/mL', ''),
+#         ('8', 'Benzoylecgonine', '1.559', '147846', '290.20>168.20', '0.039', 'mg/L', ''),
+#         ('10', 'Cocaine', '1.894', '244909', '304.20>182.20', '0.010', 'mg/L', ''),
+#         ('12', 'Cocaethylene', '2.027', '233458', '318.20>196.20', '0.010', 'mg/L', ''),
+#         ('14', 'Fentanyl', '2.125', '794659', '337.20>188.20', '4.852', 'ng/mL', ''),
+#         ('16', 'Alprazolam', '2.323', '166212', '309.20>281.20', '0.011', 'mg/L', '')
+#     ])
+# ]
     batch = 111
     method = 'QTABUSE'
     path = r"C:\Users\e314883\Desktop\locked_git_repo\12786"
-    output_LJ(controls, [], batch, path)
+    #output_LJ(controls, [], batch, path)
     #ISAR_fill(controls_ISTD, batch, method)

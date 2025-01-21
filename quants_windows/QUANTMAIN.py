@@ -33,7 +33,7 @@ ascii_art = """
  
 (((((((QUANTS -- PRELIM TESTING))))))) 
 
-Version 1.07a - 01/16/2025
+Version 1.08 - 01/21/2025
 """
 
 def main(batch, method):
@@ -113,14 +113,14 @@ def main(batch, method):
             
         if len(serum_controls) >= 4:
             print("getting serum ISAR")
-            searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
-            filler.ISAR_fill(controls, batch, output_path)
+            output_path_s = searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
+            filler.ISAR_fill(controls, batch, output_path_s)
     except Exception as e:
         print(f"--error-- unable to retrieve/fill ISAR | {e}")
 
     try:
         filler.output_LJ(controls, serum_controls, batch, output_dir)
-
+        print("LJ excel sheet successfully created!")
     except Exception as e:
         print(f"--error-- unable to fill LJ | {e}")
 

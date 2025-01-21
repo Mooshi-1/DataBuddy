@@ -6,30 +6,3 @@ ctl_set()
 calculate 50-200% range for ISAR
 check cases against ISAR
 advanced functionality
-
-export to csv
-export to fillable pdf
-
-import pandas or csv to output excel sheet
-openpyxl to output to specific cells
-
-
-add serum QC.TYPE
-create new list for serums, shooter, neg, controls
-add after bloods for batch pack but before sequence
-acetaminophen runs sep serum curve
-
-test date on batch pack
-
-exclude dilution controls for LJ printout
-(if len controls < 4)
-no ISAR for MSA batch
-
-joe emailed ISAR sheet and template for LJ
-figure out how to zip(area, form)
-
-
-Morphine: blood
-date MM/DD/YY, low control conc, high control conc
-
-codeine: blood, etc
