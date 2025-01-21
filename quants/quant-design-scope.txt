@@ -27,3 +27,9 @@ no ISAR for MSA batch
 
 joe emailed ISAR sheet and template for LJ
 figure out how to zip(area, form)
+
+
+Morphine: blood
+date MM/DD/YY, low control conc, high control conc
+
+codeine: blood, etc

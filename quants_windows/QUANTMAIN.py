@@ -114,10 +114,15 @@ def main(batch, method):
         if len(serum_controls) >= 4:
             print("getting serum ISAR")
             searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
-            filler.ISAR_fill(controls,batch)
+            filler.ISAR_fill(controls, batch, output_path)
     except Exception as e:
-        print(f"unable to retrieve/fill ISAR | {e}")
+        print(f"--error-- unable to retrieve/fill ISAR | {e}")
 
+    try:
+        filler.output_LJ(controls, serum_controls, batch, output_dir)
+
+    except Exception as e:
+        print(f"--error-- unable to fill LJ | {e}")
 
     #send case-list to binder, bind duplicates -- return list of singles
     leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)

@@ -1,4 +1,12 @@
 from PyPDFForm import FormWrapper # type: ignore # pypdfform
+import time
+import pandas # type: ignore # pandas
+import os
+
+#remove after
+import sample_sorter
+import aux_func
+import shimadzu_init
 
 def ISAR_fill(controls, batch, path):
     low1 = controls[0]
@@ -55,8 +63,70 @@ def ISAR_fill(controls, batch, path):
     # #don't forget about failed cases/analytes field
     #send ISAR results to txt or csv file
 
-def output_LJ(controls, batch, path):
-    pass
+def output_LJ(controls, serum_controls, batch, path):
+    analyte_dataframes = {}
+
+    single_control = controls[0]
+
+    def get_indexes(single_control):
+        for tuples in single_control.results_analyte:
+            return tuples.index('Conc.'), tuples.index('Name')
+
+    conc_index, name_index = get_indexes(single_control)   
+    
+    for i in range(0, len(controls), 2):
+        low_control = controls[i]
+        high_control = controls[i+1]
+
+        for low_result, high_result in zip(low_control.results_analyte[1:], high_control.results_analyte[1:]):
+            analyte_name = low_result[name_index]
+            low_conc_value = low_result[conc_index]
+            high_conc_value = high_result[conc_index]
+
+            if analyte_name not in analyte_dataframes:
+                analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
+                    "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
+
+            analyte_dataframes[analyte_name] = pandas.concat(
+                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": batch,
+                                                                    "CTL Low Conc.": [low_conc_value], 
+                                                                    "CTL High Conc.": [high_conc_value],
+                                                                    "Matrix": "Blood"
+                                                                    })], ignore_index=True
+            )
+
+    for i in range(0, len(serum_controls), 2):
+        low_serum_control = serum_controls[i]
+        high_serum_control = serum_controls[i+1]
+
+        for low_result_serum, high_result_serum in zip(low_serum_control.results_analyte[1:], high_serum_control.results_analyte[1:]):
+            analyte_name = low_result_serum[name_index]
+            low_conc_value = low_result_serum[conc_index]
+            high_conc_value = high_result_serum[conc_index]
+
+            if analyte_name not in analyte_dataframes:
+                analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
+                    "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
+
+            analyte_dataframes[analyte_name] = pandas.concat(
+                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": batch,
+                                                                    "CTL Low Conc.": [low_conc_value], 
+                                                                    "CTL High Conc.": [high_conc_value],
+                                                                    "Matrix": "Serum"
+                                                                    })], ignore_index=True
+            )
+
+    output_path = os.path.join(path, "LJ.xlsx")
+
+    with pandas.ExcelWriter(output_path, engine='openpyxl') as writer:
+        for analyte, df in analyte_dataframes.items():
+            df.to_excel(writer, sheet_name=analyte, index=False)
+
+
+        # formatted_date = time.strftime("%m%d%y", time.localtime())
+        # output_path = os.path.join(output_dir, f"{name}_{batch}_{formatted_date}.pdf")
+        # doc1.save(output_path)
+        # print(f"completed binding Batch Pack - {name}_{batch}_{formatted_date}")
 
 
 if __name__ == '__main__':
@@ -103,9 +173,34 @@ if __name__ == '__main__':
         ('15', 'Alprazolam-D5', '2.319', '2090488', '314.20>286.20', '', '', '')
     ],
     ]
-    controls_analyte = [
-
-    ]
+    controls = [
+    sample_sorter.Sample('LOW CTL 1_0', r"G:/", 'LOW CTL 1', None, None, 
+[    
+        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', 'Conc.', 'Unit', 'Mode'),
+        ('2', 'Morphine', '0.413', '314808', '286.20>165.20', '0.017', 'mg/L', ''),
+        ('4', 'Codeine', '0.956', '224105', '300.20>165.20', '0.019', 'mg/L', ''),
+        ('6', '6-Acetylmorphine', '1.107', '152560', '328.20>165.20', '1.875', 'ng/mL', ''),
+        ('8', 'Benzoylecgonine', '1.554', '298989', '290.20>168.20', '0.079', 'mg/L', ''),
+        ('10', 'Cocaine', '1.888', '482118', '304.20>182.20', '0.020', 'mg/L', ''),
+        ('12', 'Cocaethylene', '2.020', '509149', '318.20>196.20', '0.021', 'mg/L', ''),
+        ('14', 'Fentanyl', '2.118', '957656', '337.20>188.20', '5.533', 'ng/mL', ''),
+        ('16', 'Alprazolam', '2.316', '328786', '309.20>281.20', '0.020', 'mg/L', '')
+    ]),
+    sample_sorter.Sample('HIGH CTL 1_0', r"G:/", 'HIGH CTL 1', None, None, 
+[
+        ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', 'Conc.', 'Unit', 'Mode'),
+        ('2', 'Morphine', '0.415', '161400', '286.20>165.20', '0.008', 'mg/L', ''),
+        ('4', 'Codeine', '0.955', '135171', '300.20>165.20', '0.009', 'mg/L', ''),
+        ('6', '6-Acetylmorphine', '1.108', '86409', '328.20>165.20', '0.910', 'ng/mL', ''),
+        ('8', 'Benzoylecgonine', '1.559', '147846', '290.20>168.20', '0.039', 'mg/L', ''),
+        ('10', 'Cocaine', '1.894', '244909', '304.20>182.20', '0.010', 'mg/L', ''),
+        ('12', 'Cocaethylene', '2.027', '233458', '318.20>196.20', '0.010', 'mg/L', ''),
+        ('14', 'Fentanyl', '2.125', '794659', '337.20>188.20', '4.852', 'ng/mL', ''),
+        ('16', 'Alprazolam', '2.323', '166212', '309.20>281.20', '0.011', 'mg/L', '')
+    ])
+]
     batch = 111
     method = 'QTABUSE'
+    path = r"C:\Users\e314883\Desktop\locked_git_repo\12786"
+    output_LJ(controls, [], batch, path)
     #ISAR_fill(controls_ISTD, batch, method)
