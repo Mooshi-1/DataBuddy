@@ -6,3 +6,5 @@ ctl_set()
 calculate 50-200% range for ISAR
 check cases against ISAR
 advanced functionality
+
+pyinstaller --hidden-import=openpyxl.cell._writer quants_windows/QUANTMAIN.py
