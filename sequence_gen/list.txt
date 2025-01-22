@@ -1,0 +1,40 @@
+init sequence class
+read form
+
+dictionary of sample types
+
+
+bracket every 20 cases
+
+inputs
+vial start?
+reinject?
+
+error handling
+if key/value pair does not exist
+prompt to create
+
+method specifics
+gen - vial naming convention
+vol - tray1/tray2
+z - need datafile name
+scions, shimadzu's, should be fine
+lcmsms - tray1/tray2/tray3
+set max vials for all methods?
+
+
+data structure
+index = row labels
+columns = column labels
+"sample":pd.series([...], index=[1, 2, 3 ...])
+"vial"
+
+ndarray/lists
+d = {"one": [1.0, 2.0, 3.0, 4.0], "two": [4.0, 3.0, 2.0, 1.0]}
+pd.DataFrame(d)
+
+
+send complete sequence to 
+G:\LABORATORY OPERATIONS\06 - LABORATORY FORMS\LF-23 INSTRUMENT CHECKLISTS
+appropriate method 
+make folder with appropriate date

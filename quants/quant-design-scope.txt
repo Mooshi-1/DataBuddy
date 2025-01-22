@@ -7,4 +7,17 @@ calculate 50-200% range for ISAR
 check cases against ISAR
 advanced functionality
 
+use nuitka to package?
+
+add curve values to LJ printout
+batch #, r2 value, slope(mx), y-intercept(b), analyst
+or
+batch#, r2 value, quadratic coefficient (ax2), linear coefficient (bx), constant (c), analyst
+
+
+add MSA worksheet/excel fill-in
+rows = L0 - L5
+columns = istd peak area, analyte peak area
+
+
 pyinstaller --hidden-import=openpyxl.cell._writer quants_windows/QUANTMAIN.py

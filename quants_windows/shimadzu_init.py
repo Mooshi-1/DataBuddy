@@ -6,7 +6,6 @@ Created on Tue Dec 31 16:20:55 2024
 """
 import fitz  # type: ignore # PyMuPDF
 import os
-import re
 
 from aux_func import table_converter
 from sample_sorter import QCTYPE, Sample
