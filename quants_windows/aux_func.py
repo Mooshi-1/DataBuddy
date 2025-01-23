@@ -217,6 +217,13 @@ def get_ISAR(method, TP_directory):
                 source_path = os.path.join(root,file)
                 return source_path
 
+def get_MSA(LF_directory):
+    for files in os.listdir(LF_directory):
+        if 'LF-10' in files:
+            source_path = os.path.join(LF_directory, files)
+            return source_path
+    print('LF-10 not found -- cannot fill MSA')
+    return
 
 
 

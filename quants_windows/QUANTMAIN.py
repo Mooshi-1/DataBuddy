@@ -136,9 +136,12 @@ def main(batch, method):
     if len(MOA_cases) > 0:
         sliced_MOA = aux_func.MOA_slicer(MOA_cases)
         for case_list in sliced_MOA:
-
-            #create excel file here using case_list
-
+            positive_analytes = filler.interpret_MSA(case_list)
+            for analyte in positive_analytes:
+                MSA_path = searcher.copy_file(aux_func.get_MSA(LF_directory), output_dir, f"{case_list[0].base}_{analyte}")
+                #create excel file here using case_list
+                filler.fill_MSA(case_list, batch, MSA_path, analyte)
+                
             aux_func.list_binder(case_list, output_dir, batch)
 
     #SR case bind must come after compare_and_bind_duplicates otherwise will have name conflict
