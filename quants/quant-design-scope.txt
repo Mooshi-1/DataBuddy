@@ -9,6 +9,7 @@ advanced functionality
 
 use nuitka to package?
 
+add prompt to get extraction date
 add curve values to LJ printout
 batch #, r2 value, slope(mx), y-intercept(b), analyst
 or

@@ -13,7 +13,6 @@ Created on Thurs 01/09/2025
 #use pyinstaller or py2exe libs to create .exe file
 
 import sys
-import os
 
 import searcher
 import shimadzu_init
@@ -40,6 +39,7 @@ def main(batch, method):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
+    LF_directory = r'G:\LABORATORY OPERATIONS\06 - LABORATORY FORMS'
     TP_directory = r'G:\LABORATORY OPERATIONS\07 - TESTING PROCEDURES'
     data_dir = r"G:\PDF DATA"
     print(f"Starting in: {data_dir}")
@@ -118,6 +118,7 @@ def main(batch, method):
     except Exception as e:
         print(f"--error-- unable to retrieve/fill ISAR | {e}")
 
+    #LJ output
     try:
         filler.output_LJ(controls, serum_controls, batch, output_dir)
         print("LJ excel sheet successfully created!")
@@ -127,20 +128,20 @@ def main(batch, method):
     #send case-list to binder, bind duplicates -- return list of singles
     leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
 
-    #send singles to bind
+    #singles handler
     if len(leftovers) > 0:
         aux_func.move_singles(leftovers, output_dir, batch)
-    #split MOA cases and bind
+   
+    #MSA handler
     if len(MOA_cases) > 0:
-        #print(len(MOA_cases))
         sliced_MOA = aux_func.MOA_slicer(MOA_cases)
         for case_list in sliced_MOA:
-        #     for cases in case_list:
-        #         print(cases)
+
+            #create excel file here using case_list
+
             aux_func.list_binder(case_list, output_dir, batch)
 
-    #unable to pass dynamic name parameter through  here... make sure this runs after compare_and_bind_duplicates unless changed
-    #otherwise likely will have an issue where compare_and_bind and list_binder will output the same name here 
+    #SR case bind must come after compare_and_bind_duplicates otherwise will have name conflict
     if len(SR_cases) > 0:
         sliced_SR = aux_func.find_sr(cases, SR_cases)
         for case_list in sliced_SR:
@@ -168,7 +169,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         batch = input("Enter the batch number: ")
         method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ")
-        input("Reminder: Unable to handle reinjects. Remove other forms/ICARS from main directories. Press Enter to continue...")
+        input("Reminder: Unable to handle reinjects. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]
