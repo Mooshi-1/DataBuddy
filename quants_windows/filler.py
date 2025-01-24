@@ -1,18 +1,17 @@
 from PyPDFForm import FormWrapper # type: ignore # pypdfform
-#import time
+import time
 import pandas # type: ignore # pandas
 import os
 import warnings
-from openpyxl import load_workbook # type: ignore # openpyxl
-from openpyxl.worksheet.datavalidation import DataValidation # type: ignore # openpyxl
+import openpyxl # type: ignore # openpyxl
 import xlsxwriter
 import win32com.client as win32
 
 #testing imports
-import sample_sorter
-import aux_func
-import shimadzu_init
-import searcher
+# import sample_sorter
+# import aux_func
+# import shimadzu_init
+# import searcher
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -71,7 +70,85 @@ def ISAR_fill(controls, batch, path):
     # #don't forget about failed cases/analytes field
     #send ISAR results to txt or csv file
 
-def output_LJ(controls, serum_controls, batch, path):
+def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
+    analyte_dataframes = {}
+
+    single_control = controls[0]
+    def get_indexes(single_control):
+        for tuples in single_control.results_analyte:
+            return tuples.index('Conc.'), tuples.index('Name')
+
+    conc_index, name_index = get_indexes(single_control)   
+    
+    for i in range(0, len(controls), 2):
+        low_control = controls[i]
+        high_control = controls[i+1]
+
+        for low_result, high_result in zip(low_control.results_analyte[1:], high_control.results_analyte[1:]):
+            analyte_name = low_result[name_index]
+            low_conc_value = float(low_result[conc_index])
+            high_conc_value = float(high_result[conc_index])
+
+            if analyte_name not in analyte_dataframes:
+                analyte_dataframes[analyte_name] = []
+
+            analyte_dataframes[analyte_name].append({"Batch": f"{extraction_date} - {batch}",
+                                                     "CTL Low Conc.": low_conc_value, 
+                                                     "CTL High Conc.": high_conc_value,
+                                                     "Matrix": "Blood",
+                                                     "Analyte": analyte_name})
+    for i in range(0, len(serum_controls), 2):
+        low_serum_control = serum_controls[i]
+        high_serum_control = serum_controls[i+1]
+
+        for low_result_serum, high_result_serum in zip(low_serum_control.results_analyte[1:], high_serum_control.results_analyte[1:]):
+            analyte_name = low_result_serum[name_index]
+            low_conc_value = float(low_result_serum[conc_index])
+            high_conc_value = float(high_result_serum[conc_index])
+
+            if analyte_name not in analyte_dataframes:
+                analyte_dataframes[analyte_name] = []
+
+            analyte_dataframes[analyte_name].append({"Batch": f"{extraction_date} - {batch}",
+                                                     "CTL Low Conc.": low_conc_value, 
+                                                     "CTL High Conc.": high_conc_value,
+                                                     "Matrix": "Serum",
+                                                     "Analyte": analyte_name})
+                                  
+    # Combine all analyte DataFrames into one
+    combined_data = []
+    for analyte_name, data in analyte_dataframes.items():
+        combined_data.extend(data)
+    
+    combined_df = pandas.DataFrame(combined_data)
+
+    output_path = os.path.join(path, "LJ.xlsx")
+
+    with pandas.ExcelWriter(output_path, engine='openpyxl') as writer:
+        combined_df.to_excel(writer, sheet_name="All Analytes", index=False)
+
+    workbook = openpyxl.load_workbook(output_path)
+    sheet = workbook["All Analytes"]
+
+    column_widths = {
+        "A": 18,
+        "B": 18,
+        "C": 18,
+        "D": 18,
+        "E": 18
+    }
+
+    for col, width in column_widths.items():
+        sheet.column_dimensions[col].width = width
+
+    for cell in sheet["B"]:
+        cell.number_format = '0.000'
+    for cell in sheet["C"]:
+        cell.number_format = '0.000'
+
+    workbook.save(output_path)
+
+def output_LJ(controls, serum_controls, batch, path, extraction_date):
     analyte_dataframes = {}
 
     single_control = controls[0]
@@ -96,7 +173,7 @@ def output_LJ(controls, serum_controls, batch, path):
                     "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
 
             analyte_dataframes[analyte_name] = pandas.concat(
-                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": batch,
+                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": f"{extraction_date} - {batch}",
                                                                     "CTL Low Conc.": [low_conc_value], 
                                                                     "CTL High Conc.": [high_conc_value],
                                                                     "Matrix": "Blood"
@@ -117,7 +194,7 @@ def output_LJ(controls, serum_controls, batch, path):
                     "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
 
             analyte_dataframes[analyte_name] = pandas.concat(
-                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": batch,
+                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": f"{extraction_date} - {batch}",
                                                                     "CTL Low Conc.": [low_conc_value], 
                                                                     "CTL High Conc.": [high_conc_value],
                                                                     "Matrix": "Serum"
@@ -140,18 +217,18 @@ def interpret_MSA(case_list):
     #find out how many analytes there are and send to fill_MSA appropriately
     #return how many copies of excel to create and the name for each one
     base_pdf = case_list[0]
-    print(len(base_pdf.results_analyte))
+    #print(len(base_pdf.results_analyte))
 
     positive_analytes = []
     if len(base_pdf.results_analyte) > 1:
         for tuples in base_pdf.results_analyte[1:]:
             positive_analytes.append(tuples[1])
 
-    print(positive_analytes)
+    #print(positive_analytes)
 
     return positive_analytes
 
-def fill_MSA(case_list, batch, MSA_path, analyte):
+def fill_MSA(case_list, batch, MSA_path, analyte, method):
 
     base_pdf = case_list[0]
     def get_indexes(base_pdf):
@@ -163,39 +240,51 @@ def fill_MSA(case_list, batch, MSA_path, analyte):
     analyte_peak_area = []
 
     for pdf in case_list:
-        print(analyte)
+        #print(analyte)
         for tuples in pdf.results_ISTD[1:]:
             if tuples[name_index].startswith(analyte):
                 ISTD_peak_area.append(float(tuples[area_index]))
-                print('found area ISTD')
+                #print('found area ISTD')
         for tuples in pdf.results_analyte[1:]:
             if analyte in tuples:
                 analyte_peak_area.append(float(tuples[area_index]))
 
-    print(ISTD_peak_area)
-    print(analyte_peak_area)
-    print(MSA_path)
+    # print(ISTD_peak_area)
+    # print(analyte_peak_area)
+    # print(MSA_path)
 
     d = {"ISTD Peak Area": ISTD_peak_area, "Analyte Peak Area": analyte_peak_area}
     df = pandas.DataFrame(d)
 
     try:
-        #test_path = r'G:\PDF DATA\2025\1\999\CASE DATA\LF-69420.xlsx'
+        print(f"filling in your MSA for {analyte}...")
         excel = win32.Dispatch('Excel.Application')
-        print(f"initialized {excel}")
+        print(f"opened {excel}")
         workbook = excel.Workbooks.Open(MSA_path)
-        print(f"initialized {workbook}")
 
-        #sheet = workbook.Sheets('LF-10 MSA Worksheet')
+        sheet = workbook.Sheets('LF-10 MSA Worksheet')
 
-        # startrow = 14
-        # startcol = 3
+        parts = base_pdf.base.split('_')
+        case_number = parts[0]
+        specimen_type = parts[1]
+        dilution = parts[2].replace('X','')
+        formatted_date = time.strftime("%m/%d", time.localtime())
 
-        # # Write DataFrame to the specified location
-        # for i, row in df.iterrows():
-        #     for j, value in enumerate(row):
-        #         cell = sheet.Cells(startrow + i, startcol + j)
-        #         cell.Value = value
+        sheet.Range('F4').Value = method
+        sheet.Range('C4').Value = case_number
+        sheet.Range('C6').Value = batch
+        sheet.Range('F8').Value = analyte
+        sheet.Range('C10').Value = specimen_type
+        sheet.Range('F12').Value = dilution
+        sheet.Range('C8').Value = formatted_date
+
+        # Write DataFrame to the specified location
+        startrow = 15
+        startcol = 4
+        for i, row in df.iterrows():
+            for j, value in enumerate(row):
+                cell = sheet.Cells(startrow + i, startcol + j)
+                cell.Value = value
 
 
         workbook.Save()
@@ -204,32 +293,6 @@ def fill_MSA(case_list, batch, MSA_path, analyte):
         # #
         # # with pandas.ExcelWriter(MSA_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
         # #     df.to_excel(writer, sheet_name='Data', header=False, startrow=14, startcol=3, index=False)
-        # workbook = load_workbook(MSA_path, keep_vba=True)
-        # sheet1 = workbook['LF-10 MSA Worksheet']
-        # sheet2 = workbook['LF-11 TA Worksheet']
-        # sheet3 = workbook['TP Master List']
-        # # #sheet = workbook.create_sheet('data')
-        # for dv in sheet1.data_validations.dataValidation:
-        #     print(f"DataValidation: {dv.sqref}, Type: {dv.type}, Formula1: {dv.formula1}")
-        # for dv in sheet2.data_validations.dataValidation:
-        #     print(f"DataValidation: {dv.sqref}, Type: {dv.type}, Formula1: {dv.formula1}")
-        # for dv in sheet3.data_validations.dataValidation:
-        #     print(f"DataValidation: {dv.sqref}, Type: {dv.type}, Formula1: {dv.formula1}")                        
-
-        # #Define the starting row and column
-        # startrow = 14
-        # startcol = 3
-
-        # # Write DataFrame to the specified location
-        # for i, row in df.iterrows():
-        #     for j, value in enumerate(row):
-        #         cell = sheet1.cell(row=startrow + i + 1, column=startcol + j + 1)
-        #         cell.value = value
-
-        # #Save the workbook
-
-        # #MSA_path_xlsm = MSA_path.replace('.xlsx','.xlsm')
-        # workbook.save(MSA_path)
 
     except Exception as e:
         print(f"error | {e}")

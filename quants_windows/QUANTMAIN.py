@@ -35,7 +35,7 @@ ascii_art = """
 Version 1.08 - 01/21/2025
 """
 
-def main(batch, method):
+def main(batch, method, extraction_date):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
@@ -120,7 +120,7 @@ def main(batch, method):
 
     #LJ output
     try:
-        filler.output_LJ(controls, serum_controls, batch, output_dir)
+        filler.output_LJ_2(controls, serum_controls, batch, output_dir, extraction_date)
         print("LJ excel sheet successfully created!")
     except Exception as e:
         print(f"--error-- unable to fill LJ | {e}")
@@ -140,7 +140,7 @@ def main(batch, method):
             for analyte in positive_analytes:
                 MSA_path = searcher.copy_excel(aux_func.get_MSA(LF_directory), output_dir, f"{case_list[0].base}_{analyte}")
                 #create excel file here using case_list
-                filler.fill_MSA(case_list, batch, MSA_path, analyte)
+                filler.fill_MSA(case_list, batch, MSA_path, analyte, method)
 
             aux_func.list_binder(case_list, output_dir, batch)
 
@@ -169,16 +169,18 @@ def main(batch, method):
 if __name__ == "__main__":
     print(ascii_art)
     # Check if the required arguments are passed via sys.argv
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         batch = input("Enter the batch number: ")
         method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ")
-        input("Reminder: Unable to handle reinjects. Press Enter to continue...")
+        extraction_date = input("Enter extraction date with slashes in MM/DD/YY format: ")
+        input("WARNING: Make sure that Excel on your computer is closed. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]
         method = sys.argv[2]
+        extraction_date = sys.argv[3]
 
     # Call the main function with the provided or inputted arguments
-    main(batch, method)
+    main(batch, method, extraction_date)
 
     input("Press Enter to exit...")
