@@ -4,6 +4,7 @@ import pandas # type: ignore # pandas
 import os
 import warnings
 from openpyxl import load_workbook # type: ignore # openpyxl
+import xlsxwriter
 
 #testing imports
 import sample_sorter
@@ -149,38 +150,55 @@ def interpret_MSA(case_list):
     return positive_analytes
 
 def fill_MSA(case_list, batch, MSA_path, analyte):
-# need multiple MSA's if multiple analytes
 
     base_pdf = case_list[0]
     def get_indexes(base_pdf):
         for tuples in base_pdf.results_analyte:
-            return tuples.index('Area')
-    area_index = get_indexes(base_pdf)  
+            return tuples.index('Area'), tuples.index('Name')
+    area_index, name_index = get_indexes(base_pdf)  
     
     ISTD_peak_area = []
     analyte_peak_area = []
 
     for pdf in case_list:
+        print(analyte)
         for tuples in pdf.results_ISTD[1:]:
-            if analyte in tuples:
+            if tuples[name_index].startswith(analyte):
                 ISTD_peak_area.append(tuples[area_index])
                 print('found area ISTD')
         for tuples in pdf.results_analyte[1:]:
             if analyte in tuples:
                 analyte_peak_area.append(tuples[area_index])
-                print('found area analyte')
 
     print(ISTD_peak_area)
     print(analyte_peak_area)
+    print(MSA_path)
 
     d = {"ISTD Peak Area": ISTD_peak_area, "Analyte Peak Area": analyte_peak_area}
     df = pandas.DataFrame(d)
 
+    try:
+        # with pandas.ExcelWriter(MSA_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+        #     df.to_excel(writer, sheet_name='LF-10 MSA Worksheet', startrow=13, startcol=3, index=False)
+        workbook = load_workbook(MSA_path)
+        sheet = workbook['LF-10 MSA Worksheet']
 
-    with pandas.ExcelWriter(MSA_path, engine='openpyxl') as writer:
-        writer.book = load_workbook(MSA_path)
-        df.to_excel(writer, sheet_name='LF-10 MSA Worksheet', startrow=13, startcol=3, index=False)
+        # Define the starting row and column
+        startrow = 14
+        startcol = 3
 
+        # Write DataFrame to the specified location
+        for i, row in df.iterrows():
+            for j, value in enumerate(row):
+                cell = sheet.cell(row=startrow + i + 1, column=startcol + j + 1)
+                cell.value = value
+
+        # Save the workbook
+        workbook.template = True
+        workbook.save(MSA_path)
+
+    except Exception as e:
+        print(e)
 
 #import pandas as pd
 #use to fill dataframe

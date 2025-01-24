@@ -221,6 +221,7 @@ def get_MSA(LF_directory):
     for files in os.listdir(LF_directory):
         if 'LF-10' in files:
             source_path = os.path.join(LF_directory, files)
+            print(source_path)
             return source_path
     print('LF-10 not found -- cannot fill MSA')
     return
