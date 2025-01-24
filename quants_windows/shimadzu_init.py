@@ -24,8 +24,6 @@ def LC_quant_init(batch_dir):
             lines = text.split('\n')
             #print(lines)
             case_number = None
-            #quant_method = lines[3]
-            # Currently storing "ABUSE PANEL QUANTITATION BY LC-MS/MS"
             #init curves count to handle multiple curves
             curves = {}
             curve_count = 0
@@ -38,9 +36,30 @@ def LC_quant_init(batch_dir):
                     doc.close()
                     continue
                 if "Calibration Curve Report" in lines:
+                    tuples_list = []
+                    #get LJ info from all pages of curve report
+                    for page_num in range(len(doc)):
+                        page = doc[page_num]
+                        text = page.get_text()
+                        lines = text.split('\n')
+                        for index, line in enumerate(lines):
+                            if line.startswith('Analyte:'):
+                                analyte_index = index
+                                analyte = line.split(': ')[1]
+                                parts = lines[analyte_index + 1].split()
+                                r_squared = float(parts[0].split('=')[1])
+                                equation = parts[1]
+                                fit_type_line = lines[analyte_index + 2]
+                                fit_type = fit_type_line.split('Fit Type: ')[1].split()[0]
+                                weight = fit_type_line.split('Weight: ')[1]
+                                # Create a tuple and add it to the list
+                                curve_tuple = (analyte, r_squared, equation, fit_type, weight)
+                                tuples_list.append(curve_tuple)
+                    print(tuples_list)
+
                     #uses dictionary key to ensure unique object name
                     curve_key = f"curve_{curve_count}"
-                    curves[curve_key] = Sample(curve_key, pdf_path, "curve", {QCTYPE.CUR}, None, None)
+                    curves[curve_key] = Sample(curve_key, pdf_path, "curve", {QCTYPE.CUR}, None, tuples_list)
                     print("found curve")
                     samples.append(curves[curve_key])
                     curve_count += 1

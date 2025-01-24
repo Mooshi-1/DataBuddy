@@ -148,6 +148,7 @@ def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
 
     workbook.save(output_path)
 
+#currently not in use -- will use if JK/MF want analytes on separate tabs again
 def output_LJ(controls, serum_controls, batch, path, extraction_date):
     analyte_dataframes = {}
 
@@ -297,34 +298,8 @@ def fill_MSA(case_list, batch, MSA_path, analyte, method):
     except Exception as e:
         print(f"error | {e}")
 
-#import pandas as pd
-#use to fill dataframe
-# # Load your existing Excel file
-# df = pd.read_excel('example.xlsx')
-
-# # Make changes to specific cells
-# df.at[2, 'Column_Name'] = 'New_Value'  # Modify cell in row 3, column 'Column_Name'
-
-# # Save the modified DataFrame back to Excel
-# df.to_excel('example_modified.xlsx', index=False)
-
-
-
-#use to fill single cells 
-# from openpyxl import load_workbook
-
-# # Load your existing Excel workbook
-# wb = load_workbook('example.xlsx')
-
-# # Select the active worksheet
-# ws = wb.active
-
-# # Modify a specific cell
-# ws['B3'] = 'New_Value'  # Modify cell B3
-
-# # Save the modified workbook
-# wb.save('example_modified.xlsx')
-
+def append_LJ_curve():
+    pass
 
 if __name__ == '__main__':
 

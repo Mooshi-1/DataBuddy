@@ -173,7 +173,7 @@ if __name__ == "__main__":
         batch = input("Enter the batch number: ")
         method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ")
         extraction_date = input("Enter extraction date with slashes in MM/DD/YY format: ")
-        input("WARNING: Make sure that Excel on your computer is closed. Press Enter to continue...")
+        input("WARNING: Make sure that Excel on your computer is closed. Don't forget to print your curve. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]
