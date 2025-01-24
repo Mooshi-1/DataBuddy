@@ -4,7 +4,9 @@ import pandas # type: ignore # pandas
 import os
 import warnings
 from openpyxl import load_workbook # type: ignore # openpyxl
+from openpyxl.worksheet.datavalidation import DataValidation # type: ignore # openpyxl
 import xlsxwriter
+import win32com.client as win32
 
 #testing imports
 import sample_sorter
@@ -164,11 +166,11 @@ def fill_MSA(case_list, batch, MSA_path, analyte):
         print(analyte)
         for tuples in pdf.results_ISTD[1:]:
             if tuples[name_index].startswith(analyte):
-                ISTD_peak_area.append(tuples[area_index])
+                ISTD_peak_area.append(float(tuples[area_index]))
                 print('found area ISTD')
         for tuples in pdf.results_analyte[1:]:
             if analyte in tuples:
-                analyte_peak_area.append(tuples[area_index])
+                analyte_peak_area.append(float(tuples[area_index]))
 
     print(ISTD_peak_area)
     print(analyte_peak_area)
@@ -178,27 +180,59 @@ def fill_MSA(case_list, batch, MSA_path, analyte):
     df = pandas.DataFrame(d)
 
     try:
-        # with pandas.ExcelWriter(MSA_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-        #     df.to_excel(writer, sheet_name='LF-10 MSA Worksheet', startrow=13, startcol=3, index=False)
-        workbook = load_workbook(MSA_path)
-        sheet = workbook['LF-10 MSA Worksheet']
+        #test_path = r'G:\PDF DATA\2025\1\999\CASE DATA\LF-69420.xlsx'
+        excel = win32.Dispatch('Excel.Application')
+        print(f"initialized {excel}")
+        workbook = excel.Workbooks.Open(MSA_path)
+        print(f"initialized {workbook}")
 
-        # Define the starting row and column
-        startrow = 14
-        startcol = 3
+        #sheet = workbook.Sheets('LF-10 MSA Worksheet')
 
-        # Write DataFrame to the specified location
-        for i, row in df.iterrows():
-            for j, value in enumerate(row):
-                cell = sheet.cell(row=startrow + i + 1, column=startcol + j + 1)
-                cell.value = value
+        # startrow = 14
+        # startcol = 3
 
-        # Save the workbook
-        workbook.template = True
-        workbook.save(MSA_path)
+        # # Write DataFrame to the specified location
+        # for i, row in df.iterrows():
+        #     for j, value in enumerate(row):
+        #         cell = sheet.Cells(startrow + i, startcol + j)
+        #         cell.Value = value
+
+
+        workbook.Save()
+        workbook.Close()
+        excel.Quit()
+        # #
+        # # with pandas.ExcelWriter(MSA_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+        # #     df.to_excel(writer, sheet_name='Data', header=False, startrow=14, startcol=3, index=False)
+        # workbook = load_workbook(MSA_path, keep_vba=True)
+        # sheet1 = workbook['LF-10 MSA Worksheet']
+        # sheet2 = workbook['LF-11 TA Worksheet']
+        # sheet3 = workbook['TP Master List']
+        # # #sheet = workbook.create_sheet('data')
+        # for dv in sheet1.data_validations.dataValidation:
+        #     print(f"DataValidation: {dv.sqref}, Type: {dv.type}, Formula1: {dv.formula1}")
+        # for dv in sheet2.data_validations.dataValidation:
+        #     print(f"DataValidation: {dv.sqref}, Type: {dv.type}, Formula1: {dv.formula1}")
+        # for dv in sheet3.data_validations.dataValidation:
+        #     print(f"DataValidation: {dv.sqref}, Type: {dv.type}, Formula1: {dv.formula1}")                        
+
+        # #Define the starting row and column
+        # startrow = 14
+        # startcol = 3
+
+        # # Write DataFrame to the specified location
+        # for i, row in df.iterrows():
+        #     for j, value in enumerate(row):
+        #         cell = sheet1.cell(row=startrow + i + 1, column=startcol + j + 1)
+        #         cell.value = value
+
+        # #Save the workbook
+
+        # #MSA_path_xlsm = MSA_path.replace('.xlsx','.xlsm')
+        # workbook.save(MSA_path)
 
     except Exception as e:
-        print(e)
+        print(f"error | {e}")
 
 #import pandas as pd
 #use to fill dataframe
@@ -230,6 +264,7 @@ def fill_MSA(case_list, batch, MSA_path, analyte):
 
 
 if __name__ == '__main__':
+
     controls_ISTD = [
 [
         ('ID#', 'Name', 'Ret. Time (min)', 'Area', 'Quant Ion (m/z)', '', '', 'Mode'),

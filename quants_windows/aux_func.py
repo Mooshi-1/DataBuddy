@@ -219,7 +219,7 @@ def get_ISAR(method, TP_directory):
 
 def get_MSA(LF_directory):
     for files in os.listdir(LF_directory):
-        if 'LF-10' in files:
+        if 'LF-69420-xlsx' in files:
             source_path = os.path.join(LF_directory, files)
             print(source_path)
             return source_path
