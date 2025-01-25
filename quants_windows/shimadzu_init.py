@@ -12,6 +12,8 @@ from sample_sorter import QCTYPE, Sample
 
 def LC_quant_init(batch_dir):
     samples = [] #will hold sample objects created here
+    curves = {}
+    curve_count = 0
     # Iterate through directory defined by filepath
     for filename in os.listdir(batch_dir):
         if filename.endswith(".pdf"):
@@ -25,8 +27,7 @@ def LC_quant_init(batch_dir):
             #print(lines)
             case_number = None
             #init curves count to handle multiple curves
-            curves = {}
-            curve_count = 0
+
             try:
                 #take care of special cases
                 if " 0:Unknown " in lines:
@@ -55,14 +56,12 @@ def LC_quant_init(batch_dir):
                                 # Create a tuple and add it to the list
                                 curve_tuple = (analyte, r_squared, equation, fit_type, weight)
                                 tuples_list.append(curve_tuple)
-                    print(tuples_list)
-
                     #uses dictionary key to ensure unique object name
+                    curve_count += 1
                     curve_key = f"curve_{curve_count}"
-                    curves[curve_key] = Sample(curve_key, pdf_path, "curve", {QCTYPE.CUR}, None, tuples_list)
+                    curves[curve_key] = Sample(curve_key, pdf_path, curve_key, {QCTYPE.CUR}, None, tuples_list)
                     print("found curve")
                     samples.append(curves[curve_key])
-                    curve_count += 1
                     doc.close()
                     continue
                 # Find case number using sample name index + 1

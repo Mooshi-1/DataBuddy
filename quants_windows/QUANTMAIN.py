@@ -73,7 +73,7 @@ def main(batch, method, extraction_date):
         all_samples.extend(samples)
 
     if len(all_samples) == 0:
-        print("unable to find data -- is it in the CASE DATA and/or BATCH PACK DATA folder?")
+        print("CRITICAL ERROR - unable to find data -- is it in the CASE DATA and/or BATCH PACK DATA folder?")
 
 
     aux_func.pdf_rename(all_samples)
