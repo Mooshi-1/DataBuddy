@@ -301,6 +301,25 @@ def fill_MSA(case_list, batch, MSA_path, analyte, method):
 def append_LJ_curve():
     pass
 
+#CURRENT ORDER
+#DATE-BATCH, R2, SLOPE(MX), Y-INTERCEPT(B), ANALYST
+#DATE-BATCH, R2, QUADRATIC COEFFICIENT(AX2), LINEAR COEFFICIENT(BX), CONSTANT(C)
+
+#data held in self.results_analyte for curve
+#[('Amphetamine', 0.999334, 'y=21.561360*x-0.007798', 'Linear', '1/C^2'), 
+# ('MDA', 0.997473, 'y=10.899581*x-0.002546', 'Linear', '1/C^2'), 
+# ('Methamphetamine', 0.998033, 'y=20.923626*x-0.012007', 'Linear', '1/C^2'), 
+# ('MDMA', 0.998166, 'y=11.589379*x-0.000846', 'Linear', '1/C^2')]
+
+#[('Morphine', 0.997739, 'y=12.383094*x-0.015782', 'Linear', '1/C^2'), 
+# ('Codeine', 0.999962, 'y=10.181379*x-0.000795', 'Linear', '1/C^2'), 
+# ('6-Acetylmorphine', 0.999909, 'y=0.104735*x+0.003084', 'Linear', '1/C^2'), 
+# ('Benzoylecgonine', 0.999354, 'y=-0.044906*x^2+2.409508*x-0.009472', 'Quadratic', '1/C^2'), 
+# ('Cocaine', 0.998708, 'y=8.453121*x+0.004607', 'Linear', '1/C^2'), 
+# ('Cocaethylene', 0.999133, 'y=9.335855*x+0.009422', 'Linear', '1/C^2'), 
+# ('Fentanyl', 0.998983, 'y=0.081350*x-0.002333', 'Linear', '1/C^2'),
+#  ('Alprazolam', 0.999333, 'y=6.715849*x+0.000474', 'Linear', '1/C^2')]
+
 if __name__ == '__main__':
 
     controls_ISTD = [
