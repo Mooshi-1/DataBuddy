@@ -121,7 +121,9 @@ def main(batch, method, extraction_date):
     #LJ output
     try:
         filler.output_LJ_2(controls, serum_controls, batch, output_dir, extraction_date)
-        print("LJ excel sheet successfully created!")
+        print("LJ excel sheet successfully created! - Filled CTL data")
+        filler.append_LJ_curve(curve, batch, output_dir, extraction_date, initials)
+        print("LJ excel sheet successfully appended! - Filled Curve data")
     except Exception as e:
         print(f"--error-- unable to fill LJ | {e}")
 
@@ -169,16 +171,18 @@ def main(batch, method, extraction_date):
 if __name__ == "__main__":
     print(ascii_art)
     # Check if the required arguments are passed via sys.argv
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 5:
         batch = input("Enter the batch number: ")
-        method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ")
+        method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ").upper()
         extraction_date = input("Enter extraction date with slashes in MM/DD/YY format: ")
+        initials = input("Enter your initials: ").upper()
         input("WARNING: Make sure that Excel on your computer is closed. Don't forget to print your curve. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]
         method = sys.argv[2]
         extraction_date = sys.argv[3]
+        initials = sys.argv[4]
 
     # Call the main function with the provided or inputted arguments
     main(batch, method, extraction_date)

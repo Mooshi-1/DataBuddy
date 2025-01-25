@@ -298,27 +298,45 @@ def fill_MSA(case_list, batch, MSA_path, analyte, method):
     except Exception as e:
         print(f"error | {e}")
 
-def append_LJ_curve():
+def append_LJ_curve(curve, batch, path, extraction_date, initials):
+    #[('Amphetamine', 0.999334, 'y=21.561360*x-0.007798', 'Linear', '1/C^2'), 
+    #('Benzoylecgonine', 0.999354, 'y=-0.044906*x^2+2.409508*x-0.009472', 'Quadratic', '1/C^2')]
+    linear_columns = ['Date - Batch', 'r^2', 'Slope (MX)', 'Y-Intercept (b)', 'Analyst', 'Analyte']
+    linear_rows = []
+
+    quadratic_columns = ['Date - Batch', 'r^2', 'Quadratic Coefficient (ax^2)', 'Linear Coefficient (bx)', 'Constant (c)', 'Analyst', 'Analyte']
+    quadratic_rows = []
+    for obj in curve:
+        for tuples in obj.analyte_results:
+            if 'Linear' in tuples:
+                analyte = tuples[0]
+                r2 = float(tuples[1])
+                equation = tuples[2]
+                mx = float(equation.split('*x')[0].replace('y=',''))
+                b = float(equation.split('*x')[1])
+                linear_rows.append((f"{extraction_date} - {batch}", r2, mx, b, initials, analyte))
+
+            if 'Quadratic' in tuples:
+                analyte = tuples[0]
+                r2 = float(tuples[1])
+                equation = tuples[2]
+                ax2 = float(equation.split('*x^2')[0].replace('y=',''))
+                bx = float(equation[equation.find('*x^2') + len('*x^2'):equation.find('*x', equation.find('*x^2') + len('*x^2'))])
+                c = float(equation.split('*x')[1])
+                quadratic_rows.append((f"{extraction_date} - {batch}", r2, ax2, bx, c, initials, analyte))                
+
+
+    df1 = pandas.DataFrame(linear_rows, columns=linear_columns)
+    df2 = pandas.DataFrame(quadratic_rows, columns=quadratic_columns)
+
+    output_path = os.path.join(path, "LJ.xlsx")
+    with pandas.ExcelWriter(output_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+        df1.to_excel(writer, sheet_name='Curves_Linear', index=False)
+    with pandas.ExcelWriter(output_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+        df2.to_excel(writer, sheet_name='Curves_Quadratic', index=False)
+
+def append_new_LJ(controls, serum_controls, batch, path, extraction_date):
     pass
-
-#CURRENT ORDER
-#DATE-BATCH, R2, SLOPE(MX), Y-INTERCEPT(B), ANALYST
-#DATE-BATCH, R2, QUADRATIC COEFFICIENT(AX2), LINEAR COEFFICIENT(BX), CONSTANT(C)
-
-#data held in self.results_analyte for curve
-#[('Amphetamine', 0.999334, 'y=21.561360*x-0.007798', 'Linear', '1/C^2'), 
-# ('MDA', 0.997473, 'y=10.899581*x-0.002546', 'Linear', '1/C^2'), 
-# ('Methamphetamine', 0.998033, 'y=20.923626*x-0.012007', 'Linear', '1/C^2'), 
-# ('MDMA', 0.998166, 'y=11.589379*x-0.000846', 'Linear', '1/C^2')]
-
-#[('Morphine', 0.997739, 'y=12.383094*x-0.015782', 'Linear', '1/C^2'), 
-# ('Codeine', 0.999962, 'y=10.181379*x-0.000795', 'Linear', '1/C^2'), 
-# ('6-Acetylmorphine', 0.999909, 'y=0.104735*x+0.003084', 'Linear', '1/C^2'), 
-# ('Benzoylecgonine', 0.999354, 'y=-0.044906*x^2+2.409508*x-0.009472', 'Quadratic', '1/C^2'), 
-# ('Cocaine', 0.998708, 'y=8.453121*x+0.004607', 'Linear', '1/C^2'), 
-# ('Cocaethylene', 0.999133, 'y=9.335855*x+0.009422', 'Linear', '1/C^2'), 
-# ('Fentanyl', 0.998983, 'y=0.081350*x-0.002333', 'Linear', '1/C^2'),
-#  ('Alprazolam', 0.999333, 'y=6.715849*x+0.000474', 'Linear', '1/C^2')]
 
 if __name__ == '__main__':
 

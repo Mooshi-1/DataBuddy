@@ -48,7 +48,7 @@ def LC_quant_init(batch_dir):
                                 analyte_index = index
                                 analyte = line.split(': ')[1]
                                 parts = lines[analyte_index + 1].split()
-                                r_squared = float(parts[0].split('=')[1])
+                                r_squared = parts[0].split('=')[1]
                                 equation = parts[1]
                                 fit_type_line = lines[analyte_index + 2]
                                 fit_type = fit_type_line.split('Fit Type: ')[1].split()[0]
