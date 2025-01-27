@@ -20,6 +20,7 @@ class QCTYPE(Enum):
     CUR = 'curve'
     NEG = 'negative'
     SER = 'serum'
+    SOL = 'solvent'
     
 #define QC objects
 class Sample:
@@ -35,8 +36,8 @@ class Sample:
         big_dilution = re.compile(r'X(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
         dilution = re.compile(r'X(10|[0-9])')
         MOA_type = ["BRN", "LIV", "GLG"]
-        MOA_cal = ["_L0", "_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
-        SR_type = ["_SR", '_x%R', '_%R']
+        MOA_cal = ["_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
+        SR_type = ["_SR", '_X%R', '_%R']
         serum = ["SERUM"," S"]
         CAL = "CAL"
         CTL = "CTL"
@@ -71,6 +72,8 @@ class Sample:
         for spelling in serum:
             if spelling in self.ID:
                 self.type.add(QCTYPE.SER)
+        if 'S' == self.base:
+            self.type.add(QCTYPE.SOL)
                 #print(f"assigned serum {self.ID}, {self.type}")
 
     #ID is unique so using self.base for comparisons -- duplicate checker uses this
@@ -132,6 +135,7 @@ def sample_handler(all_samples):
     serum_controls = []
     serum_dil_controls = []
     serum_cal_curve = []
+    solvents = [] #currently not being returned but collecting so that they don't interfere with cases
     for sample in all_samples:
         if sample.type == {QCTYPE.CAL}:
             cal_curve.append(sample)
@@ -164,6 +168,8 @@ def sample_handler(all_samples):
             serum_dil_controls.append(sample)
         elif sample.type.issuperset({QCTYPE.CAL,QCTYPE.SER}):
             serum_cal_curve.append(sample)
+        elif QCTYPE.SOL in sample.type:
+            solvents.append(sample)
         #all non-QC samples
         else:
             cases.append(sample)
