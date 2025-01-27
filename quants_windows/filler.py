@@ -19,8 +19,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def ISAR_fill(controls, batch, path):
     low1 = controls[0]
     high1 = controls[1]
-    low2 = controls[-1]
-    high2 = controls[-2]
+    low2 = controls[-2]
+    high2 = controls[-1]
 
     #sort through ISAR_controls.results_ISTD and find values to pass
     def get_indexes(single_control):
