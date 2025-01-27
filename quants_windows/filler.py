@@ -4,7 +4,8 @@ import pandas # type: ignore # pandas
 import os
 import warnings
 import openpyxl # type: ignore # openpyxl
-import xlsxwriter
+import openpyxl.cell._writer
+#import xlsxwriter
 import win32com.client as win32
 
 #testing imports
@@ -147,6 +148,7 @@ def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
         cell.number_format = '0.000'
 
     workbook.save(output_path)
+    return output_path
 
 #currently not in use -- will use if JK/MF want analytes on separate tabs again
 def output_LJ(controls, serum_controls, batch, path, extraction_date):
@@ -307,7 +309,7 @@ def append_LJ_curve(curve, batch, path, extraction_date, initials):
     quadratic_columns = ['Date - Batch', 'r^2', 'Quadratic Coefficient (ax^2)', 'Linear Coefficient (bx)', 'Constant (c)', 'Analyst', 'Analyte']
     quadratic_rows = []
     for obj in curve:
-        for tuples in obj.analyte_results:
+        for tuples in obj.results_analyte:
             if 'Linear' in tuples:
                 analyte = tuples[0]
                 r2 = float(tuples[1])
@@ -322,7 +324,7 @@ def append_LJ_curve(curve, batch, path, extraction_date, initials):
                 equation = tuples[2]
                 ax2 = float(equation.split('*x^2')[0].replace('y=',''))
                 bx = float(equation[equation.find('*x^2') + len('*x^2'):equation.find('*x', equation.find('*x^2') + len('*x^2'))])
-                c = float(equation.split('*x')[1])
+                c = float(equation.split('*x')[-1])
                 quadratic_rows.append((f"{extraction_date} - {batch}", r2, ax2, bx, c, initials, analyte))                
 
 
@@ -330,10 +332,17 @@ def append_LJ_curve(curve, batch, path, extraction_date, initials):
     df2 = pandas.DataFrame(quadratic_rows, columns=quadratic_columns)
 
     output_path = os.path.join(path, "LJ.xlsx")
-    with pandas.ExcelWriter(output_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-        df1.to_excel(writer, sheet_name='Curves_Linear', index=False)
-    with pandas.ExcelWriter(output_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-        df2.to_excel(writer, sheet_name='Curves_Quadratic', index=False)
+    if os.path.exists(output_path):
+        with pandas.ExcelWriter(output_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+            df1.to_excel(writer, sheet_name='Curves_Linear', index=False)
+            df2.to_excel(writer, sheet_name='Curves_Quadratic', index=False)
+
+    else:
+        with pandas.ExcelWriter(output_path, engine='openpyxl') as writer:
+            df1.to_excel(writer, sheet_name='Curves_Linear', index=False)
+            df2.to_excel(writer, sheet_name='Curves_Quadratic', index=False)
+
+    return output_path
 
 #make super clean, use index, build up dataframe
 def append_new_LJ(controls, serum_controls, batch, path, extraction_date):
@@ -365,7 +374,10 @@ def append_new_LJ(controls, serum_controls, batch, path, extraction_date):
                                                      "Analyte": analyte_name})
 
     rows_indexes = [
-        
+        'Date - Batch',
+        'Matrix',
+        'Analyst',
+        analyte_name
     ]
 
 if __name__ == '__main__':

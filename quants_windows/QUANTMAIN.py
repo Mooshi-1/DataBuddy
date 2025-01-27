@@ -32,7 +32,7 @@ ascii_art = """
  
 (((((((QUANTS -- PRELIM TESTING))))))) 
 
-Version 1.08 - 01/21/2025
+Version 1.09 - 01/27/2025
 """
 
 def main(batch, method, extraction_date):
@@ -120,12 +120,20 @@ def main(batch, method, extraction_date):
 
     #LJ output
     try:
-        filler.output_LJ_2(controls, serum_controls, batch, output_dir, extraction_date)
+        LJ_path = filler.output_LJ_2(controls, serum_controls, batch, output_dir, extraction_date)
         print("LJ excel sheet successfully created! - Filled CTL data")
-        filler.append_LJ_curve(curve, batch, output_dir, extraction_date, initials)
+    except Exception as e:
+        print(f"--error-- unable to fill LJ - CTL ISSUE | {e}")
+    try:
+        #print(curve)
+        LJ_path = filler.append_LJ_curve(curve, batch, output_dir, extraction_date, initials)
         print("LJ excel sheet successfully appended! - Filled Curve data")
     except Exception as e:
-        print(f"--error-- unable to fill LJ | {e}")
+        print(f"--error-- unable to fill LJ - CURVE ISSUE | {e}")
+    try:
+        searcher.copy_excel(LJ_path, qc_dir, 'LJ')
+    except Exception as e:
+        print(f"--error moving LJ-- | {e}")
 
     #send case-list to binder, bind duplicates -- return list of singles
     leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
