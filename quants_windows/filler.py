@@ -335,8 +335,38 @@ def append_LJ_curve(curve, batch, path, extraction_date, initials):
     with pandas.ExcelWriter(output_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
         df2.to_excel(writer, sheet_name='Curves_Quadratic', index=False)
 
+#make super clean, use index, build up dataframe
 def append_new_LJ(controls, serum_controls, batch, path, extraction_date):
-    pass
+    analyte_dataframes = {}
+
+    single_control = controls[0]
+    def get_indexes(single_control):
+        for tuples in single_control.results_analyte:
+            return tuples.index('Conc.'), tuples.index('Name')
+
+    conc_index, name_index = get_indexes(single_control)   
+    
+    for i in range(0, len(controls), 2):
+        low_control = controls[i]
+        high_control = controls[i+1]
+
+        for low_result, high_result in zip(low_control.results_analyte[1:], high_control.results_analyte[1:]):
+            analyte_name = low_result[name_index]
+            low_conc_value = float(low_result[conc_index])
+            high_conc_value = float(high_result[conc_index])
+
+            if analyte_name not in analyte_dataframes:
+                analyte_dataframes[analyte_name] = []
+
+            analyte_dataframes[analyte_name].append({"Batch": f"{extraction_date} - {batch}",
+                                                     "CTL Low Conc.": low_conc_value, 
+                                                     "CTL High Conc.": high_conc_value,
+                                                     "Matrix": "Blood",
+                                                     "Analyte": analyte_name})
+
+    rows_indexes = [
+        
+    ]
 
 if __name__ == '__main__':
 
