@@ -2,6 +2,7 @@ import time
 import os
 import re
 import fitz  # type: ignore # PyMuPDF
+from sample_dict import sample_type_dict, sample_container_dict
 
 class sequence():
     def __init__(self, sample_number, sample_type, sample_container, barcode, method, batch_number):
@@ -11,16 +12,36 @@ class sequence():
         self.container = sample_container
         self.method = method
         self.batch = batch_number
+        self.abbrv = ""
 
     def __repr__(self):
-        return (f"({self.number}, {self.type}, {self.barcode}, {self.container}, {self.method}, {self.batch})")
+        return (f"({self.number}, {self.type}, {self.barcode}, {self.container}, {self.method}, {self.batch}, {self.abbrv})")
     
     def __str__(self):
-        return (f"{self.number}, {self.type}, {self.container}")
+        return (f"{self.number}, {self.type}, {self.container}, {self.abbrv}")
 
     def __eq__(self, other):
         return self.barcode == other.barcode
     
+    def abbreviate_type(self):
+        try:
+            self.abbrv += sample_type_dict[self.type]
+        except KeyError:
+            print(f"Sample type {self.type} not found in Sample Type Dictionary")
+            val1 = input(f"Enter the desired abbreviation for {self.type}: ").upper()
+            sample_type_dict[self.type] = val1
+            self.abbreviate_type()
+
+    def abbreviate_container(self):
+        try:
+            self.abbrv += sample_container_dict[self.container]
+            print(self.abbrv)
+            print(self)
+        except KeyError:
+            print(f"Sample container {self.container} not found in Sample Container Dictionary")
+            val2 = input(f"Enter the desired abbreviation for {self.container}: ").upper()
+            sample_container_dict[self.container] = val2
+            self.abbreviate_container()
 
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
@@ -37,7 +58,7 @@ def read_sequence(seq_dir):
                 page = doc[page_num]
                 text = page.get_text()
                 lines = text.strip().split('\n')
-                batch_number = lines[3].strip()
+                batch_number = lines[3].strip().replace(",","")
 
                 start_index = lines.index('TEST BATCH ') + 1
                 end_index = lines.index('CRTestBatch') - 1
@@ -49,10 +70,15 @@ def read_sequence(seq_dir):
                     sample_type = (cases[i+1]).upper()
                     barcode = (cases[i+2]).strip()
                     method = cases[i+3]
-                    sample_container = cases[i+4]
+                    sample_container = cases[i+4].upper()
                     case_ID = barcode
+                #create object
                     case_ID = sequence(sample_number, sample_type, sample_container, barcode, method, batch_number)
+                #append object to samples list
                     samples.append(case_ID)
+                #assign abbrv 
+                    case_ID.abbreviate_type()
+                    case_ID.abbreviate_container()
     print(samples)
 
 
