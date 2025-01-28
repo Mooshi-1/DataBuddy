@@ -14,6 +14,11 @@ error handling
 if key/value pair does not exist
 prompt to create
 
+add dilutions to certain samples, brain, liver, gastric, intestine
+order = brain, liver, urine, gastric
+ability to add priorities...
+
+
 method specifics
 gen - vial naming convention
 vol - tray1/tray2
