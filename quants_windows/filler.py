@@ -71,6 +71,9 @@ def ISAR_fill(controls, batch, path):
     # #don't forget about failed cases/analytes field
     #send ISAR results to txt or csv file
 
+def SR_fill(cases, batch, path):
+    pass
+
 def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
     analyte_dataframes = {}
 
@@ -151,64 +154,64 @@ def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
     return output_path
 
 #currently not in use -- will use if JK/MF want analytes on separate tabs again
-def output_LJ(controls, serum_controls, batch, path, extraction_date):
-    analyte_dataframes = {}
+# def output_LJ(controls, serum_controls, batch, path, extraction_date):
+#     analyte_dataframes = {}
 
-    single_control = controls[0]
+#     single_control = controls[0]
 
-    def get_indexes(single_control):
-        for tuples in single_control.results_analyte:
-            return tuples.index('Conc.'), tuples.index('Name')
+#     def get_indexes(single_control):
+#         for tuples in single_control.results_analyte:
+#             return tuples.index('Conc.'), tuples.index('Name')
 
-    conc_index, name_index = get_indexes(single_control)   
+#     conc_index, name_index = get_indexes(single_control)   
     
-    for i in range(0, len(controls), 2):
-        low_control = controls[i]
-        high_control = controls[i+1]
+#     for i in range(0, len(controls), 2):
+#         low_control = controls[i]
+#         high_control = controls[i+1]
 
-        for low_result, high_result in zip(low_control.results_analyte[1:], high_control.results_analyte[1:]):
-            analyte_name = low_result[name_index]
-            low_conc_value = float(low_result[conc_index])
-            high_conc_value = float(high_result[conc_index])
+#         for low_result, high_result in zip(low_control.results_analyte[1:], high_control.results_analyte[1:]):
+#             analyte_name = low_result[name_index]
+#             low_conc_value = float(low_result[conc_index])
+#             high_conc_value = float(high_result[conc_index])
 
-            if analyte_name not in analyte_dataframes:
-                analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
-                    "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
+#             if analyte_name not in analyte_dataframes:
+#                 analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
+#                     "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
 
-            analyte_dataframes[analyte_name] = pandas.concat(
-                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": f"{extraction_date} - {batch}",
-                                                                    "CTL Low Conc.": [low_conc_value], 
-                                                                    "CTL High Conc.": [high_conc_value],
-                                                                    "Matrix": "Blood"
-                                                                    })], ignore_index=True
-            )
+#             analyte_dataframes[analyte_name] = pandas.concat(
+#                 [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": f"{extraction_date} - {batch}",
+#                                                                     "CTL Low Conc.": [low_conc_value], 
+#                                                                     "CTL High Conc.": [high_conc_value],
+#                                                                     "Matrix": "Blood"
+#                                                                     })], ignore_index=True
+#             )
 
-    for i in range(0, len(serum_controls), 2):
-        low_serum_control = serum_controls[i]
-        high_serum_control = serum_controls[i+1]
+#     for i in range(0, len(serum_controls), 2):
+#         low_serum_control = serum_controls[i]
+#         high_serum_control = serum_controls[i+1]
 
-        for low_result_serum, high_result_serum in zip(low_serum_control.results_analyte[1:], high_serum_control.results_analyte[1:]):
-            analyte_name = low_result_serum[name_index]
-            low_conc_value = float(low_result_serum[conc_index])
-            high_conc_value = float(high_result_serum[conc_index])
+#         for low_result_serum, high_result_serum in zip(low_serum_control.results_analyte[1:], high_serum_control.results_analyte[1:]):
+#             analyte_name = low_result_serum[name_index]
+#             low_conc_value = float(low_result_serum[conc_index])
+#             high_conc_value = float(high_result_serum[conc_index])
 
-            if analyte_name not in analyte_dataframes:
-                analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
-                    "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
+#             if analyte_name not in analyte_dataframes:
+#                 analyte_dataframes[analyte_name] = pandas.DataFrame(columns=[
+#                     "Batch", "CTL Low Conc.", "CTL High Conc.", "Matrix"])
 
-            analyte_dataframes[analyte_name] = pandas.concat(
-                [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": f"{extraction_date} - {batch}",
-                                                                    "CTL Low Conc.": [low_conc_value], 
-                                                                    "CTL High Conc.": [high_conc_value],
-                                                                    "Matrix": "Serum"
-                                                                    })], ignore_index=True
-            )
+#             analyte_dataframes[analyte_name] = pandas.concat(
+#                 [analyte_dataframes[analyte_name], pandas.DataFrame({"Batch": f"{extraction_date} - {batch}",
+#                                                                     "CTL Low Conc.": [low_conc_value], 
+#                                                                     "CTL High Conc.": [high_conc_value],
+#                                                                     "Matrix": "Serum"
+#                                                                     })], ignore_index=True
+#             )
 
-    output_path = os.path.join(path, "LJ.xlsx")
+#     output_path = os.path.join(path, "LJ.xlsx")
 
-    with pandas.ExcelWriter(output_path, engine='openpyxl') as writer:
-        for analyte, df in analyte_dataframes.items():
-            df.to_excel(writer, sheet_name=analyte, index=False)
+    # with pandas.ExcelWriter(output_path, engine='openpyxl') as writer:
+    #     for analyte, df in analyte_dataframes.items():
+    #         df.to_excel(writer, sheet_name=analyte, index=False)
 
 
         # formatted_date = time.strftime("%m%d%y", time.localtime())
@@ -378,6 +381,8 @@ def append_new_LJ(controls, serum_controls, batch, path, extraction_date):
         'Matrix',
         'Analyst',
         analyte_name
+        #2 spaces
+        #repeat for high control
     ]
 
 if __name__ == '__main__':

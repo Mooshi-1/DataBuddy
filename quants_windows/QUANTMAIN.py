@@ -147,10 +147,13 @@ def main(batch, method, extraction_date):
         sliced_MOA = aux_func.MOA_slicer(MOA_cases)
         for case_list in sliced_MOA:
             positive_analytes = filler.interpret_MSA(case_list)
-            for analyte in positive_analytes:
-                MSA_path = searcher.copy_excel(aux_func.get_MSA(LF_directory), output_dir, f"{case_list[0].base}_{analyte}")
-                #create excel file here using case_list
-                filler.fill_MSA(case_list, batch, MSA_path, analyte, method)
+            try:
+                for analyte in positive_analytes:
+                    MSA_path = searcher.copy_excel(aux_func.get_MSA(LF_directory), output_dir, f"{case_list[0].base}_{analyte}")
+                    #create excel file here using case_list
+                    filler.fill_MSA(case_list, batch, MSA_path, analyte, method)
+            except Exception as e:
+                print(f"--error-- filling MSA | {e}")   
 
             aux_func.list_binder(case_list, output_dir, batch)
 
