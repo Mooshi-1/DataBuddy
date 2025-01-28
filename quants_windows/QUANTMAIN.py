@@ -114,7 +114,7 @@ def main(batch, method, extraction_date):
         if len(serum_controls) >= 4:
             print("getting serum ISAR")
             output_path_s = searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_serum")
-            filler.ISAR_fill(controls, batch, output_path_s)
+            filler.ISAR_fill(serum_controls, batch, output_path_s)
     except Exception as e:
         print(f"--error-- unable to retrieve/fill ISAR | {e}")
 
@@ -187,7 +187,7 @@ if __name__ == "__main__":
         method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ").upper()
         extraction_date = input("Enter extraction date with slashes in MM/DD/YY format: ")
         initials = input("Enter your initials: ").upper()
-        input("WARNING: Make sure that Excel on your computer is closed. Don't forget to print your curve. Press Enter to continue...")
+        input("WARNING: Close your pdf's/preview windows. Make sure that Excel on your computer is closed. Don't forget to print your curve. Press Enter to continue...")
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]
