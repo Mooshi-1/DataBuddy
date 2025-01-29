@@ -15,7 +15,7 @@ class sequence():
         self.abbrv = ""
 
     def __repr__(self):
-        return (f"({self.number}, {self.type}, {self.barcode}, {self.container}, {self.method}, {self.batch}, {self.abbrv})")
+        return (f"({self.number!r}, {self.type!r}, {self.barcode!r}, {self.container!r}, {self.method!r}, {self.batch!r}, {self.abbrv!r})")
     
     def __str__(self):
         return (f"{self.number}, {self.type}, {self.container}, {self.abbrv}")
@@ -23,6 +23,16 @@ class sequence():
     def __eq__(self, other):
         return self.barcode == other.barcode
     
+    def transform_number(self):
+        leading_chars = ""
+        if len(self.number) > 10:
+            if self.number[1].isdigit():
+                leading_chars += self.number[0]
+            if self.number[2].isdigit():
+                leading_chars += self.number[0]
+                leading_chars += self.number[1]
+        self.abbrv += leading_chars + self.number[-8:-6] + "-" + self.number[-4:] + "_"
+
     def abbreviate_type(self):
         try:
             self.abbrv += sample_type_dict[self.type]
@@ -35,13 +45,12 @@ class sequence():
     def abbreviate_container(self):
         try:
             self.abbrv += sample_container_dict[self.container]
-            print(self.abbrv)
-            print(self)
         except KeyError:
             print(f"Sample container {self.container} not found in Sample Container Dictionary")
             val2 = input(f"Enter the desired abbreviation for {self.container}: ").upper()
             sample_container_dict[self.container] = val2
             self.abbreviate_container()
+    
 
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
@@ -64,7 +73,7 @@ def read_sequence(seq_dir):
                 end_index = lines.index('CRTestBatch') - 1
 
                 cases = lines[start_index:end_index]
-                print(cases)
+                #print(cases)
                 for i in range(0, len(cases), 5):
                     sample_number = (cases[i])
                     sample_type = (cases[i+1]).upper()
@@ -77,32 +86,23 @@ def read_sequence(seq_dir):
                 #append object to samples list
                     samples.append(case_ID)
                 #assign abbrv 
+                    case_ID.transform_number()
                     case_ID.abbreviate_type()
                     case_ID.abbreviate_container()
-    print(samples)
+                #confirmation print
+                    print(case_ID)
+                    #print(repr(case_ID))
+    return samples
 
 
-#[(2024-03606, Blood - Heart, 2294548, 50ml Red Top, SCGEN, 12,821), 
-# (2024-03650, Brain, 2295805, Fresh Specimen Cup, SCGEN, 12,821), 
-# (2024-03756, Blood - Heart, 2299168, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00001, Blood - Aorta, 2299284, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00020, Blood - Aorta, 2300494, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00024, Blood - Heart, 2300139, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00027, Blood - Heart, 2300177, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00028, Blood - Heart, 2300279, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00031, Blood - Heart, 2300329, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00044, Blood - Aorta, 2301033, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00048, Blood - Heart, 2301182, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00053, Brain, 2301269, Fresh Specimen Cup, SCGEN, 12,821), 
-# (2025-00099, Blood - Heart, 2302145, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00115, Blood - Aorta, 2302625, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00118, Blood - Antemortem, 2303301, Purple Top Tube, SCGEN, 12,821), 
-# (2025-00119, Blood - Aorta, 2302775, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00120, Blood - Aorta, 2302815, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00127, Blood - Aorta, 2303007, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00132, Blood - Aorta, 2303199, 50ml Red Top, SCGEN, 12,821), 
-# (2025-00134, Blood - Antemortem, 2303599, Purple Top Tube, SCGEN, 12,821), 
-# (2025-00134, Serum - Antemortem, 2303600, Clear Top Tube SST, SCGEN, 12,821)]
+
+# [('2025-00048', 'BLOOD - HEART', '2301182', '50ML RED TOP', 'SCGEN', '12821', '25-00048_HBBRT'),
+# ('2025-00053', 'BRAIN', '2301269', 'FRESH SPECIMEN CUP', 'SCGEN', '12821', '25-00053_BRNCUP'),
+# ('2025-00099', 'BLOOD - HEART', '2302145', '50ML RED TOP', 'SCGEN', '12821', '25-00099_HBBRT'),
+# ('2025-00115', 'BLOOD - AORTA', '2302625', '50ML RED TOP', 'SCGEN', '12821', '25-00115_AOBBRT'),
+# ('2025-00118', 'BLOOD - ANTEMORTEM', '2303301', 'PURPLE TOP TUBE', 'SCGEN', '12821', '25-00118_AMBPRPT'),
+# ('2025-00119', 'BLOOD - AORTA', '2302775', '50ML RED TOP', 'SCGEN', '12821', '25-00119_AOBBRT'),
+# ('2025-00120', 'BLOOD - AORTA', '2302815', '50ML RED TOP', 'SCGEN', '12821', '25-00120_AOBBRT')]
 
 if __name__ == "__main__":
     seq_dir = r'C:\Users\e314883\Desktop\python pdf\sequence_gen'
