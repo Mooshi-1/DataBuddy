@@ -5,20 +5,18 @@ import fitz  # type: ignore # PyMuPDF
 from sample_dict import sample_type_dict, sample_container_dict
 
 class sequence():
-    def __init__(self, sample_number, sample_type, sample_container, barcode, method, batch_number):
+    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None):
         self.number = sample_number
         self.type = sample_type
-        self.barcode = barcode
         self.container = sample_container
-        self.method = method
-        self.batch = batch_number
-        self.abbrv = ""
+        self.barcode = barcode
+        self.abbrv = "" if abbrv is None else abbrv
 
     def __repr__(self):
-        return (f"({self.number!r}, {self.type!r}, {self.barcode!r}, {self.container!r}, {self.method!r}, {self.batch!r}, {self.abbrv!r})")
+        return (f"({self.number!r}, {self.type!r}, {self.container!r}, {self.barcode!r}, {self.abbrv!r})")
     
     def __str__(self):
-        return (f"{self.number}, {self.type}, {self.container}, {self.abbrv}")
+        return self.abbrv
 
     def __eq__(self, other):
         return self.barcode == other.barcode
@@ -82,7 +80,7 @@ def read_sequence(seq_dir):
                     sample_container = cases[i+4].upper()
                     case_ID = barcode
                 #create object
-                    case_ID = sequence(sample_number, sample_type, sample_container, barcode, method, batch_number)
+                    case_ID = sequence(sample_number, sample_type, sample_container, barcode, None)
                 #append object to samples list
                     samples.append(case_ID)
                 #assign abbrv 
@@ -92,7 +90,7 @@ def read_sequence(seq_dir):
                 #confirmation print
                     print(case_ID)
                     #print(repr(case_ID))
-    return samples
+    return samples, method, batch_number
 
 
 

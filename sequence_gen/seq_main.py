@@ -1,5 +1,5 @@
 
-import sequence_init
+import seq_init
 
 
 # [('2025-00048', 'BLOOD - HEART', '2301182', '50ML RED TOP', 'SCGEN', '12821', '25-00048_HBBRT'),
@@ -14,7 +14,7 @@ def main():
     seq_dir = r'C:\Users\e314883\Desktop\python pdf\sequence_gen'
 
     #create sequence objects, stored in list samples
-    samples = sequence_init.read_sequence(seq_dir)
+    samples = seq_init.read_sequence(seq_dir)
 
     method = samples[0].method
     batch_num = samples[0].batch
