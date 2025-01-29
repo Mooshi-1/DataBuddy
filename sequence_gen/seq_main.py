@@ -18,16 +18,14 @@ def main():
 
     print(f"{len(samples)} samples found, method = {method}, batch number = {batch_num}")
 
-    slice_interval = 20
 
-    if method == "SCRNZ":
-        pass
-    elif method == "SCGEN":
-        pass
-    elif method == "SCLCMSMS":
-        pass
-    else:
-        pass
+
+    if method.startswith("SQ") or method.startswith("SC"):
+        slice_interval = 20
+    
+    if method.startswith("QT"):
+        slice_interval = 10
+
 
 
 if __name__ == '__main__':
