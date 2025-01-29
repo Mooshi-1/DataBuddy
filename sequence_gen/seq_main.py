@@ -14,11 +14,11 @@ def main():
     seq_dir = r'C:\Users\e314883\Desktop\python pdf\sequence_gen'
 
     #create sequence objects, stored in list samples
-    samples = seq_init.read_sequence(seq_dir)
+    samples, method, batch_num = seq_init.read_sequence(seq_dir)
 
-    method = samples[0].method
-    batch_num = samples[0].batch
     print(f"{len(samples)} samples found, method = {method}, batch number = {batch_num}")
+
+    slice_interval = 20
 
     if method == "SCRNZ":
         pass
