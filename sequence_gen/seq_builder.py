@@ -55,6 +55,50 @@ def make_LH(init_counter=None):
         sequence(f'CTL HIGH {make_LH.counter}', 'HIGH CTL', '', f'CTL HIGH {make_LH.counter}', f'CTL HIGH {make_LH.counter}')
     ]
 
+nested_list = [[1, 2], [3, 4], [5, 6]]
+flattened_list = [item for sublist in nested_list for item in sublist]
+print(flattened_list)  # Output: [1, 2, 3, 4, 5, 6]
+
+nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
+new_list = [23-4, 23-5, 23-6]
+
+# Insert at the second position (index 1)
+nested_list.insert(1, new_list)
+print(nested_list)
+
+nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
+new_list = [26-1, 26-2, 26-3]
+
+# Append at the end
+nested_list.append(new_list)
+print(nested_list)
+
+#insert backwards to avoid indices getting messed up
+def duplicate_quants():
+    # Original list
+    original_list = ["24-01", "24-02", "24-03"]
+
+    # Intertwine the two lists
+    duplicate_list = []
+    for item in original_list:
+        duplicate_list.append(item)
+        duplicate_list.append(item)
+        duplicate_list.append(make_solvent())
+
+    print(duplicate_list)
+
+
+def handle_special():
+    pass
+
+def SCRNZ_seq(samples, inverval):
+    pass
+
+def slice_case_list(samples, interval):
+    sliced_cases = []
+
+
+
 def screens(samples, interval):
     SCREENS = []
     i = 0
@@ -70,6 +114,10 @@ def screens(samples, interval):
         SCREENS.append(make_solvent())
         i += interval
     return SCREENS
+
+#consider making case blocks?
+#replace block by finding index of case block
+#then SCREENS[(block_index):(block_index)+1] = [list of cases]
 
 def quants(samples, interval):
     QUANTS = []
