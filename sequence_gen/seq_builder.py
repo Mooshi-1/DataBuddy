@@ -91,45 +91,44 @@ def duplicate_quants():
 def handle_special():
     pass
 
-def SCRNZ_seq(samples, inverval):
-    SCRNZ_sequence = []
-    
 
 def slice_case_list(samples, interval):
     sliced_cases = []
 
 
 
-def screens(samples, interval):
-    SCREENS = []
+def SCRNZ_seq(samples, interval):
+    scrnz_samples = []
     i = 0
 
-    SCREENS.append(make_solvent())
-    SCREENS.append(make_neg_ctl())
-    SCREENS.append(make_pos_ctl())
-    SCREENS.append(make_solvent())
+    scrnz_samples.append(make_solvent())
+    scrnz_samples.append(make_neg_ctl())
+    scrnz_samples.append(make_pos_ctl())
+    scrnz_samples.append(make_solvent())
     while i < len(samples):
-        SCREENS.extend(samples[i:i + interval])
-        SCREENS.append(make_solvent())
-        SCREENS.append(make_pos_ctl())
-        SCREENS.append(make_solvent())
+        scrnz_samples.extend(samples[i:i + interval])
+        scrnz_samples.append(make_solvent())
+        scrnz_samples.append(make_pos_ctl())
+        scrnz_samples.append(make_solvent())
         i += interval
-    return SCREENS
+
+    return scrnz_samples
 
 #consider making case blocks?
 #replace block by finding index of case block
 #then SCREENS[(block_index):(block_index)+1] = [list of cases]
 
 def quants(samples, interval):
-    QUANTS = []
+    shimadz_quant_samples = []
     i = 0
 
-    QUANTS.append(make_solvent())
-    QUANTS.append(make_shooter())
-    QUANTS.append(make_neg_ctl())
-    QUANTS.extend(make_curve(6))
-    QUANTS.extend(make_LH())
-    QUANTS.append(make_solvent())
-    while i 
+    shimadz_quant_samples.append(make_solvent())
+    shimadz_quant_samples.append(make_shooter())
+    shimadz_quant_samples.append(make_neg_ctl())
+    shimadz_quant_samples.extend(make_curve(6))
+    shimadz_quant_samples.extend(make_LH())
+    shimadz_quant_samples.append(make_solvent())
+    while i < len(samples):
+        shimadz_quant_samples.append(samples[i:i + interval])
 
     if any('SERUM' in sample.type for sample in samples):

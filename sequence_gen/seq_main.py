@@ -33,8 +33,12 @@ def main():
     if method.startswith("QT"):
         slice_interval = 10
 
-    #if method == 'SCRNZ':
-        #seq_builder.
+    if method == 'SCRNZ':
+        samples_for_seq = seq_builder.SCRNZ_seq(samples, slice_interval)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+
+    except Exception as e:
+        print(f'sequence generation failed :(  | {e})')
