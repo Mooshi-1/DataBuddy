@@ -1,5 +1,6 @@
 
 import seq_init
+import seq_builder
 
 
 # [('2025-00048', 'BLOOD - HEART', '2301182', '50ML RED TOP', 'SCGEN', '12821', '25-00048_HBBRT'),
@@ -18,7 +19,13 @@ def main():
 
     print(f"{len(samples)} samples found, method = {method}, batch number = {batch_num}")
 
+    # test comments --
+    # P = priority
+    # X# = dilution
+    # still need to handle MSA's
+    # make sure quants can do an MSA + dilution
 
+    # list(dilution)
 
     if method.startswith("SQ") or method.startswith("SC"):
         slice_interval = 20
@@ -26,7 +33,8 @@ def main():
     if method.startswith("QT"):
         slice_interval = 10
 
-
+    #if method == 'SCRNZ':
+        #seq_builder.
 
 if __name__ == '__main__':
     main()

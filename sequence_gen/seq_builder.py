@@ -92,7 +92,8 @@ def handle_special():
     pass
 
 def SCRNZ_seq(samples, inverval):
-    pass
+    SCRNZ_sequence = []
+    
 
 def slice_case_list(samples, interval):
     sliced_cases = []

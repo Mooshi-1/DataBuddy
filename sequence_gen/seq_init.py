@@ -5,18 +5,19 @@ import fitz  # type: ignore # PyMuPDF
 from sample_dict import sample_type_dict, sample_container_dict
 
 class sequence():
-    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None):
+    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
         self.number = sample_number
         self.type = sample_type
         self.container = sample_container
         self.barcode = barcode
+        self.comment = comment
         self.abbrv = "" if abbrv is None else abbrv
 
     def __repr__(self):
-        return (f"({self.number!r}, {self.type!r}, {self.container!r}, {self.barcode!r}, {self.abbrv!r})")
+        return (f"({self.number!r}, {self.type!r}, {self.container!r}, {self.barcode!r}, {self.comment!r}, {self.abbrv!r})")
     
     def __str__(self):
-        return self.abbrv
+        return f"{self.abbrv}, {self.comment}"
 
     def __eq__(self, other):
         return self.barcode == other.barcode
@@ -48,6 +49,20 @@ class sequence():
             val2 = input(f"Enter the desired abbreviation for {self.container}: ").upper()
             sample_container_dict[self.container] = val2
             self.abbreviate_container()
+
+    def add_comment(self):
+        if self.comment == None:
+            return
+        if self.comment.startswith('X'):
+            self.abbrv += f"_{self.comment}"
+        else:
+            if self.type == 'BRAIN':
+                self.abbrv += "_X2"
+            if self.type == 'LIVER':
+                self.abbrv += "_X5"
+            if self.type == 'GASTRIC':
+                self.abbrv += "_X10"
+  
     
 
     
@@ -58,6 +73,7 @@ def read_sequence(seq_dir):
     # Iterate through directory defined by filepath
     for filename in os.listdir(seq_dir):
         if filename.endswith(".pdf"):
+            counter = 0
             pdf_path = os.path.join(seq_dir, filename)        
             doc = fitz.open(pdf_path)
             # Extract text from the first page
@@ -78,15 +94,34 @@ def read_sequence(seq_dir):
                     barcode = (cases[i+2]).strip()
                     method = cases[i+3]
                     sample_container = cases[i+4].upper()
+                    #try to use comments
+                    comment = None
+                    for annot in page.annots():
+                        if annot.type[0] in [1, 2]:  # Types for text and text-markup annotations
+                            comment_text = annot.info.get("content", "No comment")
+                            highlight_quad_points = annot.vertices
+                            for quad in highlight_quad_points:
+                                rect = fitz.Rect(quad)
+                                if sample_number in page.get_text("text", clip=rect):
+                                    comment = comment_text.upper()
+                                    print(comment)
+                                    break
+                    
                     case_ID = barcode
                 #create object
-                    case_ID = sequence(sample_number, sample_type, sample_container, barcode, None)
+                    case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                 #append object to samples list
-                    samples.append(case_ID)
+                    if 'P' in case_ID.comment:
+                        samples.insert(counter, case_ID)
+                        print(f'priority case {sample_number} inserted into index {counter}')
+                        counter += 1
+                    else: 
+                        samples.append(case_ID)
                 #assign abbrv 
                     case_ID.transform_number()
                     case_ID.abbreviate_type()
                     case_ID.abbreviate_container()
+                    case_ID.add_comment()
                 #confirmation print
                     print(case_ID)
                     #print(repr(case_ID))
