@@ -37,4 +37,5 @@ def finalize_SCRNZ(seq):
         col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
         final_list.append((col_1, col_2, col_3))        
 
+    return final_list
     

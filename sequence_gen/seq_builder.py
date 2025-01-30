@@ -128,7 +128,10 @@ def quants(samples, interval):
     shimadz_quant_samples.extend(make_curve(6))
     shimadz_quant_samples.extend(make_LH())
     shimadz_quant_samples.append(make_solvent())
+
+    #needs to check for serums... unless
     while i < len(samples):
         shimadz_quant_samples.append(samples[i:i + interval])
+
 
     if any('SERUM' in sample.type for sample in samples):

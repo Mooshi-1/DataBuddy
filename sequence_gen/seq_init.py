@@ -95,6 +95,7 @@ def read_sequence(seq_dir):
                     method = cases[i+3]
                     sample_container = cases[i+4].upper()
                     #try to use comments
+                    #write from scratch using docs
                     comment = None
                     for annot in page.annots():
                         if annot.type[0] in [1, 2]:  # Types for text and text-markup annotations

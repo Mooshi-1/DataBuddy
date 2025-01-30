@@ -1,6 +1,8 @@
 
 import seq_init
 import seq_builder
+import seq_cleaner
+import excel_fill
 
 
 # [('2025-00048', 'BLOOD - HEART', '2301182', '50ML RED TOP', 'SCGEN', '12821', '25-00048_HBBRT'),
@@ -27,6 +29,11 @@ def main():
 
     # list(dilution)
 
+    #store batches in new "PDF DATA/BATCHES" folder
+    #at very end of main, move seq pdf to analyst name within BATCHES folder
+    #then rename
+
+
     if method.startswith("SQ") or method.startswith("SC"):
         slice_interval = 20
     
@@ -35,9 +42,16 @@ def main():
 
     if method == 'SCRNZ':
         samples_for_seq = seq_builder.SCRNZ_seq(samples, slice_interval)
+        samples_for_write = seq_cleaner.finalize_SCRNZ(samples)
+        excel_fill.export_SCRNZ(samples_for_write)
+
 
 if __name__ == '__main__':
     try:
+        print('BINDER START!')
+
+        inst = input('which instrument are you running on? ')
+        #map out instruments
         main()
 
     except Exception as e:
