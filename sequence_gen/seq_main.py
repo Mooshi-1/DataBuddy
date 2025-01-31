@@ -40,19 +40,19 @@ def main():
     if method.startswith("QT"):
         slice_interval = 10
 
-    if method == 'SCRNZ':
-        samples_for_seq = seq_builder.SCRNZ_seq(samples, slice_interval)
-        samples_for_write = seq_cleaner.finalize_SCRNZ(samples)
-        excel_fill.export_SCRNZ(samples_for_write)
+
+    samples_for_seq = seq_builder.SCRNZ_seq(samples, slice_interval)
+    samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
+    excel_fill.export_SCRNZ(samples_for_write)
 
 
 if __name__ == '__main__':
-    try:
-        print('BINDER START!')
+   # try:
+    print('BINDER START!')
 
-        inst = input('which instrument are you running on? ')
-        #map out instruments
-        main()
+    inst = input('which instrument are you running on? ')
+    #map out instruments
+    main()
 
-    except Exception as e:
-        print(f'sequence generation failed :(  | {e})')
+    #except Exception as e:
+       # print(f'sequence generation failed :(  | {e})')

@@ -8,7 +8,7 @@ import win32com.client as win32 # type: ignore # win32com
 
 #probably needs a path....
 def export_SCRNZ(samples):
-
+    print("starting export")
     # Create a DataFrame from the list of tuples
     df = pd.DataFrame(samples, columns=['Sample Name', 'Vial', 'Filenames'])
 

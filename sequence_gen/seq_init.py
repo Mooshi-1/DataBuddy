@@ -112,9 +112,10 @@ def read_sequence(seq_dir):
                 #create object
                     case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                 #append object to samples list
-                    if 'P' in case_ID.comment:
-                        samples.insert(counter, case_ID)
-                        print(f'priority case {sample_number} inserted into index {counter}')
+                    if case_ID.comment is not None:
+                        if 'P' in case_ID.comment:
+                            samples.insert(counter, case_ID)
+                            print(f'priority case {sample_number} inserted into index {counter}')
                         counter += 1
                     else: 
                         samples.append(case_ID)

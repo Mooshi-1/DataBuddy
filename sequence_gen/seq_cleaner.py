@@ -8,8 +8,9 @@ def sort_shitty_matrices():
     pass
 
 def finalize_SCRNZ(seq):
+    print("starting finalizer")
     final_list = []
-    naughty_samples = []
+
     #make 3 item tuple according to columns
     #sample name, vial, datafile
 
@@ -39,7 +40,7 @@ def finalize_SCRNZ(seq):
     for sample in acids:
         col_1 = sample.abbrv + ' A'
         if sample.type == 'SOLVENT':
-            col_2 = solvent_base
+            col_2 = solvent_acid
         else:
             vial_count += 1
             col_2 = vial_count

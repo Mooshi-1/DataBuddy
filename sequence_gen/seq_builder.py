@@ -56,23 +56,23 @@ def make_LH(init_counter=None):
         sequence(f'CTL HIGH {make_LH.counter}', 'HIGH CTL', '', f'CTL HIGH {make_LH.counter}', f'CTL HIGH {make_LH.counter}')
     ]
 
-nested_list = [[1, 2], [3, 4], [5, 6]]
-flattened_list = [item for sublist in nested_list for item in sublist]
-print(flattened_list)  # Output: [1, 2, 3, 4, 5, 6]
+# nested_list = [[1, 2], [3, 4], [5, 6]]
+# flattened_list = [item for sublist in nested_list for item in sublist]
+# print(flattened_list)  # Output: [1, 2, 3, 4, 5, 6]
 
-nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
-new_list = [23-4, 23-5, 23-6]
+# nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
+# new_list = [23-4, 23-5, 23-6]
 
-# Insert at the second position (index 1)
-nested_list.insert(1, new_list)
-print(nested_list)
+# # Insert at the second position (index 1)
+# nested_list.insert(1, new_list)
+# print(nested_list)
 
-nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
-new_list = [26-1, 26-2, 26-3]
+# nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
+# new_list = [26-1, 26-2, 26-3]
 
-# Append at the end
-nested_list.append(new_list)
-print(nested_list)
+# # Append at the end
+# nested_list.append(new_list)
+# print(nested_list)
 
 #insert backwards to avoid indices getting messed up
 def duplicate_quants():
@@ -99,17 +99,21 @@ def slice_case_list(samples, interval):
 
 
 def SCRNZ_seq(samples, interval):
+    print('starting builder')
     scrnz_samples = []
-    i = 0
+    z = 0
     bad_matrix = []
 
     temp = samples.copy()
 
-    for i in range(len(temp)):
-        if samples[i].type in caboose:
+    for i in range(len(temp) -1, -1, -1):
+        print(temp[i].type)
+        if temp[i].type in caboose:
             bad_matrix.append(samples.pop(i))
+            print(f'popped the sample {temp[i]}')
 
-    bad_matrix = sorted(bad_matrix, key=lambda x: list(caboose.keys()).index(x.type))
+    print(bad_matrix)
+    bad_matrix = sorted(bad_matrix, key=lambda x: caboose[x.type])
     
     samples.extend(bad_matrix)
 
@@ -117,12 +121,12 @@ def SCRNZ_seq(samples, interval):
     scrnz_samples.append(make_neg_ctl())
     scrnz_samples.append(make_pos_ctl())
     scrnz_samples.append(make_solvent())
-    while i < len(samples):
-        scrnz_samples.extend(samples[i:i + interval])
+    while z < len(samples):
+        scrnz_samples.extend(samples[z:z + interval])
         scrnz_samples.append(make_solvent())
         scrnz_samples.append(make_pos_ctl())
         scrnz_samples.append(make_solvent())
-        i += interval
+        z += interval
 
     return scrnz_samples
 
@@ -135,8 +139,8 @@ def SCRNZ_seq(samples, interval):
 def quants(samples, interval):
     blood_quants = []
     serum_quants = []
-    if any(case.type)
-    i = 0
+    if any(case.type):
+        i = 0
 
     blood_quants.append(make_solvent())
     blood_quants.append(make_shooter())
@@ -153,3 +157,4 @@ def quants(samples, interval):
 
 
     if any('SERUM' in sample.type for sample in samples):
+        return
