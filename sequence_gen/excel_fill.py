@@ -19,3 +19,13 @@ def export_SCRNZ(samples):
 
 
     print(f"Data written to {excel_path}")
+
+def export_SCGEN(samples):
+    print("starting export")
+    # Create a DataFrame from the list of tuples
+    df = pd.DataFrame(samples, columns=['Sample Name', 'Sample Description', 'Sample Position', 'Method Name', 'Volume'])    
+
+    excel_path = 'output.xlsx'
+    df.to_excel(excel_path, index=False)
+
+    print(f"data written to {excel_path}")

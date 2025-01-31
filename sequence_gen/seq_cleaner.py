@@ -1,4 +1,7 @@
+import itertools
+
 # I think... make dict to move samples around
+
 
 #check sample.type
 
@@ -50,3 +53,39 @@ def finalize_SCRNZ(seq):
 
     return final_list
     
+def finalize_SCGEN(seq):
+
+
+    #excluded RE for now and placing solvents there
+    tray_rows = ['GA', 'GB', 'GC', 'GD', 'GE', 'BA', 'BB', 'BC', 'BD', 'BE', 'RA', 'RB', 'RC', 'RD']
+    tray_numbers = range(1,9)
+
+    solvent_rows = ['RE']
+    solvent_numbers = range(1,9)
+
+    #can eventually implement starting positions / loop
+    counter_case = itertools.product(tray_rows, tray_numbers)
+    counter_solvent = itertools.cycle(itertools.product(solvent_rows, solvent_numbers))
+
+    def get_position():
+        letter, number = next(counter_case)
+        return f"{letter}{number}"
+    
+    def get_solvent():
+        letter, number = next(counter_solvent)
+        return f"{letter}{number}"
+    
+    columns=['Sample Name', 'Sample Description', 'Sample Position', 'Method Name', 'Volume']
+    final_list = []
+    method = 'Toxtyper 3.0_GEN'
+    volume = 5
+    solvent_namer = itertools.cycle(range(1,9))
+
+    for sample in seq:
+        if sample.type == 'SOLVENT':
+            final_list.append((f'S {solvent_namer}', '', get_solvent(), method, volume))
+        else:
+            final_list.append((sample.abbrv + ' B', '', get_position, method, volume))
+            final_list.append((sample.abbrv + ' A', '', get_position, method, volume))
+
+    return final_list
