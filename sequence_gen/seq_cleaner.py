@@ -1,19 +1,29 @@
+# I think... make dict to move samples around
 
+#check sample.type
+
+
+def sort_shitty_matrices():
+    #make function to sort / order bad matrices
+    pass
 
 def finalize_SCRNZ(seq):
     final_list = []
+    naughty_samples = []
     #make 3 item tuple according to columns
     #sample name, vial, datafile
-    bases = seq
-    acids = seq
-    
+
     filename_count = 0
     vial_count = 0
     solvent_base = 101
     solvent_acid = 102
 
+
     # ^ init counters
     # v create bases and then acids
+
+    bases = seq
+    acids = seq
 
     for sample in bases:
         col_1 = sample.abbrv + ' B'

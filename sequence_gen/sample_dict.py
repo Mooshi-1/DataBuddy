@@ -114,3 +114,27 @@ sample_container_dict = {
     'BABY BOTTLE': 'BBTL',
     'CLEAR TOP TUBE SST': 'CSST'
 }
+
+caboose = {
+    'BRAIN HOMOGENATE': 'BRNHOM',
+    'GASTRIC': 'G',
+    'KIDNEY': 'KID',
+    'LARGE INTESTINAL CONTENT': 'LGIC',
+    'LIVER HOMOGENATE': 'LIVHOM',
+    'LUNG': 'LUNG',
+    'MUSCLE': 'MUSC',
+    'OCULAR FLUID': 'OF',
+    'SKELETAL MUSCLE': 'SKMUSC',
+    'SMALL INTESTINAL CONTENT': 'SMIC',
+    'SPECIMEN - OTHER': 'OTHER',
+    'SPLEEN': 'SPL',
+    'URINE': 'U',
+    'LIVER': 'LIV',
+    'BRAIN': 'BRN',
+    'INTESTINAL CONTENT - SM': 'SMIC',
+    'PLACENTA': 'PLAC',
+    'AMNIOTIC FLUID': 'AMFLU',
+    'STOMACH MATERIAL ': 'STMH ML',
+    'MUSCLE HOMOGENATE': 'MUSHOM',
+    'SMALL BOWEL': 'SMIC',
+}

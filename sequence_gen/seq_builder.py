@@ -1,4 +1,5 @@
 from seq_init import sequence
+from sample_dict import caboose
 
 # class sequence():
 #     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None):
@@ -100,6 +101,17 @@ def slice_case_list(samples, interval):
 def SCRNZ_seq(samples, interval):
     scrnz_samples = []
     i = 0
+    bad_matrix = []
+
+    temp = samples.copy()
+
+    for i in range(len(temp)):
+        if samples[i].type in caboose:
+            bad_matrix.append(samples.pop(i))
+
+    bad_matrix = sorted(bad_matrix, key=lambda x: list(caboose.keys()).index(x.type))
+    
+    samples.extend(bad_matrix)
 
     scrnz_samples.append(make_solvent())
     scrnz_samples.append(make_neg_ctl())
@@ -114,24 +126,30 @@ def SCRNZ_seq(samples, interval):
 
     return scrnz_samples
 
+
+
 #consider making case blocks?
 #replace block by finding index of case block
 #then SCREENS[(block_index):(block_index)+1] = [list of cases]
 
 def quants(samples, interval):
-    shimadz_quant_samples = []
+    blood_quants = []
+    serum_quants = []
+    if any(case.type)
     i = 0
 
-    shimadz_quant_samples.append(make_solvent())
-    shimadz_quant_samples.append(make_shooter())
-    shimadz_quant_samples.append(make_neg_ctl())
-    shimadz_quant_samples.extend(make_curve(6))
-    shimadz_quant_samples.extend(make_LH())
-    shimadz_quant_samples.append(make_solvent())
+    blood_quants.append(make_solvent())
+    blood_quants.append(make_shooter())
+    blood_quants.append(make_neg_ctl())
+    blood_quants.extend(make_curve(6))
+    blood_quants.extend(make_LH())
+    blood_quants.append(make_solvent())
 
-    #needs to check for serums... unless
-    while i < len(samples):
-        shimadz_quant_samples.append(samples[i:i + interval])
+
+
+    for case in samples:
+        
+            blood_quants.append(samples[i:i + interval])
 
 
     if any('SERUM' in sample.type for sample in samples):
