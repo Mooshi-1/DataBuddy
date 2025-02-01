@@ -97,3 +97,7 @@ def finalize_SCGEN(seq):
 
     final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), 'Toxtyper R_Wash_Column', volume))
     return final_list
+
+def finalize_LCMSMS(seq):
+    final_list = []
+    

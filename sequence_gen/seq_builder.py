@@ -98,7 +98,7 @@ def slice_case_list(samples, interval):
 
 
 
-def SCRNZ_seq(samples, interval):
+def build_screens(samples, interval):
     print('starting builder')
     scrnz_samples = []
     z = 0

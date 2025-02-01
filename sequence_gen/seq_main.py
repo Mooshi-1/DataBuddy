@@ -41,11 +41,11 @@ def main():
         slice_interval = 10
 
     #works
-    # samples_for_seq = seq_builder.SCRNZ_seq(samples, slice_interval)
+    # samples_for_seq = seq_builder.build_screens(samples, slice_interval)
     # samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
     # excel_fill.export_SCRNZ(samples_for_write)
 
-    samples_for_seq = seq_builder.SCRNZ_seq(samples, slice_interval)
+    samples_for_seq = seq_builder.build_screens(samples, slice_interval)
     samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq)
     excel_fill.export_SCGEN(samples_for_write)
 

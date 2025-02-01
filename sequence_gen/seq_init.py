@@ -52,16 +52,17 @@ class sequence():
 
     def add_comment(self):
         if self.comment == None:
-            return
-        if self.comment.startswith('X'):
-            self.abbrv += f"_{self.comment}"
-        else:
             if self.type == 'BRAIN':
                 self.abbrv += "_X2"
             if self.type == 'LIVER':
                 self.abbrv += "_X5"
             if self.type == 'GASTRIC':
                 self.abbrv += "_X10"
+            return
+        elif self.comment.startswith('X'):
+            self.abbrv += f"_{self.comment}"
+
+
   
     
 
