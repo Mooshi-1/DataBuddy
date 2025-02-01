@@ -82,10 +82,18 @@ def finalize_SCGEN(seq):
     solvent_namer = itertools.cycle(range(1,9))
 
     for sample in seq:
-        if sample.type == 'SOLVENT':
-            final_list.append((f'S {solvent_namer}', '', get_solvent(), method, volume))
+        #make sure list isn't empty to avoid index error
+        if final_list and final_list[-1][0].startswith('S') and sample.type == 'SOLVENT':
+            continue
+        elif sample.type == 'SOLVENT':
+            final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
+        elif sample.container != '':
+            final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
+            final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))
+            final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
         else:
-            final_list.append((sample.abbrv + ' B', '', get_position, method, volume))
-            final_list.append((sample.abbrv + ' A', '', get_position, method, volume))
+            final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
+            final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))            
 
+    final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), 'Toxtyper R_Wash_Column', volume))
     return final_list

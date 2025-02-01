@@ -20,6 +20,7 @@ def export_SCRNZ(samples):
 
     print(f"Data written to {excel_path}")
 
+#need to export as csv... do some research
 def export_SCGEN(samples):
     print("starting export")
     # Create a DataFrame from the list of tuples
