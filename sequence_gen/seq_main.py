@@ -34,8 +34,17 @@ def main():
     #then rename
 
 
-    if method.startswith("SQ") or method.startswith("SC"):
+    if method.startswith("SC"):
         slice_interval = 20
+        samples_for_seq = seq_builder.build_screens(samples, slice_interval)
+        
+        if method == 'SCGEN':
+            samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq)
+            excel_fill.export_SCGEN(samples_for_write)        
+
+        if method == 'SCRNZ':
+            samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
+            excel_fill.export_SCRNZ(samples_for_write)                    
     
     if method.startswith("QT"):
         slice_interval = 10
@@ -45,9 +54,8 @@ def main():
     # samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
     # excel_fill.export_SCRNZ(samples_for_write)
 
-    samples_for_seq = seq_builder.build_screens(samples, slice_interval)
-    samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq)
-    excel_fill.export_SCGEN(samples_for_write)
+
+
 
 if __name__ == '__main__':
    # try:

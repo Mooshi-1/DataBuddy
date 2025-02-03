@@ -112,7 +112,9 @@ sample_container_dict = {
     '50 ML GREEN TOP': 'XLGT',
     'BLACK TOP TUBE': 'BTT',
     'BABY BOTTLE': 'BBTL',
-    'CLEAR TOP TUBE SST': 'CSST'
+    'CLEAR TOP TUBE SST': 'CSST',
+    '50ML GREEN TOP': 'BGT',
+    '60 ML NALGENE BOTTLE': 'BOT'
 }
 
 caboose = {

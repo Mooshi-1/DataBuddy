@@ -54,13 +54,38 @@ class sequence():
         if self.comment == None:
             if self.type == 'BRAIN':
                 self.abbrv += "_X2"
+                self.MSA = True
             if self.type == 'LIVER':
                 self.abbrv += "_X5"
+                self.MSA = True
             if self.type == 'GASTRIC':
                 self.abbrv += "_X10"
+                self.MSA = True
             return
-        elif self.comment.startswith('X'):
-            self.abbrv += f"_{self.comment}"
+        elif ',' in self.comment:
+            notes = self.comment.split(',')
+            self.comment = [item.strip() for item in notes]
+            self.add_comment()
+        else:
+            if isinstance(self.comment, list):
+                for item in self.comment:
+                    self.process_comments(item)
+            else:
+                self.process_comments(self.comment)
+
+    def process_comments(self, item):
+        print(item)
+        if item.startswith('X'):
+            self.abbrv += f"_{item}"
+            self.diln = True
+        if item.startswith('P'):
+            self.prio = True
+        if item.startswith('M'):
+            self.MSA = True
+        if item.startswith('SR'):
+            self.SR = True
+        if item.startswith('SINGLE'):
+            self.single = True
 
 
   
@@ -74,7 +99,7 @@ def read_sequence(seq_dir):
     # Iterate through directory defined by filepath
     for filename in os.listdir(seq_dir):
         if filename.endswith(".pdf"):
-            counter = 0
+            #counter = 0
             pdf_path = os.path.join(seq_dir, filename)        
             doc = fitz.open(pdf_path)
             # Extract text from the first page
@@ -95,31 +120,38 @@ def read_sequence(seq_dir):
                     barcode = (cases[i+2]).strip()
                     method = cases[i+3]
                     sample_container = cases[i+4].upper()
-                    #try to use comments
-                    #write from scratch using docs
+
                     comment = None
-                    for annot in page.annots():
-                        if annot.type[0] in [1, 2]:  # Types for text and text-markup annotations
-                            comment_text = annot.info.get("content", "No comment")
-                            highlight_quad_points = annot.vertices
-                            for quad in highlight_quad_points:
-                                rect = fitz.Rect(quad)
-                                if sample_number in page.get_text("text", clip=rect):
-                                    comment = comment_text.upper()
-                                    print(comment)
-                                    break
-                    
+
+
+                    barcode_rect = page.search_for(barcode)
+                    print(f'barcode = {barcode_rect}')
+                    expand = 2
+                    sample_rect = barcode_rect[0]
+
+                    search_area = fitz.Rect(sample_rect.x0 - 285, #expand this one more to cover sample
+                                            sample_rect.y0 - expand,
+                                            sample_rect.x1 + expand, 
+                                            sample_rect.y1 + expand)
+
+                    annots = page.annots()
+                    if annots is not None:
+                        for annot in annots:
+                            if search_area.intersects(annot.rect):
+                                comment = annot.info.get('content', '').strip().upper()
+                                #print(comment)
+
                     case_ID = barcode
                 #create object
                     case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                 #append object to samples list
-                    if case_ID.comment is not None:
-                        if 'P' in case_ID.comment:
-                            samples.insert(counter, case_ID)
-                            print(f'priority case {sample_number} inserted into index {counter}')
-                        counter += 1
-                    else: 
-                        samples.append(case_ID)
+                    # if case_ID.comment is not None:
+                    #     if 'P' in case_ID.comment:
+                    #         samples.insert(counter, case_ID)
+                    #         print(f'priority case {sample_number} inserted into index {counter}')
+                    #     counter += 1
+                    # else: 
+                    samples.append(case_ID)
                 #assign abbrv 
                     case_ID.transform_number()
                     case_ID.abbreviate_type()
