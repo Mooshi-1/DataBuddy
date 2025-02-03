@@ -54,13 +54,10 @@ class sequence():
         if self.comment == None:
             if self.type == 'BRAIN':
                 self.abbrv += "_X2"
-                self.MSA = True
             if self.type == 'LIVER':
                 self.abbrv += "_X5"
-                self.MSA = True
             if self.type == 'GASTRIC':
                 self.abbrv += "_X10"
-                self.MSA = True
             return
         elif ',' in self.comment:
             notes = self.comment.split(',')
@@ -144,13 +141,6 @@ def read_sequence(seq_dir):
                     case_ID = barcode
                 #create object
                     case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
-                #append object to samples list
-                    # if case_ID.comment is not None:
-                    #     if 'P' in case_ID.comment:
-                    #         samples.insert(counter, case_ID)
-                    #         print(f'priority case {sample_number} inserted into index {counter}')
-                    #     counter += 1
-                    # else: 
                     samples.append(case_ID)
                 #assign abbrv 
                     case_ID.transform_number()

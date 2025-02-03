@@ -1,4 +1,5 @@
 import itertools
+from sample_dict import caboose
 
 # I think... make dict to move samples around
 
@@ -39,7 +40,13 @@ def finalize_SCRNZ(seq):
         filename_count += 1
         col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
         final_list.append((col_1, col_2, col_3))
-    
+        if sample.type in caboose:
+            filename_count += 1
+            col_1 = 'BLANK'
+            col_2 = solvent_base
+            col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
+            final_list.append((col_1, col_2, col_3))
+
     for sample in acids:
         col_1 = sample.abbrv + ' A'
         if sample.type == 'SOLVENT':
@@ -49,7 +56,13 @@ def finalize_SCRNZ(seq):
             col_2 = vial_count
         filename_count += 1
         col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
-        final_list.append((col_1, col_2, col_3))        
+        final_list.append((col_1, col_2, col_3))       
+        if sample.type in caboose:
+            filename_count += 1
+            col_1 = 'BLANK'
+            col_2 = solvent_acid
+            col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
+            final_list.append((col_1, col_2, col_3)) 
 
     return final_list
     

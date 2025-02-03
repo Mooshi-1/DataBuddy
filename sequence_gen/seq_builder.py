@@ -96,26 +96,43 @@ def handle_special():
 def slice_case_list(samples, interval):
     sliced_cases = []
 
+def sort_quants(samples):
 
+    bad_matrix = []
+    priority = []
+
+    temp = samples.copy()
+
+    for i in range(len(temp) -1, -1, -1):
+        if hasattr(temp[i], 'prio'):
+            priority.append(samples.pop(i))
+            print(f'sending sample to the front {temp[i]}')
+
+        if temp[i].type in caboose:
+            bad_matrix.append(samples.pop(i))
+            print(f'sending sample to the back {temp[i]}')    
 
 def build_screens(samples, interval):
     print('starting builder')
     scrnz_samples = []
     z = 0
     bad_matrix = []
+    priority = []
 
     temp = samples.copy()
 
     for i in range(len(temp) -1, -1, -1):
-        print(temp[i].type)
+        if hasattr(temp[i], 'prio'):
+            priority.append(samples.pop(i))
+            print(f'sending sample to the front {temp[i]}')
+
         if temp[i].type in caboose:
             bad_matrix.append(samples.pop(i))
-            print(f'popped the sample {temp[i]}')
+            print(f'sending sample to the back {temp[i]}')
 
-    print(bad_matrix)
     bad_matrix = sorted(bad_matrix, key=lambda x: caboose[x.type])
     
-    samples.extend(bad_matrix)
+    samples = priority[::-1] + samples + bad_matrix
 
     scrnz_samples.append(make_solvent())
     scrnz_samples.append(make_neg_ctl())

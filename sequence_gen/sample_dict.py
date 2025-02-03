@@ -77,7 +77,8 @@ sample_type_dict = {
     'SOFT TISSUE': 'ST',
     'BRAIN CLOT': 'BRNCLT',
     'BLOOD - ABDOMEN': 'BLABDM',
-    'BRAIN HEMORRHAGE': 'BRNHEM'
+    'BRAIN HEMORRHAGE': 'BRNHEM',
+    'SMALL INTESTINE': 'SMI'
 }
 
 sample_container_dict = {
@@ -118,7 +119,6 @@ sample_container_dict = {
 }
 
 caboose = {
-    'OCULAR FLUID': 'OF',
     'PLACENTA': 'PLAC',
     'AMNIOTIC FLUID': 'AMFLU',    
     'BRAIN': 'BRN',      
@@ -130,6 +130,7 @@ caboose = {
     'LUNG': 'LUNG',   
     'URINE': 'U',
     'GASTRIC': 'G',
+    'SMALL INTESTINE': 'SMI',
     'SMALL INTESTINAL CONTENT': 'SMIC',
     'SMALL BOWEL': 'SMIC', 
     'LARGE INTESTINAL CONTENT': 'LGIC',
