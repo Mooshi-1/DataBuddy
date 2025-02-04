@@ -81,13 +81,29 @@ class sequence():
             self.MSA = True
         if item.startswith('SR'):
             self.SR = True
-        if item.startswith('SINGLE'):
+        if item.startswith('SI') or item == '1':
             self.single = True
 
+class volatiles(sequence):
+    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
+        super().__init__(sample_number, sample_type, sample_container, barcode, abbrv, comment)
+        self.single = False
+        self.double = False
 
+    def __eq__(self, other):
+        return self.number == other.number
   
-    
-
+    def add_comment(self):
+        if ',' in self.comment:
+            notes = self.comment.split(',')
+            self.comment = [item.strip() for item in notes]
+            self.add_comment()        
+        else:
+            if isinstance(self.comment, list):
+                for item in self.comment:
+                    self.process_comments(item)
+            else:
+                self.process_comments(self.comment)
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
@@ -142,7 +158,10 @@ def read_sequence(seq_dir):
 
                     case_ID = barcode
                 #create object
-                    case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
+                    if method == 'SQVOL':
+                        case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
+                    else:
+                        case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                     samples.append(case_ID)
                 #assign abbrv 
                     case_ID.transform_number()

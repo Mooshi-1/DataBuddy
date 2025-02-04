@@ -54,12 +54,9 @@ def main():
             excel_fill.export_LCMSMS(samples_for_write)              
     
     if method.startswith("QT"):
-        slice_interval = 10
+        slice_interval = 20
+        
 
-    #works
-    # samples_for_seq = seq_builder.build_screens(samples, slice_interval)
-    # samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
-    # excel_fill.export_SCRNZ(samples_for_write)
 
 
 
