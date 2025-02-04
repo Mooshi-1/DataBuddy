@@ -47,7 +47,8 @@ def finalize_SCRNZ(seq):
             col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
             final_list.append((col_1, col_2, col_3))
 
-    for sample in acids:
+    #skip first solvent since B ends with a solvent
+    for sample in acids[1:]:
         col_1 = sample.abbrv + ' A'
         if sample.type == 'SOLVENT':
             col_2 = solvent_acid

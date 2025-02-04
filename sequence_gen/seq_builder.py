@@ -130,8 +130,9 @@ def build_screens(samples, interval):
             bad_matrix.append(samples.pop(i))
             print(f'sending sample to the back {temp[i]}')
 
-    bad_matrix = sorted(bad_matrix, key=lambda x: caboose[x.type])
-    
+
+    bad_matrix = bad_matrix[::-1]
+    bad_matrix = sorted(bad_matrix, key=lambda x: caboose.get(x.type, '99'))
     samples = priority[::-1] + samples + bad_matrix
 
     scrnz_samples.append(make_solvent())

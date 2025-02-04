@@ -122,7 +122,7 @@ def read_sequence(seq_dir):
 
 
                     barcode_rect = page.search_for(barcode)
-                    print(f'barcode = {barcode_rect}')
+                    #print(f'barcode = {barcode_rect}')
                     expand = 2
                     sample_rect = barcode_rect[0]
 
