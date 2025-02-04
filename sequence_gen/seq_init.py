@@ -93,6 +93,7 @@ class sequence():
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
 def read_sequence(seq_dir):
     samples = [] #will hold sample objects created here
+    batches = set()
     # Iterate through directory defined by filepath
     for filename in os.listdir(seq_dir):
         if filename.endswith(".pdf"):
@@ -105,6 +106,7 @@ def read_sequence(seq_dir):
                 text = page.get_text()
                 lines = text.strip().split('\n')
                 batch_number = lines[3].strip().replace(",","")
+                batches.add(batch_number)
 
                 start_index = lines.index('TEST BATCH ') + 1
                 end_index = lines.index('CRTestBatch') - 1
@@ -150,7 +152,7 @@ def read_sequence(seq_dir):
                 #confirmation print
                     print(case_ID)
                     #print(repr(case_ID))
-    return samples, method, batch_number
+    return samples, method, batches
 
 
 

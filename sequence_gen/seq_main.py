@@ -17,7 +17,10 @@ def main():
     seq_dir = r'C:\Users\e314883\Desktop\python pdf\sequence_gen'
 
     #create sequence objects, stored in list samples
-    samples, method, batch_num = seq_init.read_sequence(seq_dir)
+    samples, method, batches = seq_init.read_sequence(seq_dir)
+    batch_num = "/".join(map(str, batches))
+
+
 
     print(f"{len(samples)} samples found, method = {method}, batch number = {batch_num}")
 
@@ -44,7 +47,11 @@ def main():
 
         if method == 'SCRNZ':
             samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
-            excel_fill.export_SCRNZ(samples_for_write)                    
+            excel_fill.export_SCRNZ(samples_for_write)
+
+        if method == 'SCLCMSMS':
+            samples_for_write = seq_cleaner.finalize_LCMSMS(samples_for_seq, batch_num)
+            excel_fill.export_LCMSMS(samples_for_write)              
     
     if method.startswith("QT"):
         slice_interval = 10

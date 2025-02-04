@@ -1,32 +1,18 @@
 import itertools
 from sample_dict import caboose
 
-# I think... make dict to move samples around
-
-
-#check sample.type
-
-
-def sort_shitty_matrices():
-    #make function to sort / order bad matrices
-    pass
 
 def finalize_SCRNZ(seq):
     print("starting finalizer")
     final_list = []
-
     #make 3 item tuple according to columns
     #sample name, vial, datafile
-
     filename_count = 0
     vial_count = 0
     solvent_base = 101
     solvent_acid = 102
-
-
     # ^ init counters
     # v create bases and then acids
-
     bases = seq
     acids = seq
 
@@ -68,8 +54,7 @@ def finalize_SCRNZ(seq):
     return final_list
     
 def finalize_SCGEN(seq):
-
-
+    print('starting finalizer')
     #excluded RE for now and placing solvents there
     tray_rows = ['GA', 'GB', 'GC', 'GD', 'GE', 'BA', 'BB', 'BC', 'BD', 'BE', 'RA', 'RB', 'RC', 'RD']
     tray_numbers = range(1,9)
@@ -107,11 +92,23 @@ def finalize_SCGEN(seq):
             final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
         else:
             final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
-            final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))            
+            final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))
 
     final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), 'Toxtyper R_Wash_Column', volume))
     return final_list
 
-def finalize_LCMSMS(seq):
+def finalize_LCMSMS(seq, batch):
     final_list = []
-    
+    columns=['Batch #', 'Tray', 'Vial#', 'Sample Name']
+    #4 item tuple
+    solvent_vials = itertools.cycle(range(1,4))
+    vial_count = 0
+
+    for sample in seq:
+        if sample.type == 'SOLVENT':
+            final_list.append((batch, 2, next(solvent_vials), sample.abbrv))
+        else:
+            vial_count += 1
+            final_list.append((batch, 1, vial_count, sample.abbrv))
+
+    return final_list
