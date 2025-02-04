@@ -2,7 +2,7 @@ import time
 import os
 import re
 import fitz  # type: ignore # PyMuPDF
-from sample_dict import sample_type_dict, sample_container_dict
+from sample_dict import sample_type_dict, sample_container_dict, vol_duplicate
 
 class sequence():
     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
@@ -87,12 +87,17 @@ class sequence():
 class volatiles(sequence):
     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
         super().__init__(sample_number, sample_type, sample_container, barcode, abbrv, comment)
-        self.single = False
+        self.single = True
         self.double = False
 
     def __eq__(self, other):
         return self.number == other.number
   
+    def add_duplicate(self):
+        if self.type in vol_duplicate:
+            self.single = False
+            self.double = True
+
     def add_comment(self):
         if ',' in self.comment:
             notes = self.comment.split(',')
@@ -104,6 +109,21 @@ class volatiles(sequence):
                     self.process_comments(item)
             else:
                 self.process_comments(self.comment)
+    
+    def process_comments(self, item):
+        print(item)
+        if item.startswith('X'):
+            self.abbrv += f"_{item}"
+            self.diln = True
+        if item.startswith('P'):
+            self.prio = True
+        if item.startswith('SI') or item == '1':
+            self.single = True
+            self.double = False
+        if item.startswith('DO') or item.startswith('DU') or item == '2':
+            self.single = False
+            self.double = True
+
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
@@ -160,6 +180,7 @@ def read_sequence(seq_dir):
                 #create object
                     if method == 'SQVOL':
                         case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
+                        case_ID.add_duplicate()
                     else:
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                     samples.append(case_ID)
