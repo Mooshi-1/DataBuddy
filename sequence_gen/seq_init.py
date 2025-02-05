@@ -83,6 +83,8 @@ class sequence():
             self.SR = True
         if item.startswith('SI') or item == '1':
             self.single = True
+        if item.startswith('B'):
+            self.bad = True
 
 class volatiles(sequence):
     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
@@ -184,6 +186,7 @@ def read_sequence(seq_dir):
                     else:
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                     samples.append(case_ID)
+                    
                 #assign abbrv 
                     case_ID.transform_number()
                     case_ID.abbreviate_type()

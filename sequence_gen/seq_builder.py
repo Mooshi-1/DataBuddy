@@ -109,7 +109,7 @@ def build_screens(samples, interval):
             priority.append(samples.pop(i))
             print(f'sending sample to the front {temp[i]}')
 
-        if temp[i].type in caboose:
+        if temp[i].type in caboose or hasattr(temp[i], 'bad'):
             bad_matrix.append(samples.pop(i))
             print(f'sending sample to the back {temp[i]}')
 

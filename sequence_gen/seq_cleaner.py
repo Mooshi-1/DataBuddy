@@ -26,7 +26,7 @@ def finalize_SCRNZ(seq):
         filename_count += 1
         col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
         final_list.append((col_1, col_2, col_3))
-        if sample.type in caboose:
+        if sample.type in caboose or hasattr(sample, 'bad'):
             filename_count += 1
             col_1 = 'BLANK'
             col_2 = solvent_base
@@ -44,7 +44,7 @@ def finalize_SCRNZ(seq):
         filename_count += 1
         col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
         final_list.append((col_1, col_2, col_3))       
-        if sample.type in caboose:
+        if sample.type in caboose or hasattr(sample, 'bad'):
             filename_count += 1
             col_1 = 'BLANK'
             col_2 = solvent_acid
