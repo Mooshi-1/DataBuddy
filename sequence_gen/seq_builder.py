@@ -160,13 +160,17 @@ def build_vols(samples, interval):
     for sample in samples:
         if sample.single:
             #bring single inject to the front
-            if samples_final and sample == samples_final[-1]:
+            if samples_final and sample == samples_final[-1] and not hasattr(sample, 'ex'):
+                print('rearranged single injection')
                 samples_final.insert(-2, sample)
             else:
+                print(sample)
                 samples_final.append(sample)
         if sample.double:
+            print(sample)
             samples_final.append(sample)
             samples_final.append(sample.copy())
+
 
 
     vol_list.append(make_neg_ctl())
@@ -176,7 +180,7 @@ def build_vols(samples, interval):
         sorted_dilns = sorted(dilns, key=lambda x: int(x[1:]), reverse=True)
         for diln in sorted_dilns:
             vol_list.append(make_diln(diln))
-    while z < len(samples):
+    while z < len(samples_final):
         vol_list.extend(samples_final[z:z + interval])
         vol_list.extend(make_LH())
         z += interval

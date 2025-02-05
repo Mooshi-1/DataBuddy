@@ -107,6 +107,7 @@ class volatiles(sequence):
         if self.type in vol_duplicate:
             self.single = False
             self.double = True
+        return self
 
     def add_comment(self):
         if self.comment is None:
@@ -125,6 +126,7 @@ class volatiles(sequence):
     def process_comments(self, item):
         print(item)
         if item.startswith('EXTRA:'):
+            self.ex = True
             return
         elif item.startswith('X'):
             self.abbrv += f"_{item}"
@@ -192,6 +194,7 @@ def read_sequence(seq_dir):
                     case_ID = barcode
                     #remove CME TEST BATCH duplicate barcodes
                     if samples and samples[-1].barcode == case_ID:
+                        print(f'skipping duplicate barcode {barcode}')
                         extra=False
                         continue
                 #create object
@@ -199,7 +202,7 @@ def read_sequence(seq_dir):
                         case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.add_duplicate()
                         if extra:
-                            samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment))
+                            samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate())
 
                     else:
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
@@ -215,10 +218,13 @@ def read_sequence(seq_dir):
                 #confirmation print
                     print(case_ID)
                     if extra:
+                        #does not includ add_duplicate() specific to SQVOL
+                        print(f'transforming extra sample')
                         samples[-2].transform_number()
                         samples[-2].abbreviate_type()
                         samples[-2].abbreviate_container()
                         samples[-2].add_comment()
+                        print(samples[-2])
                         extra=False
 
 

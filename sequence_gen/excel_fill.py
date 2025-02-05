@@ -42,9 +42,10 @@ def export_LCMSMS(samples):
 
 def export_SQVOL(samples):
     print('starting export')
-    df = pd.DataFrame(samples, columns=['Batch #', 'Tray Name', 'Vial#', 'Sample Name', 'Sample ID'])
+    df = pd.DataFrame(samples, columns=['Batch #', 'Tray Name', 'Vial#', 'Sample Name', 'Sample ID', 'barcode'])
 
-    excel_path = 'output.csv'
-    df.to_csv(excel_path, index=False, encoding='utf-8')
+    excel_path = 'output.xlsx'
+    df.to_excel(excel_path, index=False)
     print(f'data written to {excel_path}')
+
 
