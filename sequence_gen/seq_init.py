@@ -72,6 +72,8 @@ class sequence():
 
     def process_comments(self, item):
         print(item)
+        if item.startswith('EXTRA:'):
+            return        
         if item.startswith('X'):
             self.abbrv += f"_{item}"
             self.diln = True
@@ -114,15 +116,17 @@ class volatiles(sequence):
     
     def process_comments(self, item):
         print(item)
-        if item.startswith('X'):
+        if item.startswith('EXTRA:'):
+            return
+        elif item.startswith('X'):
             self.abbrv += f"_{item}"
             self.diln = item
-        if item.startswith('P'):
+        elif item.startswith('P'):
             self.prio = True
-        if item.startswith('SI') or item == '1':
+        elif item.startswith('SI') or item == '1':
             self.single = True
             self.double = False
-        if item.startswith('DO') or item.startswith('DU') or item == '2':
+        elif item.startswith('DO') or item.startswith('DU') or item == '2':
             self.single = False
             self.double = True
 
@@ -135,7 +139,6 @@ def read_sequence(seq_dir):
     # Iterate through directory defined by filepath
     for filename in os.listdir(seq_dir):
         if filename.endswith(".pdf"):
-            #counter = 0
             pdf_path = os.path.join(seq_dir, filename)        
             doc = fitz.open(pdf_path)
             # Extract text from the first page
@@ -157,36 +160,44 @@ def read_sequence(seq_dir):
                     barcode = (cases[i+2]).strip()
                     method = cases[i+3]
                     sample_container = cases[i+4].upper()
-
+                    #find comments block:
                     comment = None
-
-
                     barcode_rect = page.search_for(barcode)
                     #print(f'barcode = {barcode_rect}')
                     expand = 2
                     sample_rect = barcode_rect[0]
-
                     search_area = fitz.Rect(sample_rect.x0 - 285, #expand this one more to cover sample
                                             sample_rect.y0 - expand,
                                             sample_rect.x1 + expand, 
                                             sample_rect.y1 + expand)
-
                     annots = page.annots()
                     if annots is not None:
                         for annot in annots:
                             if search_area.intersects(annot.rect):
                                 comment = annot.info.get('content', '').strip().upper()
                                 #print(comment)
+                                if 'EXTRA:' in comment:
+                                    extra = True
+                                    e_comment = comment.split(':')[1].strip()
 
                     case_ID = barcode
+                    #remove CME TEST BATCH duplicate barcodes
+                    if samples and samples[-1].barcode == case_ID:
+                        extra=False
+                        continue
                 #create object
                     if method == 'SQVOL':
                         case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.add_duplicate()
+                        if extra:
+                            samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment))
+
                     else:
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
+                        if extra:
+                            samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment))
+
                     samples.append(case_ID)
-                    
                 #assign abbrv 
                     case_ID.transform_number()
                     case_ID.abbreviate_type()
@@ -194,7 +205,14 @@ def read_sequence(seq_dir):
                     case_ID.add_comment()
                 #confirmation print
                     print(case_ID)
-                    #print(repr(case_ID))
+                    if extra:
+                        samples[-2].transform_number()
+                        samples[-2].abbreviate_type()
+                        samples[-2].abbreviate_container()
+                        samples[-2].add_comment()
+                        extra=False
+
+
     return samples, method, batches
 
 
