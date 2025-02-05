@@ -134,7 +134,7 @@ def finalize_SQVOL(seq, batch):
         if sample.type in caboose:
             final_list.append((batch, tray, vial, 'BLANK', 'BLANK'))
             tray, vial = increment_vial(tray, vial)
-    print(final_list)
+
     return final_list
 
 

@@ -94,8 +94,14 @@ class volatiles(sequence):
         self.single = True
         self.double = False
 
+    def __str__(self):
+        return f"{self.abbrv}, {self.comment}, 1={self.single}, 2={self.double}"
+
     def __eq__(self, other):
         return self.number == other.number
+    
+    def copy(self):
+        return volatiles(self.number, self.type, self.container, self.barcode, self.abbrv)
   
     def add_duplicate(self):
         if self.type in vol_duplicate:
@@ -103,6 +109,8 @@ class volatiles(sequence):
             self.double = True
 
     def add_comment(self):
+        if self.comment is None:
+            return
         if ',' in self.comment:
             notes = self.comment.split(',')
             self.comment = [item.strip() for item in notes]
@@ -162,6 +170,7 @@ def read_sequence(seq_dir):
                     sample_container = cases[i+4].upper()
                     #find comments block:
                     comment = None
+                    extra = False
                     barcode_rect = page.search_for(barcode)
                     #print(f'barcode = {barcode_rect}')
                     expand = 2

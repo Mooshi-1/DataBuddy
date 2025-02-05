@@ -1,5 +1,6 @@
 from seq_init import sequence
 from sample_dict import caboose
+import copy
 
 # class sequence():
 #     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None):
@@ -156,28 +157,31 @@ def build_vols(samples, interval):
         # make sure to not disrupt index of samples
     samples = priority + samples
     samples_final = []
-    samples_final.append(samples[0])
-    for sample in samples[1:]:
+    for sample in samples:
         if sample.single:
-            samples_final.append(sample)
+            #bring single inject to the front
+            if samples_final and sample == samples_final[-1]:
+                samples_final.insert(-2, sample)
+            else:
+                samples_final.append(sample)
         if sample.double:
             samples_final.append(sample)
-            samples_final.append(sample)
-    print(samples_final)
+            samples_final.append(sample.copy())
+
 
     vol_list.append(make_neg_ctl())
-    vol_list.extend(make_curve(6))
+    vol_list.extend(make_curve(7))
     vol_list.extend(make_LH())
     if dilns:
         sorted_dilns = sorted(dilns, key=lambda x: int(x[1:]), reverse=True)
         for diln in sorted_dilns:
             vol_list.append(make_diln(diln))
     while z < len(samples):
-        vol_list.extend(samples[z:z + interval])
+        vol_list.extend(samples_final[z:z + interval])
         vol_list.extend(make_LH())
         z += interval
     
-    print(vol_list)
+    #print(vol_list)
     return vol_list
 
     

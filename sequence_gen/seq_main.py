@@ -55,6 +55,8 @@ def main():
     
     if method == 'SQVOL':
         slice_interval = 20
+        samples_for_seq = seq_builder.build_vols(samples, slice_interval)
+        samples_for_write = seq_cleaner.finalize_SQVOL(samples_for_seq, batch_num)
 
     if method.startswith("QT"):
         slice_interval = 20
