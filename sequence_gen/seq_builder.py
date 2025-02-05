@@ -56,23 +56,6 @@ def make_LH(init_counter=None):
         sequence(f'CTL HIGH {make_LH.counter}', 'HIGH CTL', '', f'CTL HIGH {make_LH.counter}', f'CTL HIGH {make_LH.counter}')
     ]
 
-# nested_list = [[1, 2], [3, 4], [5, 6]]
-# flattened_list = [item for sublist in nested_list for item in sublist]
-# print(flattened_list)  # Output: [1, 2, 3, 4, 5, 6]
-
-# nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
-# new_list = [23-4, 23-5, 23-6]
-
-# # Insert at the second position (index 1)
-# nested_list.insert(1, new_list)
-# print(nested_list)
-
-# nested_list = [[23-1, 23-2, 23-3], [24-01, 24-02, 24-03], [25-1, 25-2, 25-3]]
-# new_list = [26-1, 26-2, 26-3]
-
-# # Append at the end
-# nested_list.append(new_list)
-# print(nested_list)
 
 #insert backwards to avoid indices getting messed up
 def duplicate_quants():
@@ -148,7 +131,21 @@ def build_screens(samples, interval):
 
     return scrnz_samples
 
+def build_vols(samples, interval):
+    print('starting builder')
+    vol_list = []
+    z = 0
+    priority = []
+    dilns = set()
+    temp = samples.copy()
 
+    for i in range(len(temp) -1, -1, -1):
+        if hasattr(temp[i], 'prio'):
+            priority.append(samples.pop(i))
+            print(f'sending sample to the front {temp[i]}')
+
+        if hasattr(temp[i], 'diln'):
+            dilns.add(samples[i].diln)
 
 #consider making case blocks?
 #replace block by finding index of case block
