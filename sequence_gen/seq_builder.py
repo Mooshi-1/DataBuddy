@@ -152,6 +152,19 @@ def build_vols(samples, interval):
             priority.append(samples.pop(i))
             print(f'sending sample to the front {temp[i]}')
 
+        # organize single > double order and then append doubles to sample list
+        # make sure to not disrupt index of samples
+    samples = priority + samples
+    samples_final = []
+    samples_final.append(samples[0])
+    for sample in samples[1:]:
+        if sample.single:
+            samples_final.append(sample)
+        if sample.double:
+            samples_final.append(sample)
+            samples_final.append(sample)
+    print(samples_final)
+
     vol_list.append(make_neg_ctl())
     vol_list.extend(make_curve(6))
     vol_list.extend(make_LH())
@@ -164,6 +177,7 @@ def build_vols(samples, interval):
         vol_list.extend(make_LH())
         z += interval
     
+    print(vol_list)
     return vol_list
 
     

@@ -115,6 +115,26 @@ def finalize_LCMSMS(seq, batch):
 
 def finalize_SQVOL(seq, batch):
     final_list = []
-    columns=['Tray Name', 'Vial#', 'Sample Name', 'Sample ID']
+    columns=['Batch #', 'Tray Name', 'Vial#', 'Sample Name', 'Sample ID']
     #vial 1-60 tray 1, vial 1-60 tray 2
-    vial_counter = itertools.product(range(1,3), range(1,61))
+
+    tray = 1
+    vial = 1
+
+    def increment_vial(tray, vial):
+        vial += 1
+        if vial > 60:
+            vial = 1
+            tray += 1
+        return tray, vial
+
+    for sample in seq:
+        final_list.append((batch, tray, vial, sample.abbrv, sample.abbrv))
+        tray, vial = increment_vial(tray, vial)
+        if sample.type in caboose:
+            final_list.append((batch, tray, vial, 'BLANK', 'BLANK'))
+            tray, vial = increment_vial(tray, vial)
+    print(final_list)
+    return final_list
+
+

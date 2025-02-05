@@ -53,6 +53,9 @@ def main():
             samples_for_write = seq_cleaner.finalize_LCMSMS(samples_for_seq, batch_num)
             excel_fill.export_LCMSMS(samples_for_write)              
     
+    if method == 'SQVOL':
+        slice_interval = 20
+
     if method.startswith("QT"):
         slice_interval = 20
         
