@@ -76,7 +76,7 @@ class sequence():
             return        
         if item.startswith('X'):
             self.abbrv += f"_{item}"
-            self.diln = True
+            self.diln = item
         if item.startswith('P'):
             self.prio = True
         if item.startswith('M'):

@@ -56,6 +56,8 @@ def make_LH(init_counter=None):
         sequence(f'CTL HIGH {make_LH.counter}', 'HIGH CTL', '', f'CTL HIGH {make_LH.counter}', f'CTL HIGH {make_LH.counter}')
     ]
 
+def make_diln(value):
+    return sequence(f'DILN CTL {value}', 'CTL', '', f'DILN CTL {value}', f'DILN CTL {value}')
 
 #insert backwards to avoid indices getting messed up
 def duplicate_quants():
@@ -97,7 +99,7 @@ def sort_quants(samples):
 
 def build_screens(samples, interval):
     print('starting builder')
-    scrnz_samples = []
+    screen_samples = []
     z = 0
     bad_matrix = []
     priority = []
@@ -118,18 +120,18 @@ def build_screens(samples, interval):
     bad_matrix = sorted(bad_matrix, key=lambda x: caboose.get(x.type, '99'))
     samples = priority[::-1] + samples + bad_matrix
 
-    scrnz_samples.append(make_solvent())
-    scrnz_samples.append(make_neg_ctl())
-    scrnz_samples.append(make_pos_ctl())
-    scrnz_samples.append(make_solvent())
+    screen_samples.append(make_solvent())
+    screen_samples.append(make_neg_ctl())
+    screen_samples.append(make_pos_ctl())
+    screen_samples.append(make_solvent())
     while z < len(samples):
-        scrnz_samples.extend(samples[z:z + interval])
-        scrnz_samples.append(make_solvent())
-        scrnz_samples.append(make_pos_ctl())
-        scrnz_samples.append(make_solvent())
+        screen_samples.extend(samples[z:z + interval])
+        screen_samples.append(make_solvent())
+        screen_samples.append(make_pos_ctl())
+        screen_samples.append(make_solvent())
         z += interval
 
-    return scrnz_samples
+    return screen_samples
 
 def build_vols(samples, interval):
     print('starting builder')
@@ -140,12 +142,32 @@ def build_vols(samples, interval):
     temp = samples.copy()
 
     for i in range(len(temp) -1, -1, -1):
+
+        if hasattr(temp[i], 'diln'):
+            if temp[i].diln != 'X0':
+                dilns.add(samples[i].diln)
+                print(f'creating dilution control {samples[i].diln}')
+
         if hasattr(temp[i], 'prio'):
             priority.append(samples.pop(i))
             print(f'sending sample to the front {temp[i]}')
 
-        if hasattr(temp[i], 'diln'):
-            dilns.add(samples[i].diln)
+    vol_list.append(make_neg_ctl())
+    vol_list.extend(make_curve(6))
+    vol_list.extend(make_LH())
+    if dilns:
+        sorted_dilns = sorted(dilns, key=lambda x: int(x[1:]), reverse=True)
+        for diln in sorted_dilns:
+            vol_list.append(make_diln(diln))
+    while z < len(samples):
+        vol_list.extend(samples[z:z + interval])
+        vol_list.extend(make_LH())
+        z += interval
+    
+    return vol_list
+
+    
+
 
 #consider making case blocks?
 #replace block by finding index of case block

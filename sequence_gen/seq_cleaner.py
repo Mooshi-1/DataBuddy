@@ -112,3 +112,9 @@ def finalize_LCMSMS(seq, batch):
             final_list.append((batch, 1, vial_count, sample.abbrv))
 
     return final_list
+
+def finalize_SQVOL(seq, batch):
+    final_list = []
+    columns=['Tray Name', 'Vial#', 'Sample Name', 'Sample ID']
+    #vial 1-60 tray 1, vial 1-60 tray 2
+    vial_counter = itertools.product(range(1,3), range(1,61))
