@@ -13,9 +13,9 @@ def export_SCRNZ(samples):
     df = pd.DataFrame(samples, columns=['Sample Name', 'Vial', 'Filenames'])
 
     # Write the DataFrame to an Excel file
-    excel_path = 'output.xlsx'
+    excel_path = 'output.csv'
 
-    df.to_excel(excel_path, index=False)
+    df.to_csv(excel_path, index=False, encoding='utf-8')
 
 
     print(f"Data written to {excel_path}")
@@ -35,7 +35,16 @@ def export_LCMSMS(samples):
     print('starting export')
     df = pd.DataFrame(samples, columns=['Batch #', 'Tray', 'Vial#', 'Sample Name'])
 
-    excel_path = 'output.xlsx'
+    excel_path = 'output.csv'
     
-    df.to_excel(excel_path, index=False)
+    df.to_csv(excel_path, index=False, encoding='utf-8')
     print(f"Data written to {excel_path}")
+
+def export_SQVOL(samples):
+    print('starting export')
+    df = pd.DataFrame(samples, columns=['Batch #', 'Tray Name', 'Vial#', 'Sample Name', 'Sample ID'])
+
+    excel_path = 'output.csv'
+    df.to_csv(excel_path, index=False, encoding='utf-8')
+    print(f'data written to {excel_path}')
+
