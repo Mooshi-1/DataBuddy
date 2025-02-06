@@ -4,16 +4,10 @@ Created on Thurs 01/09/2025
 
 @author: Giachetti
 """
-#pyinstaller main.py -- to package .exe file
-#make shortcut from dist folder
-#export QC data to pdf
 #handle reinjects
 #integrate sequence generation from test batch
 ##export sequence as pdf
-#use pyinstaller or py2exe libs to create .exe file
-
 import sys
-
 import searcher
 import shimadzu_init
 import sample_sorter
@@ -21,18 +15,21 @@ import aux_func
 import filler
 
 ascii_art = """
- .
- ooo        ooooo oooooooooo.   ooo        ooooo oooooooooooo      ooooooooooooo   .oooooo.   ooooooo  ooooo 
- `88.       .888' `888'   `Y8b  `88.       .888' `888'     `8      8'   888   `8  d8P'  `Y8b   `8888    d8'  
-  888b     d'888   888      888  888b     d'888   888                   888      888      888    Y888..8P    
-  8 Y88. .P  888   888      888  8 Y88. .P  888   888oooo8              888      888      888     `8888'     
-  8  `888'   888   888      888  8  `888'   888   888    "              888      888      888    .8PY888.    
-  8    Y     888   888     d88'  8    Y     888   888       o           888      `88b    d88'   d8'  `888b   
- o8o        o888o o888bood8P'   o8o        o888o o888ooooood8          o888o      `Y8bood8P'  o888o  o88888o 
- 
-(((((((QUANTS -- PRELIM TESTING))))))) 
-
-Version 1.09 - 01/27/2025
+ ██████╗ ██╗   ██╗ █████╗ ███╗   ██╗████████╗
+██╔═══██╗██║   ██║██╔══██╗████╗  ██║╚══██╔══╝
+██║   ██║██║   ██║███████║██╔██╗ ██║   ██║   
+██║▄▄ ██║██║   ██║██╔══██║██║╚██╗██║   ██║   
+╚██████╔╝╚██████╔╝██║  ██║██║ ╚████║   ██║   
+ ╚══▀▀═╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   
+                                             
+██████╗ ██╗███╗   ██╗██████╗ ███████╗██████╗ 
+██╔══██╗██║████╗  ██║██╔══██╗██╔════╝██╔══██╗
+██████╔╝██║██╔██╗ ██║██║  ██║█████╗  ██████╔╝
+██╔══██╗██║██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗
+██████╔╝██║██║ ╚████║██████╔╝███████╗██║  ██║
+╚═════╝ ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝
+                                            
+Version 1.10 - 02/06/2025
 """
 
 def main(batch, method, extraction_date):

@@ -1,6 +1,5 @@
-from seq_init import sequence, volatiles
+from seq_init import sequence
 from sample_dict import caboose
-import copy
 
 # class sequence():
 #     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None):
@@ -9,8 +8,6 @@ import copy
 #         self.container = sample_container
 #         self.barcode = barcode
 #         self.abbrv = "" if abbrv is None else abbrv
-
-#screens
 
 def make_solvent():
     if not hasattr(make_solvent, "counter"):
