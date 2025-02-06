@@ -1,4 +1,4 @@
-from seq_init import sequence
+from seq_init import sequence, volatiles
 from sample_dict import caboose
 import copy
 
@@ -129,10 +129,8 @@ def build_vols(samples, interval):
                 print('rearranged single injection')
                 samples_final.insert(-2, sample)
             else:
-                print(sample)
                 samples_final.append(sample)
         if sample.double:
-            print(sample)
             samples_final.append(sample)
             samples_final.append(sample.copy())
 
@@ -259,6 +257,4 @@ def build_quants(samples, interval, method):
             quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L5'))
             quant_list.append(make_solvent())
 
-        
-    print(quant_list)
     return quant_list

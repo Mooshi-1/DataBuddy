@@ -39,7 +39,7 @@ class sequence():
         except KeyError:
             print(f"Sample type {self.type} not found in Sample Type Dictionary")
             sample_type_dict[self.type] = input(f"Enter the desired abbreviation for {self.type}: ").upper()
-            self.abbreviate_type()
+            return self.abbreviate_type()
 
     def abbreviate_container(self):
         try:
@@ -48,7 +48,7 @@ class sequence():
         except KeyError:
             print(f"Sample container {self.container} not found in Sample Container Dictionary")
             sample_container_dict[self.container] = input(f"Enter the desired abbreviation for {self.container}: ").upper()
-            self.abbreviate_container()
+            return self.abbreviate_container()
 
     def add_serum(self):
         self.abbrv += ' SERUM'
@@ -248,16 +248,18 @@ def read_sequence(seq_dir):
                         continue
                 #create object, use subclass if necessary
                     if method == 'SQVOL': #SQVOL
+                        #print('converting to volatiles')
                         case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.add_duplicate()
                         if extra:
                             samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate())
-                    if method.startswith('QT'): #QUANTS
+                    elif method.startswith('QT'): #QUANTS
                         case_ID = quants(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.find_serums()
                         if extra:
                             samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment).find_serums())
                     else: #SCRNZ, SCGEN, SCLCMSMS, ALL OTHER
+                        #print('converting to sequence')
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                         if extra:
                             samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment))
