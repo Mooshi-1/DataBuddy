@@ -44,6 +44,8 @@ def main():
         slice_interval = 20
 
         samples_for_seq = seq_builder.build_quants(samples, slice_interval, method)
+        samples_for_write = seq_cleaner.finalize_quants(samples_for_seq, batch_num)
+        excel_fill.export_quants(samples_for_write)
         
 
 

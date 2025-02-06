@@ -226,13 +226,14 @@ def build_quants(samples, interval, method):
         sorted_dilns = sorted(dilns_b, key=lambda x: int(x[1:]), reverse=True)
         for diln in sorted_dilns:
             quant_list.append(make_diln(diln))
-    quant_list.append(make_solvent())
     while z < len(bloods_final):
         quant_list.extend(bloods_final[z:z + interval])
-        quant_list.extend(make_LH())
         quant_list.append(make_solvent())
+        quant_list.extend(make_LH())
+
         z += interval
     if serums_final:
+        quant_list.append(make_solvent())
         quant_list.append(make_shooter().add_serum())
         quant_list.append(make_neg_ctl().add_serum())
         if method.startswith('QTACET'):
@@ -242,11 +243,11 @@ def build_quants(samples, interval, method):
             sorted_dilns = sorted(dilns_s, key=lambda x: int(x[1:]), reverse=True)
             for diln in sorted_dilns:
                 quant_list.append(make_diln(diln).add_serum())
-        quant_list.append(make_solvent())
+
         while y < len(serums_final):
             quant_list.extend(serums_final[y:y+interval])
-            quant_list.extend([ctl.add_serum() for ctl in make_LH(0)])
             quant_list.append(make_solvent())
+            quant_list.extend([ctl.add_serum() for ctl in make_LH()])
             y += interval
     if MSA:
         for case in MSA:

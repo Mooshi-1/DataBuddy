@@ -49,3 +49,10 @@ def export_SQVOL(samples):
     print(f'data written to {excel_path}')
 
 
+def export_quants(samples):
+    print('starting export')
+    df = pd.DataFrame(samples, columns=['Batch #', 'Tray', 'Vial#', 'Sample Name'])
+
+    excel_path = 'output.xlsx'
+    df.to_excel(excel_path, index=False)
+    print(f'data written to {excel_path}')

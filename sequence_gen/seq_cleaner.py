@@ -1,5 +1,6 @@
 import itertools
 from sample_dict import caboose
+from seq_init import quants
 
 
 def finalize_SCRNZ(seq):
@@ -146,5 +147,25 @@ def finalize_quants(seq, batch):
     #max vial = 105
     solvents = itertools.cycle(range(100,106))
 
+    previous_sample = None
     for sample in seq:
-        final_list.append((batch, tray,))
+        if sample.type == 'SOLVENT':
+            final_list.append((batch, tray, next(solvents), sample.number))
+
+        elif sample.container == '':
+            final_list.append((batch, tray, vial_number, sample.abbrv))
+            vial_number += 1
+
+        elif isinstance(sample, quants):
+            if previous_sample and previous_sample == sample:
+                final_list.append((batch, tray, vial_number, sample.abbrv))
+                vial_number += 1
+            if previous_sample and previous_sample != sample:
+                print(f'adding solvent before {sample}')
+                final_list.append((batch, tray, next(solvents), 'S'))
+                final_list.append((batch, tray, vial_number, sample.abbrv))
+                vial_number += 1 
+        previous_sample = sample              
+
+    print(final_list)
+    return final_list
