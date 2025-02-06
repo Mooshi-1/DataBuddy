@@ -13,7 +13,7 @@ class sequence():
         self.abbrv = "" if abbrv is None else abbrv
 
     def __repr__(self):
-        return (f"({self.number!r}, {self.type!r}, {self.container!r}, {self.barcode!r}, {self.comment!r}, {self.abbrv!r})")
+        return (f"({self.barcode!r}, {self.comment!r}, {self.abbrv!r})")
     
     def __str__(self):
         return f"{self.abbrv}, {self.comment}"
@@ -30,23 +30,24 @@ class sequence():
                 leading_chars += self.number[0]
                 leading_chars += self.number[1]
         self.abbrv += leading_chars + self.number[-8:-6] + "-" + self.number[-4:] + "_"
+        return self
 
     def abbreviate_type(self):
         try:
             self.abbrv += sample_type_dict[self.type]
+            return self
         except KeyError:
             print(f"Sample type {self.type} not found in Sample Type Dictionary")
-            val1 = input(f"Enter the desired abbreviation for {self.type}: ").upper()
-            sample_type_dict[self.type] = val1
+            sample_type_dict[self.type] = input(f"Enter the desired abbreviation for {self.type}: ").upper()
             self.abbreviate_type()
 
     def abbreviate_container(self):
         try:
             self.abbrv += sample_container_dict[self.container]
+            return self
         except KeyError:
             print(f"Sample container {self.container} not found in Sample Container Dictionary")
-            val2 = input(f"Enter the desired abbreviation for {self.container}: ").upper()
-            sample_container_dict[self.container] = val2
+            sample_container_dict[self.container] = input(f"Enter the desired abbreviation for {self.container}: ").upper()
             self.abbreviate_container()
 
     def add_comment(self):
@@ -70,7 +71,6 @@ class sequence():
                 self.process_comments(self.comment)
 
     def process_comments(self, item):
-        print(item)
         if item.startswith('EXTRA:'):
             return        
         if item.startswith('X'):
@@ -117,7 +117,6 @@ class volatiles(sequence):
                 self.process_comments(self.comment)
     
     def process_comments(self, item):
-        print(item)
         if item.startswith('EXTRA:'):
             self.ex = True
             return
@@ -139,8 +138,8 @@ class quants(sequence):
         self.MSA = False
         self.SR = False
         self.single = False
-
-
+        self.double = True
+    #quants class override
     def add_comment(self):
         if self.comment == None:
             if self.type == 'BRAIN':
@@ -163,12 +162,11 @@ class quants(sequence):
                     self.process_comments(item)
             else:
                 self.process_comments(self.comment)
-
+    #quants class override
     def process_comments(self, item):
-        print(item)
         if item.startswith('EXTRA:'):
             return        
-        if item.startswith('X'):
+        elif item.startswith('X'):
             self.abbrv += f"_{item}"
             if int(item[1:]) > 10:
                 self.MSA = True
@@ -182,41 +180,41 @@ class quants(sequence):
             self.SR = True
         if item.startswith('SI') or item == '1':
             self.single = True
+            self.double = False
+    def find_serums():
+        pass
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
 def read_sequence(seq_dir):
-    samples = [] #will hold sample objects created here
-    batches = set()
-    # Iterate through directory defined by filepath
+    samples = [] # holds created class objects, returned at end
+    batches = set() # only 1 of each batch number, concat in main()
     for filename in os.listdir(seq_dir):
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(seq_dir, filename)        
             doc = fitz.open(pdf_path)
-            # Extract text from the first page
+            # check all pages
             for page_num in range(len(doc)):
                 page = doc[page_num]
                 text = page.get_text()
                 lines = text.strip().split('\n')
                 batch_number = lines[3].strip().replace(",","")
                 batches.add(batch_number)
-
+            #remove non-sample indexes
                 start_index = lines.index('TEST BATCH ') + 1
                 end_index = lines.index('CRTestBatch') - 1
-
                 cases = lines[start_index:end_index]
-                #print(cases)
+            #start case info loop
                 for i in range(0, len(cases), 5):
                     sample_number = (cases[i])
                     sample_type = (cases[i+1]).upper()
                     barcode = (cases[i+2]).strip()
                     method = cases[i+3]
                     sample_container = cases[i+4].upper()
-                    #find comments block:
+                #find comments block:
                     comment = None
-                    extra = False
+                    extra = False #flag to create extra sample
                     barcode_rect = page.search_for(barcode)
-                    #print(f'barcode = {barcode_rect}')
                     expand = 2
                     sample_rect = barcode_rect[0]
                     search_area = fitz.Rect(sample_rect.x0 - 285, #expand this one more to cover sample
@@ -224,6 +222,7 @@ def read_sequence(seq_dir):
                                             sample_rect.x1 + expand, 
                                             sample_rect.y1 + expand)
                     annots = page.annots()
+                    #find where annotation and search area intersect
                     if annots is not None:
                         for annot in annots:
                             if search_area.intersects(annot.rect):
@@ -232,35 +231,37 @@ def read_sequence(seq_dir):
                                 if 'EXTRA:' in comment:
                                     extra = True
                                     e_comment = comment.split(':')[1].strip()
-
+                #end comments block, continue to list append
                     case_ID = barcode
-                    #remove CME TEST BATCH duplicate barcodes
+                #remove CME TEST BATCH duplicate barcodes
                     if samples and samples[-1].barcode == case_ID:
                         print(f'skipping duplicate barcode {barcode}')
                         extra=False
                         continue
-                #create object
-                    if method == 'SQVOL':
+                #create object, use subclass if necessary
+                    if method == 'SQVOL': #SQVOL
                         case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.add_duplicate()
                         if extra:
                             samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate())
-
-                    else:
+                    if method.startswith('QT'): #QUANTS
+                        case_ID = quants(sample_number, sample_type, sample_container, barcode, None, comment)
+                        if extra:
+                            samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment))
+                    else: #SCRNZ, SCGEN, SCLCMSMS, ALL OTHER
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                         if extra:
                             samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment))
 
                     samples.append(case_ID)
-                #assign abbrv 
-                    case_ID.transform_number()
-                    case_ID.abbreviate_type()
-                    case_ID.abbreviate_container()
+                #assign abbrv, chain return self
+                    case_ID.transform_number().abbreviate_type().abbreviate_container()
+                #assign comments, subclass override -- comments must be separated by comma
                     case_ID.add_comment()
                 #confirmation print
                     print(case_ID)
                     if extra:
-                        #does not includ add_duplicate() specific to SQVOL
+                    #does not include add_duplicate() specific to volatiles class
                         print(f'transforming extra sample')
                         samples[-2].transform_number()
                         samples[-2].abbreviate_type()
@@ -269,20 +270,22 @@ def read_sequence(seq_dir):
                         print(samples[-2])
                         extra=False
 
-
     return samples, method, batches
 
 
 
-# [('2025-00048', 'BLOOD - HEART', '2301182', '50ML RED TOP', 'SCGEN', '12821', '25-00048_HBBRT'),
-# ('2025-00053', 'BRAIN', '2301269', 'FRESH SPECIMEN CUP', 'SCGEN', '12821', '25-00053_BRNCUP'),
-# ('2025-00099', 'BLOOD - HEART', '2302145', '50ML RED TOP', 'SCGEN', '12821', '25-00099_HBBRT'),
-# ('2025-00115', 'BLOOD - AORTA', '2302625', '50ML RED TOP', 'SCGEN', '12821', '25-00115_AOBBRT'),
-# ('2025-00118', 'BLOOD - ANTEMORTEM', '2303301', 'PURPLE TOP TUBE', 'SCGEN', '12821', '25-00118_AMBPRPT'),
-# ('2025-00119', 'BLOOD - AORTA', '2302775', '50ML RED TOP', 'SCGEN', '12821', '25-00119_AOBBRT'),
-# ('2025-00120', 'BLOOD - AORTA', '2302815', '50ML RED TOP', 'SCGEN', '12821', '25-00120_AOBBRT')]
 
 if __name__ == "__main__":
     seq_dir = r'C:\Users\e314883\Desktop\python pdf\sequence_gen'
     print('running...')
+
+    
+# [('2025-00048', 'BLOOD - HEART', '2301182', '50ML RED TOP', 'SCGEN', '12821', '25-0048_HBBRT'),
+# ('2025-00053', 'BRAIN', '2301269', 'FRESH SPECIMEN CUP', 'SCGEN', '12821', '25-0053_BRNCUP'),
+# ('2025-00099', 'BLOOD - HEART', '2302145', '50ML RED TOP', 'SCGEN', '12821', '25-0099_HBBRT'),
+# ('2025-00115', 'BLOOD - AORTA', '2302625', '50ML RED TOP', 'SCGEN', '12821', '25-0115_AOBBRT'),
+# ('2025-00118', 'BLOOD - ANTEMORTEM', '2303301', 'PURPLE TOP TUBE', 'SCGEN', '12821', '25-0118_AMBPRPT'),
+# ('2025-00119', 'BLOOD - AORTA', '2302775', '50ML RED TOP', 'SCGEN', '12821', '25-0119_AOBBRT'),
+# ('2025-00120', 'BLOOD - AORTA', '2302815', '50ML RED TOP', 'SCGEN', '12821', '25-0120_AOBBRT')]
+
     read_sequence(seq_dir)
