@@ -41,7 +41,7 @@ def make_shooter():
 #for curve, add cal# arg and call .extend
 def make_curve(CALS):
     curve_list = []
-    for i in range(1, CALS):
+    for i in range(1, CALS + 1):
         curve_list.append(sequence(f'CAL L{i}', f'CAL L{i}', '', f'CAL L{i}', f'CAL L{i}'))
     return curve_list
 
@@ -174,7 +174,7 @@ def build_vols(samples, interval):
 
 
     vol_list.append(make_neg_ctl())
-    vol_list.extend(make_curve(7))
+    vol_list.extend(make_curve(6))
     vol_list.extend(make_LH())
     if dilns:
         sorted_dilns = sorted(dilns, key=lambda x: int(x[1:]), reverse=True)
@@ -196,24 +196,78 @@ def build_vols(samples, interval):
 #then SCREENS[(block_index):(block_index)+1] = [list of cases]
 
 def quants(samples, interval):
-    blood_quants = []
-    serum_quants = []
-    if any(case.type):
-        i = 0
+    print('starting builder')
+    quant_list = []
+    z = 0
+    priority = []
+    dilns_b = set()
+    serums = []
+    dilns_s = set()
+    temp = samples.copy()
+    MSA=[]
 
-    blood_quants.append(make_solvent())
-    blood_quants.append(make_shooter())
-    blood_quants.append(make_neg_ctl())
-    blood_quants.extend(make_curve(6))
-    blood_quants.extend(make_LH())
-    blood_quants.append(make_solvent())
+    def check_SR(sample):
+        pass
 
+    def check_diln(sample):
+        if hasattr(sample, 'diln'):
+            if sample.diln != 'X0':
+                dilns_b.add(sample.diln)
+                print(f'creating dilution control {sample.diln}')
 
+    for i in range(len(temp) -1, -1, -1):
+        if hasattr(temp[i], 'MSA'):
+            MSA.append(samples.pop(i))
+            continue
 
-    for case in samples:
+        elif 'SERUM' in temp[i].type or 'PLASMA' in temp[i].type:
+            print(f'found serum sample')
+            check_diln(samples[i])
+            serums.append(samples.pop(i))
+            continue
+
+        elif hasattr(temp[i], 'diln'):
+            if temp[i].diln != 'X0':
+                dilns_b.add(samples[i].diln)
+                print(f'creating dilution control {samples[i].diln}')
         
-            blood_quants.append(samples[i:i + interval])
 
 
-    if any('SERUM' in sample.type for sample in samples):
-        return
+        elif hasattr(temp[i], 'prio'):
+            priority.append(samples.pop(i))
+            print(f'sending sample to the front {temp[i]}')
+
+        # organize single > double order and then append doubles to sample list
+        # make sure to not disrupt index of samples
+    samples = priority + samples
+    samples_final = []
+    for sample in samples:
+        if sample.single:
+            #bring single inject to the front
+            if samples_final and sample == samples_final[-1] and not hasattr(sample, 'ex'):
+                print('rearranged single injection')
+                samples_final.insert(-2, sample)
+            else:
+                print(sample)
+                samples_final.append(sample)
+        if sample.double:
+            print(sample)
+            samples_final.append(sample)
+            samples_final.append(sample.copy())
+
+
+
+    quant_list.append(make_neg_ctl())
+    quant_list.extend(make_curve(7))
+    quant_list.extend(make_LH())
+    if dilns:
+        sorted_dilns = sorted(dilns, key=lambda x: int(x[1:]), reverse=True)
+        for diln in sorted_dilns:
+            quant_list.append(make_diln(diln))
+    while z < len(samples_final):
+        quant_list.extend(samples_final[z:z + interval])
+        quant_list.extend(make_LH())
+        z += interval
+    
+    #print(quant_list)
+    return quant_list
