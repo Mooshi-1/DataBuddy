@@ -52,7 +52,7 @@ if __name__ == '__main__':
    # try:
     print('BINDER START!')
 
-    inst = input('which instrument are you running on? ')
+    #inst = input('which instrument are you running on? ')
     #map out instruments
     main()
 

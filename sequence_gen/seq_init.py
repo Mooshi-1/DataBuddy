@@ -1,6 +1,5 @@
 import time
 import os
-import re
 import fitz  # type: ignore # PyMuPDF
 from sample_dict import sample_type_dict, sample_container_dict, vol_duplicate
 
@@ -79,12 +78,6 @@ class sequence():
             self.diln = item
         if item.startswith('P'):
             self.prio = True
-        if item.startswith('M'):
-            self.MSA = True
-        if item.startswith('SR'):
-            self.SR = True
-        if item.startswith('SI') or item == '1':
-            self.single = True
         if item.startswith('B'):
             self.bad = True
 
@@ -140,6 +133,55 @@ class volatiles(sequence):
             self.single = False
             self.double = True
 
+class quants(sequence):
+    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
+        super().__init__(sample_number, sample_type, sample_container, barcode, abbrv, comment)
+        self.MSA = False
+        self.SR = False
+        self.single = False
+
+
+    def add_comment(self):
+        if self.comment == None:
+            if self.type == 'BRAIN':
+                self.abbrv += "_X2"
+                self.MSA = True
+            if self.type == 'LIVER':
+                self.abbrv += "_X5"
+                self.MSA = True
+            if self.type == 'GASTRIC':
+                self.abbrv += "_X10"
+                self.MSA = True
+            return
+        elif ',' in self.comment:
+            notes = self.comment.split(',')
+            self.comment = [item.strip() for item in notes]
+            self.add_comment()
+        else:
+            if isinstance(self.comment, list):
+                for item in self.comment:
+                    self.process_comments(item)
+            else:
+                self.process_comments(self.comment)
+
+    def process_comments(self, item):
+        print(item)
+        if item.startswith('EXTRA:'):
+            return        
+        if item.startswith('X'):
+            self.abbrv += f"_{item}"
+            if int(item[1:]) > 10:
+                self.MSA = True
+                return
+            self.diln = item
+        if item.startswith('P'):
+            self.prio = True
+        if item.startswith('M'):
+            self.MSA = True
+        if item.startswith('SR'):
+            self.SR = True
+        if item.startswith('SI') or item == '1':
+            self.single = True
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
