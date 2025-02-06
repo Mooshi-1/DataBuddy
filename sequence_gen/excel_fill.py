@@ -7,52 +7,51 @@ import openpyxl.cell._writer # type: ignore # openpyxl
 import win32com.client as win32 # type: ignore # win32com
 
 #probably needs a path....
-def export_SCRNZ(samples):
+def export_SCRNZ(samples, path):
     print("starting export")
     # Create a DataFrame from the list of tuples
     df = pd.DataFrame(samples, columns=['Sample Name', 'Vial', 'Filenames'])
 
     # Write the DataFrame to an Excel file
-    excel_path = 'output.csv'
+    excel_path = os.path.join(path, "sequence.csv")
 
     df.to_csv(excel_path, index=False, encoding='utf-8')
-
 
     print(f"Data written to {excel_path}")
 
 
-def export_SCGEN(samples):
+def export_SCGEN(samples, path):
     print("starting export")
     # Create a DataFrame from the list of tuples
     df = pd.DataFrame(samples, columns=['Sample Name', 'Sample Description', 'Sample Position', 'Method Name', 'Volume'])    
 
-    excel_path = 'output.csv'
+    excel_path = os.path.join(path, "sequence.csv")
     df.to_csv(excel_path, index=False, encoding='utf-8')
 
     print(f"data written to {excel_path}")
 
-def export_LCMSMS(samples):
+def export_LCMSMS(samples, path):
     print('starting export')
     df = pd.DataFrame(samples, columns=['Batch #', 'Tray', 'Vial#', 'Sample Name'])
 
-    excel_path = 'output.csv'
+    excel_path = os.path.join(path, "sequence.csv")
     
     df.to_csv(excel_path, index=False, encoding='utf-8')
     print(f"Data written to {excel_path}")
 
-def export_SQVOL(samples):
+def export_SQVOL(samples, path):
     print('starting export')
     df = pd.DataFrame(samples, columns=['Batch #', 'Tray Name', 'Vial#', 'Sample Name', 'Sample ID', 'barcode'])
 
-    excel_path = 'output.xlsx'
+    excel_path = os.path.join(path, "sequence.xlsx")
     df.to_excel(excel_path, index=False)
     print(f'data written to {excel_path}')
 
 
-def export_quants(samples):
+def export_quants(samples, path):
     print('starting export')
     df = pd.DataFrame(samples, columns=['Batch #', 'Tray', 'Vial#', 'Sample Name'])
 
-    excel_path = 'output.xlsx'
+    excel_path = os.path.join(path, "sequence.xlsx")
     df.to_excel(excel_path, index=False)
     print(f'data written to {excel_path}')
