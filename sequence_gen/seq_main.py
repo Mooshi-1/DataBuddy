@@ -29,8 +29,7 @@ ascii_art = '''
 '''
 
 def main(initials):
-    base_dir = r'G:\PDF DATA\TEST BATCH REPORTS'
-    seq_dir = f'{base_dir}\\{initials}'
+    seq_dir = fr'G:\PDF DATA\TEST BATCH REPORTS\{initials}'
     #create sequence objects, stored in list samples
     try:
         samples, method, batches = seq_init.read_sequence(seq_dir)
@@ -82,7 +81,9 @@ def main(initials):
 
     try:
         build_and_export(samples, method, batch_num, seq_dir)
+        print('-----------------------------------------------------------------------------------------')
         print(f'sequence building is complete! An excel file has been created where your TEST BATCH is.')
+        print('-----------------------------------------------------------------------------------------')
     except Exception as e:
         print(f'Sequence build and export failed :[   | {e}]')
 
@@ -90,8 +91,8 @@ def main(initials):
 if __name__ == '__main__':
    # try:
     print(ascii_art)
-    print('place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')
-    initials = input('Enter your initials: ')
+    print(r'place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')
+    initials = input('Enter your initials: ').upper()
 
     #inst = input('which instrument are you running on? ')
     #map out instruments
