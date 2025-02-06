@@ -139,6 +139,10 @@ class quants(sequence):
         self.SR = False
         self.single = False
         self.double = True
+        self.serum = False
+    #quants class override
+    def copy(self):
+        return quants(self.number, self.type, self.container, self.barcode, self.abbrv)
     #quants class override
     def add_comment(self):
         if self.comment == None:
@@ -181,8 +185,11 @@ class quants(sequence):
         if item.startswith('SI') or item == '1':
             self.single = True
             self.double = False
-    def find_serums():
-        pass
+    #class specific
+    def find_serums(self):
+        if 'SERUM' in self.type or 'PLASMA' in self.type:
+            self.serum = True
+        return self
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
@@ -246,8 +253,9 @@ def read_sequence(seq_dir):
                             samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate())
                     if method.startswith('QT'): #QUANTS
                         case_ID = quants(sample_number, sample_type, sample_container, barcode, None, comment)
+                        case_ID.find_serums()
                         if extra:
-                            samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment))
+                            samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment).find_serums())
                     else: #SCRNZ, SCGEN, SCLCMSMS, ALL OTHER
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                         if extra:
@@ -261,7 +269,7 @@ def read_sequence(seq_dir):
                 #confirmation print
                     print(case_ID)
                     if extra:
-                    #does not include add_duplicate() specific to volatiles class
+                    #does not include add_duplicate() specific to volatiles class, or find_serums() for quants
                         print(f'transforming extra sample')
                         samples[-2].transform_number()
                         samples[-2].abbreviate_type()
