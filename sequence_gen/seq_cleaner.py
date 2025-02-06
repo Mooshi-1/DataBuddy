@@ -138,3 +138,13 @@ def finalize_SQVOL(seq, batch):
     return final_list
 
 
+def finalize_quants(seq, batch):
+    final_list = []
+    columns=['Batch #', 'Tray', 'Vial#', 'Sample Name']
+    tray = 1
+    vial_number = 1
+    #max vial = 105
+    solvents = itertools.cycle(range(100,106))
+
+    for sample in seq:
+        final_list.append((batch, tray,))

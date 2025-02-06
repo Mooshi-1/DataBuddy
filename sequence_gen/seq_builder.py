@@ -53,8 +53,8 @@ def make_LH(init_counter=None):
         make_LH.counter = 0
     make_LH.counter += 1
     return [
-        sequence(f'CTL LOW {make_LH.counter}', 'LOW CTL', '', f'CTL LOW {make_LH.counter}', f'CTL LOW {make_LH.counter}'),
-        sequence(f'CTL HIGH {make_LH.counter}', 'HIGH CTL', '', f'CTL HIGH {make_LH.counter}', f'CTL HIGH {make_LH.counter}')
+        sequence(f'LOW CTL {make_LH.counter}', 'LOW CTL', '', f'LOW CTL {make_LH.counter}', f'LOW CTL {make_LH.counter}'),
+        sequence(f'HIGH CTL {make_LH.counter}', 'HIGH CTL', '', f'HIGH CTL {make_LH.counter}', f'HIGH CTL {make_LH.counter}')
     ]
 
 def make_diln(value):
@@ -162,7 +162,7 @@ def build_quants(samples, interval, method):
     serums = []
     dilns_s = set()
     temp = samples.copy()
-    MSA=[]
+    MSA = []
 
     def check_diln(sample, flag=None):
         if hasattr(sample, 'diln') and sample.diln != 'X0':
@@ -233,7 +233,7 @@ def build_quants(samples, interval, method):
         quant_list.append(make_solvent())
         z += interval
     if serums_final:
-        quant_list.append(make_shooter())
+        quant_list.append(make_shooter().add_serum())
         quant_list.append(make_neg_ctl().add_serum())
         if method.startswith('QTACET'):
             quant_list.extend([cal.add_serum() for cal in make_curve(6)])
@@ -242,14 +242,22 @@ def build_quants(samples, interval, method):
             sorted_dilns = sorted(dilns_s, key=lambda x: int(x[1:]), reverse=True)
             for diln in sorted_dilns:
                 quant_list.append(make_diln(diln).add_serum())
-        quant_list.append(make_solvent().add_serum())
+        quant_list.append(make_solvent())
         while y < len(serums_final):
             quant_list.extend(serums_final[y:y+interval])
             quant_list.extend([ctl.add_serum() for ctl in make_LH(0)])
-            quant_list.append(make_solvent)
+            quant_list.append(make_solvent())
             y += interval
     if MSA:
-        pass
+        for case in MSA:
+            quant_list.append(case)
+            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L1'))
+            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L2'))
+            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L3'))
+            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L4'))
+            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L5'))
+            quant_list.append(make_solvent())
+
         
     print(quant_list)
     return quant_list

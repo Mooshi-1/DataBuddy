@@ -139,11 +139,8 @@ class volatiles(sequence):
 class quants(sequence):
     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
         super().__init__(sample_number, sample_type, sample_container, barcode, abbrv, comment)
-        self.MSA = False
-        self.SR = False
         self.single = False
         self.double = True
-        self.serum = False
     #quants class override
     def copy(self):
         return quants(self.number, self.type, self.container, self.barcode, self.abbrv)
