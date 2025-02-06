@@ -16,7 +16,7 @@ def make_solvent():
     if not hasattr(make_solvent, "counter"):
         make_solvent.counter = 0
     make_solvent.counter += 1
-    return sequence(f'S{make_solvent.counter}', 'SOLVENT', '', f'S{make_solvent.counter}', f'S{make_solvent.counter}')
+    return sequence(f'S', 'SOLVENT', '', f'S{make_solvent.counter}', f'S{make_solvent.counter}')
 
 def make_pos_ctl():
     if not hasattr(make_pos_ctl, "counter"):
@@ -42,7 +42,7 @@ def make_shooter():
 def make_curve(CALS):
     curve_list = []
     for i in range(1, CALS + 1):
-        curve_list.append(sequence(f'CAL L{i}', f'CAL L{i}', '', f'CAL L{i}', f'CAL L{i}'))
+        curve_list.append(sequence(f'CAL{i}', f'CAL{i}', '', f'CAL{i}', f'CAL{i}'))
     return curve_list
 
 #call .extend
@@ -61,7 +61,7 @@ def make_diln(value):
     return sequence(f'DILN CTL {value}', 'CTL', '', f'DILN CTL {value}', f'DILN CTL {value}')
 
 def make_SR(sample):
-    return sequence('SPIKED RECOVERY', 'SR', '', sample.barcode, sample.abbrv +'_SR')
+    return sequence('SPIKED RECOVERY', 'SR', '', sample.barcode, sample.abbrv + '_SR')
 
 def build_screens(samples, interval):
     print('starting builder')
@@ -152,10 +152,11 @@ def build_vols(samples, interval):
     return vol_list
 
 
-def quants(samples, interval):
+def build_quants(samples, interval, method):
     print('starting builder')
     quant_list = []
     z = 0
+    y = 0
     priority = []
     dilns_b = set()
     serums = []
@@ -207,31 +208,48 @@ def quants(samples, interval):
     
     if serums:
         for serum in serums[::-1]:
-            serum.abbrv += ' SERUM'
             if serum.single:
                 serums_final.append(serum)
             if serum.double:
                 serums_final.append(serum)
                 serums_final.append(serum.copy())
-            if hasattr(serum, 'SR'): #remove suffix then re-add
-                serum.abbrv = serum.abbrv.replace(' SERUM', '')
-                serums_final.append(make_SR(serum))
-                serums_final[-1].abbrv += ' SERUM'
+            if hasattr(serum, 'SR'):
+                serums_final.append(make_SR().add_serum())
 
-
-    ##### start back here
-    #serum curve for qtacetaminophen
+    quant_list.append(make_solvent())
+    quant_list.append(make_shooter())
     quant_list.append(make_neg_ctl())
-    quant_list.extend(make_curve(7))
+    quant_list.extend(make_curve(6))
+    quant_list.append(make_solvent())
     quant_list.extend(make_LH())
-    if dilns:
-        sorted_dilns = sorted(dilns, key=lambda x: int(x[1:]), reverse=True)
+    if dilns_b:
+        sorted_dilns = sorted(dilns_b, key=lambda x: int(x[1:]), reverse=True)
         for diln in sorted_dilns:
             quant_list.append(make_diln(diln))
-    while z < len(samples_final):
-        quant_list.extend(samples_final[z:z + interval])
+    quant_list.append(make_solvent())
+    while z < len(bloods_final):
+        quant_list.extend(bloods_final[z:z + interval])
         quant_list.extend(make_LH())
+        quant_list.append(make_solvent())
         z += interval
-    
-    #print(quant_list)
+    if serums_final:
+        quant_list.append(make_shooter())
+        quant_list.append(make_neg_ctl().add_serum())
+        if method.startswith('QTACET'):
+            quant_list.extend([cal.add_serum() for cal in make_curve(6)])
+        quant_list.extend([ctl.add_serum() for ctl in make_LH(0)])
+        if dilns_s:
+            sorted_dilns = sorted(dilns_s, key=lambda x: int(x[1:]), reverse=True)
+            for diln in sorted_dilns:
+                quant_list.append(make_diln(diln).add_serum())
+        quant_list.append(make_solvent().add_serum())
+        while y < len(serums_final):
+            quant_list.extend(serums_final[y:y+interval])
+            quant_list.extend([ctl.add_serum() for ctl in make_LH(0)])
+            quant_list.append(make_solvent)
+            y += interval
+    if MSA:
+        pass
+        
+    print(quant_list)
     return quant_list

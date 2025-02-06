@@ -50,6 +50,10 @@ class sequence():
             sample_container_dict[self.container] = input(f"Enter the desired abbreviation for {self.container}: ").upper()
             self.abbreviate_container()
 
+    def add_serum(self):
+        self.abbrv += ' SERUM'
+        return self
+
     def add_comment(self):
         if self.comment == None:
             if self.type == 'BRAIN':

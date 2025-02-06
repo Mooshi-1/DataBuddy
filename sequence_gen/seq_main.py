@@ -42,6 +42,8 @@ def main():
 
     if method.startswith("QT"):
         slice_interval = 20
+
+        samples_for_seq = seq_builder.build_quants(samples, slice_interval, method)
         
 
 
