@@ -9,6 +9,7 @@ import seq_builder
 import seq_cleaner
 import excel_fill
 from sample_dict import method_dict
+import searcher
 
 ascii_art = '''
 
@@ -35,11 +36,11 @@ def main(initials):
     try:
         samples, method, batches = seq_init.read_sequence(seq_dir)
     except Exception as e:
-        print(f'INIT FAILED -- THIS IS NOT GOOD -- {e}')
+        print(f'INIT FAILED -- Umm... is your file in the right place? -- {e}')
         input('Press enter to exit...')
         return
         
-    batch_num = "/".join(map(str, batches))
+    batch_num = "-".join(sorted(batches))
 
     print(f"{len(samples)} samples found, method = {method}, batch number = {batch_num}")
 
@@ -50,15 +51,15 @@ def main(initials):
             
             if method == 'SCGEN' or method == 'COSTIM':
                 samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq)
-                excel_fill.export_SCGEN(samples_for_write, seq_dir)        
+                excel_fill.export_SCGEN(samples_for_write, seq_dir, batch_num)        
 
             if method == 'SCRNZ':
                 samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
-                excel_fill.export_SCRNZ(samples_for_write, seq_dir)
+                excel_fill.export_SCRNZ(samples_for_write, seq_dir, batch_num)
 
             if method == 'SCLCMSMS' or method == 'COTHC' or method == 'SCNITAZENE':
                 samples_for_write = seq_cleaner.finalize_LCMSMS(samples_for_seq, batch_num)
-                excel_fill.export_LCMSMS(samples_for_write, seq_dir)        
+                excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)        
             return       
         
         elif method == 'SQVOL':
@@ -66,7 +67,7 @@ def main(initials):
 
             samples_for_seq = seq_builder.build_vols(samples, slice_interval)
             samples_for_write = seq_cleaner.finalize_SQVOL(samples_for_seq, batch_num)
-            excel_fill.export_SQVOL(samples_for_write, seq_dir)
+            excel_fill.export_SQVOL(samples_for_write, seq_dir, batch_num)
             return
 
         elif method.startswith("QT") or method.startswith("SQ"):
@@ -74,13 +75,13 @@ def main(initials):
 
             samples_for_seq = seq_builder.build_quants(samples, slice_interval, method)
             samples_for_write = seq_cleaner.finalize_quants(samples_for_seq, batch_num)
-            excel_fill.export_quants(samples_for_write, seq_dir)
+            excel_fill.export_quants(samples_for_write, seq_dir, batch_num)
             return
         
         else:
             print('Unable to find a sequence builder for the method listed in the TEST BATCH.')
             method = input('Enter another/similar method and attemp to re-run?: ').upper()
-            build_and_export(samples, method, batch_num, seq_dir)
+            build_and_export(samples, method, batch_num, seq_dir, batch_num)
 
     try:
         build_and_export(samples, method, batch_num, seq_dir)
@@ -108,22 +109,26 @@ def main(initials):
         if var.startswith('Y'):
             print('comparing method to instruments available...')
             instrument = find_instrument(method)
-            print(instrument)
+            print(f'Make sure your files are closed. Attempting to move to {instrument} folder')
+            input('press enter to continue')
+            searcher.LF_plumbing(seq_dir, instrument, initials)
+            print('-----------------------------------------------------------------------------------------')
+            print('                Successful! Your files have been copied :) Bye!')
+            input('-----------------------------------------------------------------------------------------')
 
         if var.startswith('N'):
             input('Press enter to exit...')
             return
     except Exception as e:
         print(f'theres been a problem... unable to create LF-23 directory | {e}')
+        input('Exiting...')
+        return
 
 if __name__ == '__main__':
-   # try:
+
     print(ascii_art)
     print(r'place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')
     initials = input('Enter your initials: ').upper()
 
 
     main(initials)
-
-    #except Exception as e:
-       # print(f'sequence generation failed :(  | {e})')

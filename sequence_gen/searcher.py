@@ -1,51 +1,60 @@
 import os
-import re
 import time
+import shutil
 
 
-#simplify to name batch pdf
-def pdf_rename(samples):
-    def sanitize_filename(filename):
-        return re.sub(r'[\\/*?:"<>|]', "_", filename)
-    for sample in samples:
-        # Define the new filename
-        new_filename = sanitize_filename(f"{sample.ID}.pdf")
-        new_path = os.path.join(os.path.dirname(sample.path), new_filename)
-        # Rename the file
-        try:
-            os.rename(sample.path, new_path)
-            #print(f"{sample.ID} has been renamed to {new_filename}")
-        except (PermissionError, FileExistsError, FileNotFoundError) as e:
-            print(f"--error--: {e}, while renaming {sample.path} to {new_path}")
-            continue
-        # keep sample.path up to date
-        sample.path = new_path
-    print("naming complete")
+def LF_plumbing(seq_dir, instrument, initials):
+    LF_dir = r'G:\LABORATORY OPERATIONS\06 - LABORATORY FORMS\LF-23 INSTRUMENT CHECKLISTS'
+    LF_path = os.path.join(LF_dir, instrument)
 
-#adapt to find instrument/create dated folder
-#and/or adapt to find sequence
-def get_ISAR(method, TP_directory):
-    for dir in os.listdir(TP_directory):
-        if method in dir:
-            TP = os.path.join(TP_directory, dir)
-            #find TP folder
-    for root, dirs, files in os.walk(TP):
-        for file in files:
-            if "Area Response" in file:
-                source_path = os.path.join(root,file)
-                return source_path
+    for item in os.listdir(LF_path):
+        if item.endswith('.pdf'):
+            checklist_path = os.path.join(LF_path, item)
+            checklist = item
+    
+    batch_path = create_LF_directories(LF_path, initials)
 
-#adapt to find instrument log            
-def get_MSA(LF_directory):
-    for files in os.listdir(LF_directory):
-        if 'LF-10' in files:
-            source_path = os.path.join(LF_directory, files)
-            #print(source_path)
-            return source_path
-    print('--error-- LF-10 not found -- cannot fill MSA')
-    return
+    copy_from_generater(seq_dir, batch_path)
+
+    new_checklist = os.path.join(batch_path, checklist)
+    if os.path.exists(new_checklist):
+        print('checklist already in batch folder')
+        return
+    else:
+        shutil.copy2(checklist_path, new_checklist)
+
+#called by LF_plumbing
+def create_LF_directories(base_path, initials):
+    current_time = time.localtime()
+    formatted_date = time.strftime("%m%d%y", current_time)
+    year = time.strftime('%Y', current_time)
+    month = time.strftime('%m', current_time)
+    final_location = formatted_date + '_' + initials
+    date_path = os.path.join(base_path, year, month, final_location)
+    print(date_path)
+    print('you can copy/paste the path printed above')
+
+    if not os.path.exists(date_path):
+        os.makedirs(date_path)
+    
+    return date_path
+
+#called by LF_plumbing
+def copy_from_generater(seq_dir, batch_path):
+    for files in os.listdir(seq_dir):
+        if files.endswith('.pdf') or files.endswith('.xlsx') or files.endswith('.csv'):
+            src_path = os.path.join(seq_dir, files)
+            dst_path = os.path.join(batch_path, files)
+            shutil.copy2(src_path, dst_path)
+
+    
+
+
+
+
 
 if __name__ == '__main__':
-    m = 
-    tp_dir = 
-    get_ISAR(m, tp_dir)
+    batch = '1111'
+    instr = 'LF-23.9 Shimadzu 8060 LC-MSMS #1'
+    tp_dir = r'C:\Users\e314883\Desktop\LF-23 INSTRUMENT CHECKLISTS'
+    LF_plumbing(instr, tp_dir, batch)
