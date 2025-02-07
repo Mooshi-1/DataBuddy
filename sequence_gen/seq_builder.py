@@ -107,7 +107,7 @@ def build_vols(samples, interval):
     for i in range(len(temp) -1, -1, -1):
 
         if hasattr(temp[i], 'diln'):
-            if temp[i].diln != 'X0':
+            if temp[i].diln != 'X0' and temp[i].diln != 'X1':
                 dilns.add(samples[i].diln)
                 print(f'creating dilution control {samples[i].diln}')
 
@@ -160,7 +160,7 @@ def build_quants(samples, interval, method):
     MSA = []
 
     def check_diln(sample, flag=None):
-        if hasattr(sample, 'diln') and sample.diln != 'X0':
+        if hasattr(sample, 'diln') and sample.diln != 'X0' and sample.diln != 'X1':
             if flag:
                 dilns_s.add(sample.diln)
                 print(f'creating serum dilution control {sample.diln}')

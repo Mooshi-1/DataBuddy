@@ -16,7 +16,7 @@ class sequence():
         return (f"({self.barcode!r}, {self.comment!r}, {self.abbrv!r})")
     
     def __str__(self):
-        return f"{self.abbrv}, {self.comment}"
+        return f"{self.abbrv}, Comment:{self.comment}"
 
     def __eq__(self, other):
         return self.barcode == other.barcode and self.extra == other.extra
@@ -95,7 +95,7 @@ class volatiles(sequence):
         self.double = False
 
     def __str__(self):
-        return f"{self.abbrv}, {self.comment}, 1={self.single}, 2={self.double}"
+        return f"{self.abbrv}, Comment:{self.comment}, 1={self.single}, 2={self.double}"
 
     def __eq__(self, other):
         return self.number == other.number
@@ -179,6 +179,9 @@ class quants(sequence):
         elif item.startswith('X'):
             self.abbrv += f"_{item}"
             if int(item[1:]) > 10:
+                self.MSA = True
+                return
+            if self.type in ['BRAIN', 'LIVER', 'GASTRIC', 'MUSCLE', 'SMALL INTESTINE']:
                 self.MSA = True
                 return
             self.diln = item

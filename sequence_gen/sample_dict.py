@@ -61,9 +61,9 @@ sample_type_dict = {
     'AMNIOTIC FLUID': 'AMFLU',
     'PERI': 'PCS',
     'BLOOD - CENTRAL': 'CB',
-    'INTRAPARENCHYMAL BLOOD': 'INTPCLB',
+    'INTRAPARENCHYMAL BLOOD': 'PCB',
     'CHEST FLUID - LEFT CHEST & RIGHT CHEST': 'LCRC',
-    'STOMACH MATERIAL ': 'STMH ML',
+    'STOMACH MATERIAL ': 'STM',
     'DONOR-SAPHENOUS VEIN': 'DSV',
     'MUSCLE HOMOGENATE': 'MUSHOM',
     'SMALL BOWEL': 'SMIC',
@@ -75,9 +75,9 @@ sample_type_dict = {
     'FEMORAL CLOTS': 'FC',
     'BLOOD SUBCLAVIAN': 'SCB',
     'SOFT TISSUE': 'ST',
-    'BRAIN CLOT': 'BRNCLT',
-    'BLOOD - ABDOMEN': 'BLABDM',
-    'BRAIN HEMORRHAGE': 'BRNHEM',
+    'BRAIN CLOT': 'BRCLT',
+    'BLOOD - ABDOMEN': 'BABD',
+    'BRAIN HEMORRHAGE': 'BRHEM',
     'SMALL INTESTINE': 'SMI'
 }
 
@@ -120,6 +120,7 @@ sample_container_dict = {
 
 caboose = {
     'PLACENTA': 1,
+    'BILE': 1, 
     'AMNIOTIC FLUID': 2,
     'BRAIN': 3,
     'LIVER': 4,
@@ -146,6 +147,7 @@ vol_duplicate = [
     'OCULAR FLUID',
     'OCULAR',
     'PLACENTA',
+    'BILE',
     'AMNIOTIC FLUID',
     'BRAIN',
     'LIVER',
@@ -192,11 +194,11 @@ method_dict = {
     'QTZOLP':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
     'COTHC':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
 
-    'SCGEN':'LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',
-    'COSTIM':'LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',
-    'SCSYNCAN':'LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',
+    'SCGEN':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
+    'COSTIM':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
+    'SCSYNCAN':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
 
-    'SCLCMSMS':'LF-23.5 Shimadzu 8060NX LC-MSMS',
+    'SCLCMSMS':['LF-23.5 Shimadzu 8060NX LC-MSMS',],
 
     'SQVOL':['LF-23.1 Shimadzu Nexis GC-2030 #1', 'LF-23.2 Shimadzu Nexis GC-2030 #2'],
 

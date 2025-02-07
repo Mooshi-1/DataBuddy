@@ -3,7 +3,6 @@ import re
 import time
 
 
-
 #simplify to name batch pdf
 def pdf_rename(samples):
     def sanitize_filename(filename):
@@ -46,3 +45,7 @@ def get_MSA(LF_directory):
     print('--error-- LF-10 not found -- cannot fill MSA')
     return
 
+if __name__ == '__main__':
+    m = 
+    tp_dir = 
+    get_ISAR(m, tp_dir)
