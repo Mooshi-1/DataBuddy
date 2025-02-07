@@ -10,6 +10,7 @@ class sequence():
         self.barcode = barcode
         self.comment = comment
         self.abbrv = "" if abbrv is None else abbrv
+        self.extra = False
 
     def __repr__(self):
         return (f"({self.barcode!r}, {self.comment!r}, {self.abbrv!r})")
@@ -18,7 +19,7 @@ class sequence():
         return f"{self.abbrv}, {self.comment}"
 
     def __eq__(self, other):
-        return self.barcode == other.barcode
+        return self.barcode == other.barcode and self.extra == other.extra
     
     def transform_number(self):
         leading_chars = ""
@@ -100,7 +101,7 @@ class volatiles(sequence):
         return self.number == other.number
     
     def copy(self):
-        return volatiles(self.number, self.type, self.container, self.barcode, self.abbrv)
+        return volatiles(self.number, self.type, self.container, self.barcode, self.abbrv, self.extra)
   
     def add_duplicate(self):
         if self.type in vol_duplicate:
@@ -139,13 +140,15 @@ class volatiles(sequence):
             self.double = True
 
 class quants(sequence):
-    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
+    def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None, extra=False):
         super().__init__(sample_number, sample_type, sample_container, barcode, abbrv, comment)
         self.single = False
         self.double = True
+        self.extra = extra
+
     #quants class override
     def copy(self):
-        return quants(self.number, self.type, self.container, self.barcode, self.abbrv)
+        return quants(self.number, self.type, self.container, self.barcode, self.abbrv, self.comment, self.extra)
     #quants class override
     def add_comment(self):
         if self.comment == None:
@@ -254,17 +257,17 @@ def read_sequence(seq_dir):
                         case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.add_duplicate()
                         if extra:
-                            samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate())
+                            samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate().add_extra())
                     elif method.startswith('QT'): #QUANTS
                         case_ID = quants(sample_number, sample_type, sample_container, barcode, None, comment)
                         case_ID.find_serums()
                         if extra:
-                            samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment).find_serums())
+                            samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment).find_serums().add_extra())
                     else: #SCRNZ, SCGEN, SCLCMSMS, ALL OTHER
                         #print('converting to sequence')
                         case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
                         if extra:
-                            samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment))
+                            samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment).add_extra())
 
                     samples.append(case_ID)
                 #assign abbrv, chain return self

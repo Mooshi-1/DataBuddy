@@ -245,13 +245,12 @@ def build_quants(samples, interval, method):
             quant_list.extend([ctl.add_serum() for ctl in make_LH()])
             y += interval
     if MSA:
-        for case in MSA:
+        for case in MSA[::-1]:
             quant_list.append(case)
             quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L1'))
             quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L2'))
             quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L3'))
             quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L4'))
             quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L5'))
-            quant_list.append(make_solvent())
 
     return quant_list

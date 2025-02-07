@@ -97,10 +97,8 @@ def main(initials):
             method = input('Enter another method name that uses the same instrument?: ').upper()
             return find_instrument(method)
         elif len(method_dict[matched_methods[0]]) == 1:
-            print('only 1 instrument')
             return method_dict[matched_methods[0]]
         else:
-            print('found more than 1 instrument')
             choice = input(f'type 1 for {method_dict[matched_methods[0]][0]} OR 2 for {method_dict[matched_methods[0]][1]}: ')
             choice = int(choice) - 1
             return method_dict[matched_methods[0]][choice]
