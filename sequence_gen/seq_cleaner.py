@@ -157,10 +157,12 @@ def finalize_quants(seq, batch):
             vial_number += 1
 
         elif isinstance(sample, quants):
-            if previous_sample and previous_sample == sample:
+            if previous_sample and previous_sample.extra
+
+            elif previous_sample and previous_sample == sample:
                 final_list.append((batch, tray, vial_number, sample.abbrv))
                 vial_number += 1
-            if previous_sample and previous_sample != sample:
+            elif previous_sample and previous_sample != sample:
                 #print(f'adding solvent before {sample}')
                 final_list.append((batch, tray, next(solvents), 'S'))
                 final_list.append((batch, tray, vial_number, sample.abbrv))

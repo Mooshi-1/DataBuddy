@@ -52,6 +52,9 @@ class sequence():
     def add_serum(self):
         self.abbrv += ' SERUM'
         return self
+    def add_extra(self):
+        self.extra = True
+        return self
 
     def add_comment(self):
         if self.comment == None:
