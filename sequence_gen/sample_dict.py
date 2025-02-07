@@ -167,3 +167,38 @@ vol_duplicate = [
     'BRAIN HOMOGENATE',
     'LIVER HOMOGENATE',
 ]
+
+method_dict = {
+    'QTABUSE':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTACET':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTANTIDEP':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTANTIHI':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTBZO1':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTBZO2':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTCCB':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTDASH':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTMEPER':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTMETHA':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTOLANZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTPSY':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTSALIC':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTSERT':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTSTIM':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTTRAZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'SCNITAZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+
+    'QTTRAM':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
+    'QTOPI':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
+    'QTZOLP':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
+    'COTHC':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
+
+    'SCGEN':'LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',
+    'COSTIM':'LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',
+    'SCSYNCAN':'LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',
+
+    'SCLCMSMS':'LF-23.5 Shimadzu 8060NX LC-MSMS',
+
+    'SQVOL':['LF-23.1 Shimadzu Nexis GC-2030 #1', 'LF-23.2 Shimadzu Nexis GC-2030 #2'],
+
+    'SCRNZ':['LF-23.3 Agilent ToxAnalyzer GC-NPD-MS #1', 'LF-23.4 Agilent ToxAnalyzer GC-NPD-MS #2'],
+}

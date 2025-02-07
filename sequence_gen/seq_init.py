@@ -1,4 +1,3 @@
-import time
 import os
 import fitz  # type: ignore # PyMuPDF
 from sample_dict import sample_type_dict, sample_container_dict, vol_duplicate
