@@ -27,7 +27,7 @@ ascii_art = '''
 ╚██████╔╝███████╗██║ ╚████║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
  ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
                                                                              
- Version 1.00 - 2/7/25
+ Version 1.01 - 2/10/25
 '''
 
 def main(initials):
@@ -81,7 +81,7 @@ def main(initials):
         else:
             print('Unable to find a sequence builder for the method listed in the TEST BATCH.')
             method = input('Enter another/similar method and attemp to re-run?: ').upper()
-            build_and_export(samples, method, batch_num, seq_dir, batch_num)
+            build_and_export(samples, method, batch_num, seq_dir)
 
     try:
         build_and_export(samples, method, batch_num, seq_dir)
