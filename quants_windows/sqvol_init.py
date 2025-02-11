@@ -72,38 +72,30 @@ def sqvol_init(batch_dir):
                 case_number = lines[sample_name_index + 1]
                 # Trim characters off case number string
                 case_number = case_number[2:].upper()
-                #print(f"{case_number}")
-                # Extract table data
-                ISTDs_data = []
                 analytes_data = []
 
-                analytes_data.extend(lines[(results_index + 2):-1])
-                print(analytes_data)
+                analytes_data.extend(lines[(results_index + 2):])
                 
                 def convert_table(analytes_data):
-                    pdf_list = ['Name', ' Methanol ', ' Ethanol ', ' Isopropanol ', ' Acetone ', ' n-Propanol (ISTD) ', 'RT', '--', ' 1.221 ', '--', '--', ' 2.192 ', 'RRT', '--', ' 0.557 ', '--', '--', ' 1.000 ', 'Area', '--', ' 5339 ', '--', '--', ' 72585 ', 'Conc.', '--', ' 0.020 ', '--', '--', ' 0.000 ', 'Unit', ' % ', ' % ', ' % ', ' % ']
-
-                    # Headers for tuples
-                    headers = ['Name', 'RT', 'RRT', 'Area', 'Conc.', 'Unit']
-
                     # Extracting values from the list
-                    names = pdf_list[0:6]
-                    rt_values = pdf_list[6:12]
-                    rrt_values = pdf_list[12:18]
-                    area_values = pdf_list[18:24]
-                    conc_values = pdf_list[24:30]
-                    unit_values = pdf_list[30:36]
-
+                    names = analytes_data[0:6]
+                    rt_values = analytes_data[6:12]
+                    rrt_values = analytes_data[12:18]
+                    area_values = analytes_data[18:24]
+                    conc_values = analytes_data[24:30]
+                    unit_values = analytes_data[30:36]
                     # Creating tuples
-                    tuples_list = []
-                    for i in range(6):
-                        tuples_list.append((names[i].strip(), rt_values[i].strip(), rrt_values[i].strip(), area_values[i].strip(), conc_values[i].strip(), unit_values[i].strip()))
-
-                    # Adding headers as the first tuple
-                    tuples_list.insert(0, tuple(headers))
-
-                    print(tuples_list)
-
+                    analytes_list = []
+                    ISTD_list = []
+                    for i in range(0,5):
+                        analytes_list.append((names[i].strip(), rt_values[i].strip(), rrt_values[i].strip(), 
+                                            area_values[i].strip(), conc_values[i].strip(), unit_values[i].strip()))
+                    for i in [0, 5]:
+                        ISTD_list.append((names[i].strip(), rt_values[i].strip(), rrt_values[i].strip(), 
+                                            area_values[i].strip(), conc_values[i].strip(), unit_values[i].strip()))
+                    return ISTD_list, analytes_list
+                
+                format_ISTDs, format_analytes = convert_table(analytes_data)
 
                 case_ID = f"{case_number}_0"
                 #change case number if it already exists as an object
@@ -111,7 +103,7 @@ def sqvol_init(batch_dir):
                 while any(case_ID == sample.ID for sample in samples):
                     case_ID = f"{case_ID.rsplit('_', 1)[0]}_{duplicate_count}"
                     duplicate_count += 1
-                    #print(f"recognized duplicate, new ID: {case_ID}")
+                    print(f"recognized duplicate, new ID: {case_ID}")
                 
                 #create sample object
                 case_ID = Sample(case_ID, pdf_path, case_number, None, format_ISTDs, format_analytes)
