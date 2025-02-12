@@ -222,6 +222,7 @@ def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
 def interpret_MSA(case_list):
     #find out how many analytes there are and send to fill_MSA appropriately
     #return how many copies of excel to create and the name for each one
+    #right now, specific to SHIMADZU
     base_pdf = case_list[0]
     #print(len(base_pdf.results_analyte))
 
