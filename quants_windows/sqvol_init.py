@@ -23,11 +23,11 @@ def sqvol_init(batch_dir):
             #print(lines)
             case_number = None
             #init curves count to handle multiple curves
-            print(lines)
+            #print(lines)
 
             try:
                 #take care of special cases
-                if "0:Unknown" in lines:
+                if " 0:Unknown " in lines:
                     Sequence = Sample("Sequence", pdf_path, "sequence", {QCTYPE.SEQ}, None, None)
                     print("found sequence")
                     samples.append(Sequence)
@@ -44,14 +44,14 @@ def sqvol_init(batch_dir):
                             if line.startswith('Analyte:'):
                                 analyte_index = index
                                 analyte = line.split(': ')[1]
-                                parts = lines[analyte_index + 1].split()
-                                r_squared = parts[0].split('=')[1]
-                                equation = parts[1]
-                                fit_type_line = lines[analyte_index + 2]
+                                r_squared = lines[analyte_index + 1].split('=')[1]
+                                equation = lines[analyte_index + 2]
+                                fit_type_line = lines[analyte_index + 3]
                                 fit_type = fit_type_line.split('Fit Type: ')[1].split()[0]
                                 weight = fit_type_line.split('Weight: ')[1]
                                 # Create a tuple and add it to the list
                                 curve_tuple = (analyte, r_squared, equation, fit_type, weight)
+                                #print(curve_tuple)
                                 tuples_list.append(curve_tuple)
                     #uses dictionary key to ensure unique object name
                     curve_count += 1
