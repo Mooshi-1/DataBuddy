@@ -91,7 +91,31 @@ class Sample:
     #used for quick checks
     def __str__(self):
         return f"({self.base}, {self.type}, analytes={len(self.results_analyte)}, ISTDs={len(self.results_ISTD)})"
-    
+
+class SQVOL(Sample):
+    def __init__(self, ID, path, base, type=None, results_ISTD=None, results_analyte=None, additional_attribute=None):
+        super().__init__(ID, path, base, type, results_ISTD, results_analyte)
+        
+
+    def assign_type(self):
+        dilution = re.compile(r'X\d+')
+        CAL = "CAL"
+        CTL = "CTL"
+        NEG = "NEG"
+        #assign QCTYPE by various means. must be of Sample class
+        if self.type == QCTYPE.SEQ or self.type == QCTYPE.CUR:
+            return #assigned at init, could always create logic
+        if dilution.search(self.ID):
+            self.type.add(QCTYPE.DL)
+        if CAL in self.ID:
+            self.type.add(QCTYPE.CAL)
+        if CTL in self.ID:
+            self.type.add(QCTYPE.CTL)
+        if NEG in self.ID:
+            self.type.add(QCTYPE.NEG)
+        if 'S' == self.base:
+            self.type.add(QCTYPE.SOL)
+                #print(f"assigned serum {self.ID}, {self.type}")
 
 ##below is not part of class
 

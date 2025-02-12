@@ -3,13 +3,13 @@
 import fitz  # type: ignore # PyMuPDF
 import os
 
-from aux_func import table_converter
-from sample_sorter import QCTYPE, Sample
+from sample_sorter import QCTYPE,SQVOL
 
 def sqvol_init(batch_dir):
     samples = [] #will hold sample objects created here
     curves = {}
     curve_count = 0
+    seq_count = 0
     # Iterate through directory defined by filepath
     for filename in os.listdir(batch_dir):
         if filename.endswith(".pdf"):
@@ -28,10 +28,9 @@ def sqvol_init(batch_dir):
             try:
                 #take care of special cases
                 if " 0:Unknown " in lines:
-                    Sequence = Sample("Sequence", pdf_path, "sequence", {QCTYPE.SEQ}, None, None)
-                    print("found sequence")
-                    samples.append(Sequence)
+                    samples.append(SQVOL(f"Sequence_{seq_count}", pdf_path, "sequence", {QCTYPE.SEQ}, None, None))
                     doc.close()
+                    seq_count += 1
                     continue
                 if "Calibration Curve Report" in lines:
                     tuples_list = []
@@ -56,7 +55,7 @@ def sqvol_init(batch_dir):
                     #uses dictionary key to ensure unique object name
                     curve_count += 1
                     curve_key = f"curve_{curve_count}"
-                    curves[curve_key] = Sample(curve_key, pdf_path, curve_key, {QCTYPE.CUR}, None, tuples_list)
+                    curves[curve_key] = SQVOL(curve_key, pdf_path, curve_key, {QCTYPE.CUR}, None, tuples_list)
                     print("found curve")
                     samples.append(curves[curve_key])
                     doc.close()
@@ -106,7 +105,7 @@ def sqvol_init(batch_dir):
                     print(f"recognized duplicate, new ID: {case_ID}")
                 
                 #create sample object
-                case_ID = Sample(case_ID, pdf_path, case_number, None, format_ISTDs, format_analytes)
+                case_ID = SQVOL(case_ID, pdf_path, case_number, None, format_ISTDs, format_analytes)
                 #print(case_ID)
                 samples.append(case_ID)
             except Exception as e:

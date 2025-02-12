@@ -13,6 +13,7 @@ import shimadzu_init
 import sample_sorter
 import aux_func
 import filler
+import sqvol_init
 
 ascii_art = """
  ██████╗ ██╗   ██╗ █████╗ ███╗   ██╗████████╗
@@ -66,7 +67,10 @@ def main(batch, method, extraction_date):
     #check CASE DATA and BATCH PACK DATA
     for dirs in batch_dirs:
         print(f"checking {dirs}")
-        samples = shimadzu_init.LC_quant_init(dirs)
+        if method == 'SQVOL':
+            samples = sqvol_init.sqvol_init(dirs)
+        else:
+            samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)
 
     if len(all_samples) == 0:
