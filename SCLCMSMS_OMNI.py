@@ -7,7 +7,6 @@ Created on Fri Dec 27 17:49:56 2024
 
 import fitz  # PyMuPDF
 import os
-import re
 #import time
 
 def LCMSrename(batch_dir):

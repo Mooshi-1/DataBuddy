@@ -16,7 +16,7 @@ def Zrename(batch_dir):
     # \d+-\d+: This matches the numeric part of the case number.
     #  [AB]: This matches a space followed by either 'A' or 'B'.
     case_pattern = re.compile(r'([A-Za-z]{0,2}\d+-\d+_.+ [AB])')
-    control_pattern = re.compile(r'\D+CTRL [0-99] [AB]')
+    control_pattern = re.compile(r'\D+CTL [0-99] [AB]')
 
     # Iterate through the directory defined by filepath
     for filename in os.listdir(batch_dir):
@@ -47,7 +47,7 @@ def Zrename(batch_dir):
                         #print(f"AM matched {AM_case_number}")
 
                     if control_pattern.search(lines[0]):
-                        AM_case_number = control_pattern.search(lines[0]).group().strip()
+                        AM_case_number = (control_pattern.search(lines[0]).group().strip())[1:]
                         #print(f"control matched {AM_case_number}")
                         
             except (ValueError, IndexError): 
