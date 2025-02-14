@@ -4,7 +4,7 @@ import pandas # type: ignore # pandas
 import os
 import warnings
 import openpyxl # type: ignore # openpyxl
-import openpyxl.cell._writer
+import openpyxl.cell._writer #pyinstaller needs this specific line or will be missing dependancy
 #import xlsxwriter
 import win32com.client as win32
 
