@@ -1,18 +1,23 @@
 # python-pdf
-automated naming and binding for raw pdf data
+Automated naming, binding, and excel sheet generation for laboratory data.
 
-main.py currently runs 3 screens
-searcher.py contains aux functions
-(shuttle, create_batch_dir, shuttlehome)
+This program is used by the Miami-Dade Medical Examiner Toxicology Laboratory staff.
 
-working on quants
-init objects in objects.py
-quant workflow working to account for QC
+The program is split into 3 separate 'MAIN' entry-points, in 3 separate folders.
+screens:
+    find batch data on networked drive by searching batch number
+    convert raw pdf instrument data reports into bound and named files by case
+    create batch pack with corresponding QC data
+quants:
+    find batch data on networked drive by searching batch number
+    convert raw pdf instrument data reports into bound and named files by case
+    create batch pack with corresponing QC data
+    generate levey-jennings excel file to assist with QC tracking
+    find and fill controlled documents LF-10, LF-11, and Interal Standard Area Response (ISAR)
+sequence:
+    convert CMS generated 'TEST BATCH REPORT' into instrument-specific sequence
+    output sequence as an excel file, csv or xlsx depending on method
+    create year/month/date directory in LF-23 INSTRUMENT CHECKLISTS
+    copy new sequence, test batch report, and specific LF-23 form into the new directory
 
-version history -
-1.05 - removed many prints, cleanup, working on QC INIT
-1.04 - bugfixes, cleanup
-1.03 - LCMSMS, bugfixes
-1.02 - bugfixes, shuttle/shuttlehome
-1.01 - SCRNZ
-1.00 - init, SCGEN
+
