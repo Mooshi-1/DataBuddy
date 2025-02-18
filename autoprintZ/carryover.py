@@ -20,12 +20,12 @@ def extract_info_from_page(page):
                 if "?" in drug_name:
                     drug_name = drug_name.replace("?","").strip()
                 score = parts[0].split('=')[1]
-                score = score[:2]
-                if score == '10':
-                    score = '100'
+                score = int(score[:2])
+                if score == 10:
+                    score = 100
             if "Abundance" in line:
                 parts = line.split('[')
-                abundance = parts[1].split(']')[0].strip()
+                abundance = int(parts[1].split(']')[0].strip())
             if "Extracted spectrum" in line:
                 parts = line.split('(')
                 RT = parts[1].split(')')[0].strip()
@@ -48,16 +48,53 @@ def extract_text_from_pdf(pdf_path):
                 page_num + 1, drug_name,score,abundance, RT
             ))
     return info_list
-    #columns = ['Page Number', 'Drug Name', 'Score', 'Abundance', 'Retention']
+
+
+def create_full_excel(info_list):
+        #columns = ['Page Number', 'Drug Name', 'Score', 'Abundance', 'Retention']
+    pass
+
 def main():
     path = r'C:\Users\e314883\Desktop\locked_git_repo\AMDIS\2'
+    previous_report = {}
+    reinjects = {}
+
     for filename in os.listdir(path):
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(path, filename)
             print(f"Processing file: {filename}")
             info_list = extract_text_from_pdf(pdf_path)
+            create_full_excel(info_list)
+
             for info in info_list:
-                print(info)
+                case_key = info_list[0][1]
+                reinjects[case_key] = []
+                if info[1] in previous_report:
+                    reinjects[case_key].append(info)
+
+        previous_report = {info[1]: info[3] for info in info_list}
+
+
 
 if __name__ == "__main__":
     main()
+
+# Processing file: 26877 Results of AMDIS Analysis.pdf
+# (1, '005_24-3725_IVBGT B_3 ', 'score', 'abundance', 'retention')
+# (2, 'Chlorphenisin', '73', '308', '1.073 min')
+# (3, 'Norketamine', '69', '2110', '1.862 min')
+# (4, 'Pseudoephedrine formyl artifact', '62', '229', '2.142 min')
+# (5, 'Bupropion', '85', '84187', '2.315 min')
+# (6, 'Bupropion Threo Amino Alcohol', '95', '75735', '2.700 min')
+# (7, 'Chlorophenylpiperazine', '89', '7182', '2.775 min')
+# (8, 'Hydroxy-Bupropion', '94', '61693', '3.036 min')
+# (9, 'Lidocaine', '64', '8287', '3.138 min')
+# (10, 'Etomidate', '75', '4817', '3.190 min')
+# (11, 'N-butyl pentylone', '61', '3828', '3.207 min')
+# (12, 'Moclobemide', '67', '2531', '3.324 min')
+# (13, 'Mepivacaine ISTD', '97', '35423', '3.651 min')
+# (14, 'Sertraline', '86', '1982', '4.391 min')
+# (15, 'Midazolam', '93', '2235', '4.886 min')
+# (16, 'Fentanyl', '81', '432', '5.146 min')
+# (17, 'Norchlorcyclizine', '92', '568', '5.153 min')
+# (18, 'Trazodone', '92', '15730', '6.414 min')
