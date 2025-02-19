@@ -5,43 +5,65 @@ Created on Mon Feb 17 16:15:00 2025
 @author: ADG
 """
 #attempting to print reports from AMDIS
-import pynput
-from pynput.keyboard import Controller, Key
+import pyautogui
 import time
-import win32gui
+import pygetwindow as gw
 
-keyboard = Controller()
+def print_report(counter):
+    counter += 1
 
-def print_report():
-    # Activate menu and navigate to Print
-    keyboard.press(Key.alt)
-    keyboard.press('f')
-    keyboard.release('f')
-    keyboard.release(Key.alt)
-    time.sleep(1)
-    
-    keyboard.press('p')
-    keyboard.release('p')
-    time.sleep(1)
-    
-    keyboard.press(Key.enter)
-    keyboard.release(Key.enter)
-    time.sleep(5)  # Wait for the printing process to complete (adjust time as needed)
+    all_windows = gw.getAllTitles()
+    target_windows = [w for w in all_windows if w.startswith("AMDIS Chromatogram")]
+    sample_name = target_windows[0].split(' - ')[2].strip()
+    print(f'printing report #{counter} - {sample_name}')
 
-    # Bring the window with the data files back into focus by its title
-    window_title = "Results of Last Batch Job"  # Replace with the actual title of your data files window
-    hwnd = win32gui.FindWindow(None, window_title)
-    if hwnd:
-        win32gui.SetForegroundWindow(hwnd)
-        time.sleep(1)
 
-        # Navigate within the window using the down arrow key
-        keyboard.press(Key.down)
-        keyboard.release(Key.down)
-        time.sleep(1)
+    pyautogui.press('alt')
+    time.sleep(0.1)
+    pyautogui.press('m')
+    time.sleep(0.1)
+    pyautogui.press('t')
+    time.sleep(0.1)
+    pyautogui.press('alt')
+    time.sleep(0.1)
+    pyautogui.press('f')
+    time.sleep(0.1)
+    pyautogui.press('p')
+    time.sleep(0.1)
+    pyautogui.press('enter')
+    time.sleep(0.1)
+    pyautogui.press('enter')
+    time.sleep(3) 
+
+    window = gw.getWindowsWithTitle("Results of Last Batch Job")[0]
+    window.activate()
+    pyautogui.press('down')
+    time.sleep(5)
+
+    active_window = gw.getActiveWindow()
+
+    if active_window == window:
+        print(f'printed {counter} reports')
+        input('Out of reports to print... Press enter to exit')
+        return
     else:
-        print(f"Window with title '{window_title}' not found.")
+        print_report(counter)
 
-# Run the function
-time.sleep(10)
-print_report()
+
+if __name__ == '__main__':
+    counter = 0
+    input('Ensure that your AMDIS processing list \n[Results of Last Batch Job] is open and highlighted on the first sample. \nPress enter to continue')
+
+    all_windows = gw.getAllTitles()
+    target_windows = [w for w in all_windows if w.startswith("AMDIS Chromatogram")]
+    if target_windows:
+        AMDIS_program = gw.getWindowsWithTitle(target_windows[0])[0]
+        print(AMDIS_program)
+        AMDIS_program.minimize()
+        time.sleep(0.5)
+        AMDIS_program.restore()
+        time.sleep(0.5)
+        print('initialization successful, starting loop... do not operate the computer')
+        print_report(counter)
+    else:
+        input('Unable to find AMDIS window. Press enter to exit')
