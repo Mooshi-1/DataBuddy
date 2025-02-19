@@ -72,7 +72,7 @@ class Sample:
         for spelling in serum:
             if spelling in self.ID:
                 self.type.add(QCTYPE.SER)
-        if 'S' == self.base:
+        if 'S' == self.base or 'BLANK' == self.base:
             self.type.add(QCTYPE.SOL)
                 #print(f"assigned serum {self.ID}, {self.type}")
 

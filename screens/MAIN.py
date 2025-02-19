@@ -123,7 +123,7 @@ if __name__ == "__main__":
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 3:
         batch_num = input("Enter the batch number: ")
-        method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS): ")
+        method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS): ").upper()
         flag = input("Reminder: Unable to handle reinjects. Bind your sequence manually. Press Enter to continue... or -r to enter naming mode")
     else:
         # Use CLI provided arguments

@@ -137,11 +137,13 @@ def main(batch, method, extraction_date):
         print(f"--error moving LJ-- | {e}")
 
     #send case-list to binder, bind duplicates -- return list of singles
-    leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
-
-    #singles handler
-    if len(leftovers) > 0:
-        aux_func.move_singles(leftovers, output_dir, batch)
+    try:
+        leftovers = aux_func.compare_and_bind_duplicates(cases, output_dir, batch)
+        #singles handler
+        if len(leftovers) > 0:
+            aux_func.move_singles(leftovers, output_dir, batch)
+    except Exception as e:
+        print(f'error finding/binding duplicates | {e}')
    
     #MSA handler
     if len(MOA_cases) > 0:
@@ -185,7 +187,7 @@ if __name__ == "__main__":
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 5:
         batch = input("Enter the batch number: ")
-        method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, etc): ").upper()
+        method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, SQVOL, etc): ").upper()
         extraction_date = input("Enter extraction date with slashes in MM/DD/YY format: ")
         initials = input("Enter your initials: ").upper()
         input("WARNING: Close your pdf's/preview windows. Make sure that Excel on your computer is closed. Don't forget to print your curve. Press Enter to continue...")
