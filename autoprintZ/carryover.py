@@ -20,17 +20,17 @@ def extract_info_from_page(page):
                 if "?" in drug_name:
                     drug_name = drug_name.replace("?","").strip()
                 score = parts[0].split('=')[1]
-                score = int(score[:2])
+                score = float(score[:2])
                 if score == 10:
                     score = 100
             if "Abundance" in line:
                 parts = line.split('[')
-                abundance = int(parts[1].split(']')[0].strip())
+                abundance = float(parts[1].split(']')[0].strip())
             if "Extracted spectrum" in line:
                 parts = line.split('(')
                 RT = parts[1].split(')')[0].strip()
-    except:
-        print(f'.pdf file is not an AMDIS report')
+    except Exception as e:
+        print(f'.pdf file is not an AMDIS report || {e}')
         return 'ERROR', 'ERROR', 'ERROR', 'ERROR'
     if drug_name != None and score != None and abundance != None and RT != None:
         return drug_name, score, abundance, RT
@@ -55,32 +55,45 @@ def create_full_excel(info_list):
     pass
 
 def main():
-    path = r'C:\Users\e314883\Desktop\locked_git_repo\AMDIS\2'
+    path = r'C:\Users\e314883\Desktop\locked_git_repo\AMDIS'
     previous_report = {}
     reinjects = {}
 
     for filename in os.listdir(path):
+    
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(path, filename)
             print(f"Processing file: {filename}")
+            #get data
             info_list = extract_text_from_pdf(pdf_path)
+            #send to excel
             create_full_excel(info_list)
 
+#                 (1, '005_24-3725_IVBGT B_3 ', 'score', 'abundance', 'retention')
+# INFO STRUCTURE: (4, 'Pseudoephedrine formyl artifact', '62', '229', '2.142 min')
+            case_key = info_list[0][1]
+            reinjects[case_key] = []
+
             for info in info_list:
-                case_key = info_list[0][1]
-                reinjects[case_key] = []
                 if info[1] in previous_report:
-                    reinjects[case_key].append(info)
+                    if info[3] <= previous_report[info[1]]:
+                        reinjects[case_key].append(info)
+        else:
+            continue
 
-        previous_report = {info[1]: info[3] for info in info_list}
+        previous_report = {info[1]: info[3] for info in info_list if (info[1] != 'Mepivacaine ISTD' and info [1] != 'Aprobarbital ISTD')}
 
+        print(previous_report)
+    for key, value in reinjects.items():
+        print(f"{key}: {value}")
+    #print(reinjects)
 
 
 if __name__ == "__main__":
     main()
 
 # Processing file: 26877 Results of AMDIS Analysis.pdf
-# (1, '005_24-3725_IVBGT B_3 ', 'score', 'abundance', 'retention')
+
 # (2, 'Chlorphenisin', '73', '308', '1.073 min')
 # (3, 'Norketamine', '69', '2110', '1.862 min')
 # (4, 'Pseudoephedrine formyl artifact', '62', '229', '2.142 min')
