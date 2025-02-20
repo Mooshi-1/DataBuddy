@@ -54,26 +54,46 @@ def extract_text_from_pdf(pdf_path):
 
 def reinject_to_excel(reinjects, path):
     rows = []
+    sequence = []
+    sequence_rows = []
 
     for key, values in reinjects.items():
         if values:
             for i, value in enumerate(values):
                 if i == 0:
+                    sequence.append(key)
                     rows.append([key, *value])
                 else:
                     rows.append(["", *value])
+    if sequence:
+        counter = 900
+        for item in sequence[::-1]:
+            if ' A_' in item or ' B_' in item:
+                sequence_rows.append(("S", 101, f'{counter}_S_101.D'))
+                counter += 1
 
-    df = pd.DataFrame(rows, columns=['Case Number', 'Page', 'Drug Name', 'Score', 'Abundance', 'Retention'])
+                delimiter = ' A_' if ' A_' in item else ' B_'
+                parts = item.rsplit(delimiter)
+                number = parts[0][4:] + "_RI" + delimiter.strip('_')
+                vial = parts[1]
+                filename = parts[0] + "_RI" + delimiter + vial + ".D"
+                sequence_rows.append((number, int(vial), filename))
+        sequence_rows.append(("S", 101, f'{counter}_S_101.D'))
+        counter += 1
+
+    RI_list = pd.DataFrame(rows, columns=['Case Number', 'Page', 'Drug Name', 'Score', 'Abundance', 'Retention'])
+    RI_sequence = pd.DataFrame(sequence_rows, columns=['Case Number', 'Vial', 'Filename'])
 
     excel_path = os.path.join(path, f'AMDIS_REPORT.xlsx')
  
     if os.path.exists(excel_path):
-        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-            df.to_excel(writer, sheet_name='reinjects', index=False)
-
+        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+            RI_list.to_excel(writer, sheet_name='reinjects', index=False)
+            RI_sequence.to_excel(writer, sheet_name='sequence', index=False)
     else:
         with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-            df.to_excel(writer, sheet_name='reinjects', index=False)
+            RI_list.to_excel(writer, sheet_name='reinjects', index=False)
+            RI_sequence.to_excel(writer, sheet_name='sequence', index=False)
 
 def full_info_to_excel(all_reports, path):
     print('starting export')
@@ -82,7 +102,7 @@ def full_info_to_excel(all_reports, path):
     excel_path = os.path.join(path, f'AMDIS_REPORT.xlsx')
  
     if os.path.exists(excel_path):
-        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
             df.to_excel(writer, sheet_name='full_report', index=False)
 
     else:
@@ -118,10 +138,11 @@ def main(path):
             continue
         all_reports.append(("","","",""))
         previous_report = {info[1]: info[3] for info in info_list if (info[1] != 'Mepivacaine ISTD' and info [1] != 'Aprobarbital ISTD')}
-
-        print(previous_report)
-    for key, value in reinjects.items():
-        print(f"{key}: {value}")
+        #add calculation to info[3] to adjust for tolerance, if needed
+    # #print verify
+    #     print(previous_report)
+    # for key, value in reinjects.items():
+    #     print(f"{key}: {value}")
     reinject_to_excel(reinjects, path)
     full_info_to_excel(all_reports, path)    
     #print(reinjects)
