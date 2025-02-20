@@ -1,5 +1,8 @@
 import os
 from PyPDF2 import PdfReader
+import pandas as pd
+import openpyxl
+import openpyxl.cell._writer #pyinstaller needs this specific line or will be missing dependancy
 
 def extract_info_from_page(page):
     text = page.extract_text()
@@ -49,15 +52,49 @@ def extract_text_from_pdf(pdf_path):
             ))
     return info_list
 
+def reinject_to_excel(reinjects, path):
+    rows = []
 
-def create_full_excel(info_list):
-        #columns = ['Page Number', 'Drug Name', 'Score', 'Abundance', 'Retention']
-    pass
+    for key, values in reinjects.items():
+        if values:
+            for i, value in enumerate(values):
+                if i == 0:
+                    rows.append([key, *value])
+                else:
+                    rows.append(["", *value])
 
-def main():
-    path = r'C:\Users\e314883\Desktop\locked_git_repo\AMDIS'
+    df = pd.DataFrame(rows, columns=['Case Number', 'Page', 'Drug Name', 'Score', 'Abundance', 'Retention'])
+
+    excel_path = os.path.join(path, f'AMDIS_REPORT.xlsx')
+ 
+    if os.path.exists(excel_path):
+        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+            df.to_excel(writer, sheet_name='reinjects', index=False)
+
+    else:
+        with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='reinjects', index=False)
+
+def full_info_to_excel(all_reports, path):
+    print('starting export')
+    df = pd.DataFrame(all_reports, columns=['Page', 'Drug Name', 'Score', 'Abundance', 'Retention'])
+
+    excel_path = os.path.join(path, f'AMDIS_REPORT.xlsx')
+ 
+    if os.path.exists(excel_path):
+        with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+            df.to_excel(writer, sheet_name='full_report', index=False)
+
+    else:
+        with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='full_report', index=False)
+
+    print(f'data written to {excel_path}')
+
+def main(path):
     previous_report = {}
     reinjects = {}
+    all_reports = []
 
     for filename in os.listdir(path):
     
@@ -67,47 +104,31 @@ def main():
             #get data
             info_list = extract_text_from_pdf(pdf_path)
             #send to excel
-            create_full_excel(info_list)
-
 #                 (1, '005_24-3725_IVBGT B_3 ', 'score', 'abundance', 'retention')
 # INFO STRUCTURE: (4, 'Pseudoephedrine formyl artifact', '62', '229', '2.142 min')
             case_key = info_list[0][1]
             reinjects[case_key] = []
 
             for info in info_list:
+                all_reports.append(info)
                 if info[1] in previous_report:
                     if info[3] <= previous_report[info[1]]:
                         reinjects[case_key].append(info)
         else:
             continue
-
+        all_reports.append(("","","",""))
         previous_report = {info[1]: info[3] for info in info_list if (info[1] != 'Mepivacaine ISTD' and info [1] != 'Aprobarbital ISTD')}
 
         print(previous_report)
     for key, value in reinjects.items():
         print(f"{key}: {value}")
+    reinject_to_excel(reinjects, path)
+    full_info_to_excel(all_reports, path)    
     #print(reinjects)
 
 
 if __name__ == "__main__":
-    main()
+    path = r'C:\Users\e314883\Desktop\locked_git_repo\AMDIS'
+    main(path)
 
-# Processing file: 26877 Results of AMDIS Analysis.pdf
 
-# (2, 'Chlorphenisin', '73', '308', '1.073 min')
-# (3, 'Norketamine', '69', '2110', '1.862 min')
-# (4, 'Pseudoephedrine formyl artifact', '62', '229', '2.142 min')
-# (5, 'Bupropion', '85', '84187', '2.315 min')
-# (6, 'Bupropion Threo Amino Alcohol', '95', '75735', '2.700 min')
-# (7, 'Chlorophenylpiperazine', '89', '7182', '2.775 min')
-# (8, 'Hydroxy-Bupropion', '94', '61693', '3.036 min')
-# (9, 'Lidocaine', '64', '8287', '3.138 min')
-# (10, 'Etomidate', '75', '4817', '3.190 min')
-# (11, 'N-butyl pentylone', '61', '3828', '3.207 min')
-# (12, 'Moclobemide', '67', '2531', '3.324 min')
-# (13, 'Mepivacaine ISTD', '97', '35423', '3.651 min')
-# (14, 'Sertraline', '86', '1982', '4.391 min')
-# (15, 'Midazolam', '93', '2235', '4.886 min')
-# (16, 'Fentanyl', '81', '432', '5.146 min')
-# (17, 'Norchlorcyclizine', '92', '568', '5.153 min')
-# (18, 'Trazodone', '92', '15730', '6.414 min')

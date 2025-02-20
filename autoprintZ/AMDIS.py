@@ -19,24 +19,26 @@ def print_report(counter):
 
 
     pyautogui.press('alt')
-    time.sleep(0.1)
+    time.sleep(0.2)
     pyautogui.press('m')
-    time.sleep(0.1)
+    time.sleep(0.2)
     pyautogui.press('t')
-    time.sleep(0.1)
+    time.sleep(0.2)
     pyautogui.press('alt')
-    time.sleep(0.1)
+    time.sleep(0.2)
     pyautogui.press('f')
-    time.sleep(0.1)
+    time.sleep(0.2)
     pyautogui.press('p')
-    time.sleep(0.1)
+    time.sleep(0.5)
     pyautogui.press('enter')
-    time.sleep(0.1)
+    time.sleep(1)
     pyautogui.press('enter')
-    time.sleep(3) 
+    time.sleep(5) 
 
     window = gw.getWindowsWithTitle("Results of Last Batch Job")[0]
+    time.sleep(0.5)
     window.activate()
+    time.sleep(0.5)
     pyautogui.press('down')
     time.sleep(5)
 
@@ -52,13 +54,13 @@ def print_report(counter):
 
 if __name__ == '__main__':
     counter = 0
-    input('Ensure that your AMDIS processing list \n[Results of Last Batch Job] is open and highlighted on the first sample. \nPress enter to continue')
+    input('Ensure that your AMDIS processing list window named:\n[Results of Last Batch Job] is open and highlighted on the first sample. \nPress enter to continue')
 
     all_windows = gw.getAllTitles()
     target_windows = [w for w in all_windows if w.startswith("AMDIS Chromatogram")]
     if target_windows:
         AMDIS_program = gw.getWindowsWithTitle(target_windows[0])[0]
-        print(AMDIS_program)
+
         AMDIS_program.minimize()
         time.sleep(0.5)
         AMDIS_program.restore()
