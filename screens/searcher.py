@@ -44,10 +44,11 @@ def ShuttleHome(input_dir):
     #list contents
     print("returning contents to individual case folders:")
     for contents in os.listdir(input_dir):
-        content_path = os.path.join(input_dir, contents)
+
         
         #look for pdfs, extract last 4 of case number as string
         if contents.endswith('.pdf'):
+            content_path = os.path.join(input_dir, contents)
             #print("found a pdf")
             try:
                 number = str(contents.split('_')[0].split('-')[1])

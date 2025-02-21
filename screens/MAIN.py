@@ -51,39 +51,44 @@ def main(batch_num, method, flag=None):
         raise Exception("Unable to locate batch directory")
 
     def renamer_mode(case_dir, qc_dir, method):
-        while True:
-            print("Options:")
-            print("r = Run method renamer in BATCH PACK DATA/CASE DATA")
-            print("e = move files from individual folders and place in CASE DATA")
-            print("p = move files from CASE DATA into individual folders")
-            print("q = Quit")
-            print("bind = exit rename mode and continue immediately to binder")
+        try:
+            while True:
+                print("Options:")
+                print("r = Run method renamer in BATCH PACK DATA/CASE DATA")
+                print("e = move files from individual folders and place in CASE DATA")
+                print("p = move files from CASE DATA into individual folders")
+                print("q = Quit")
+                print("bind = exit rename mode and continue immediately to binder")
 
-            choice = input("Enter your choice: ").strip().lower()
+                choice = input("Enter your choice: ").strip().lower()
 
-            if choice == "r":
-                print("Renaming files in BATCH PACK DATA and CASE DATA")
-                if method == "SCGEN":
-                    SCGEN_OMNI.GENrename(case_dir);SCGEN_OMNI.GENrename(qc_dir)
-                if method == "SCRNZ":
-                    SCRNZ_omni.Zrename(case_dir);SCRNZ_omni.Zrename(qc_dir)
-                if method == "SCLCMSMS":
-                    SCLCMSMS_OMNI.LCMSrename(case_dir);SCLCMSMS_OMNI.LCMSrename(qc_dir)
-            elif choice == "e":
-                print("Running searcher.Shuttle...")
-                searcher.Shuttle(case_dir)
-            elif choice == "p":
-                print("Running searcher.ShuttleHome...")
-                searcher.ShuttleHome(case_dir)
-            elif choice == "q":
-                print("Exiting Renamer Mode.")
-                sys.exit()
-            elif choice == "bind":
-                break
-            else:
-                print("Invalid choice. Please try again.")
+                if choice == "r":
+                    print("Renaming files in BATCH PACK DATA and CASE DATA")
+                    if method == "SCGEN":
+                        SCGEN_OMNI.GENrename(case_dir);SCGEN_OMNI.GENrename(qc_dir)
+                    if method == "SCRNZ":
+                        SCRNZ_omni.Zrename(case_dir);SCRNZ_omni.Zrename(qc_dir)
+                    if method == "SCLCMSMS":
+                        SCLCMSMS_OMNI.LCMSrename(case_dir);SCLCMSMS_OMNI.LCMSrename(qc_dir)
+                elif choice == "e":
+                    print("Running searcher.Shuttle...")
+                    searcher.Shuttle(case_dir)
+                elif choice == "p":
+                    print("Running searcher.ShuttleHome...")
+                    searcher.ShuttleHome(case_dir)
+                elif choice == "q":
+                    print("Exiting Renamer Mode.")
+                    sys.exit()
+                elif choice == "bind":
+                    break
+                else:
+                    print("Invalid choice. Please try again.")
+        except Exception as e:
+            print(f'theres been an error. please save screenshot/copy this to adg | {e}')
+            print(f'-----------restarting renamer mode-------------')
+            renamer_mode(case_dir, qc_dir, method)
 
-    if flag == "-r":
+    if flag == "-r" or flag == "-R":
         input("Entering Renamer Mode, press Enter to continue")
         renamer_mode(case_dir, qc_dir, method)
     
@@ -94,26 +99,29 @@ def main(batch_num, method, flag=None):
     #move files from individual folders
     searcher.Shuttle(case_dir)
 
-    if method == "SCGEN":
-        SCGEN_OMNI.GENrename(case_dir)
-        SCGEN_OMNI.GENbinder(case_dir, output_dir, batch_num)
-        SCGEN_OMNI.GENrename(qc_dir)
-        SCGEN_OMNI.GENbinder(qc_dir, output_dir, batch_num)        
-        SCGEN_OMNI.GENcontrols(output_dir, batch_num)
+    try:
+        if method == "SCGEN":
+            SCGEN_OMNI.GENrename(case_dir)
+            SCGEN_OMNI.GENbinder(case_dir, output_dir, batch_num)
+            SCGEN_OMNI.GENrename(qc_dir)
+            SCGEN_OMNI.GENbinder(qc_dir, output_dir, batch_num)        
+            SCGEN_OMNI.GENcontrols(output_dir, batch_num)
 
-    if method == "SCRNZ":
-        SCRNZ_omni.Zrename(case_dir)
-        SCRNZ_omni.Zbinder(case_dir, output_dir, batch_num)
-        SCRNZ_omni.Zrename(qc_dir)
-        SCRNZ_omni.Zbinder(qc_dir, output_dir, batch_num)
-        SCRNZ_omni.Zcontrols(output_dir, batch_num)
-    
-    if method == "SCLCMSMS":
-        SCLCMSMS_OMNI.LCMSrename(case_dir)
-        SCLCMSMS_OMNI.LCMSbinder(case_dir, output_dir, batch_num)
-        SCLCMSMS_OMNI.LCMSrename(qc_dir)
-        SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
-        SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
+        if method == "SCRNZ":
+            SCRNZ_omni.Zrename(case_dir)
+            SCRNZ_omni.Zbinder(case_dir, output_dir, batch_num)
+            SCRNZ_omni.Zrename(qc_dir)
+            SCRNZ_omni.Zbinder(qc_dir, output_dir, batch_num)
+            SCRNZ_omni.Zcontrols(output_dir, batch_num)
+        
+        if method == "SCLCMSMS":
+            SCLCMSMS_OMNI.LCMSrename(case_dir)
+            SCLCMSMS_OMNI.LCMSbinder(case_dir, output_dir, batch_num)
+            SCLCMSMS_OMNI.LCMSrename(qc_dir)
+            SCLCMSMS_OMNI.LCMSbinder(qc_dir, output_dir, batch_num)
+            SCLCMSMS_OMNI.LCMScontrols(output_dir, batch_num)
+    except Exception as e:
+        print(f'theres been an error. please save screenshot/copy this to adg | {e}')
             
     #return files to individual directory
     searcher.ShuttleHome(case_dir)
@@ -121,7 +129,7 @@ def main(batch_num, method, flag=None):
 if __name__ == "__main__":
     print(ascii_art)
     # Check if the required arguments are passed via sys.argv
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         batch_num = input("Enter the batch number: ")
         method = input("Enter the method (SCGEN, SCRNZ, SCLCMSMS): ").upper()
         flag = input("Reminder: Unable to handle reinjects. Bind your sequence manually. Press Enter to continue... or -r to enter naming mode")
@@ -129,6 +137,7 @@ if __name__ == "__main__":
         # Use CLI provided arguments
         batch_num = sys.argv[1]
         method = sys.argv[2]
+        flag = sys.argv[3]
 
     # Call the main function with the provided or inputted arguments
     main(batch_num, method, flag)
