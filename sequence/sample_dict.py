@@ -185,11 +185,11 @@ method_dict = {
     'QTMEPER':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTMETHA':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTOLANZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
-    'QTPSY':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTPSYCH':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTSALIC':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTSERT':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTSTIM':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
-    'QTTRAZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTTRAZODON':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'SCNITAZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
 
     'QTTRAM':['LF-23.7 Bruker SCION GC-MSMS #1', 'LF-23.8 Bruker SCION GC-MSMS #2'],
