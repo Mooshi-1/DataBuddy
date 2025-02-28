@@ -66,22 +66,34 @@ def build_screens(samples, interval):
     z = 0
     bad_matrix = []
     priority = []
+    PTs = []
+
+    #make sure to add PT list back into samples
 
     temp = samples.copy()
 
     for i in range(len(temp) -1, -1, -1):
-        if hasattr(temp[i], 'prio'):
+        if hasattr(temp[i], 'PTs'):
+            PTs.append(samples.pop(i))
+            print(f'found proficiency {temp[i]}')
+
+        elif hasattr(temp[i], 'prio'):
             priority.append(samples.pop(i))
             print(f'sending sample to the front {temp[i]}')
 
-        if temp[i].type in caboose or hasattr(temp[i], 'bad'):
+        elif temp[i].type in caboose or hasattr(temp[i], 'bad'):
             bad_matrix.append(samples.pop(i))
             print(f'sending sample to the back {temp[i]}')
-
-
+    
+    if PTs:
+        PTs = PTs[::-1]
+        flag = input('Do you want your PTs in duplicate? [Y/n]').upper()
+        if flag.startswith('Y'):
+            PTs += PTs
     bad_matrix = bad_matrix[::-1]
     bad_matrix = sorted(bad_matrix, key=lambda x: caboose.get(x.type, 99))
-    samples = priority[::-1] + samples + bad_matrix
+    samples = PTs + priority[::-1] + samples + bad_matrix
+
 
     screen_samples.append(make_solvent())
     screen_samples.append(make_neg_ctl())

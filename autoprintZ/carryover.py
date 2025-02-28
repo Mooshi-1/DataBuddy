@@ -149,7 +149,7 @@ def main(path):
 
 
 if __name__ == "__main__":
-    path = r'C:\Users\e314883\Desktop\locked_git_repo\AMDIS'
+    path = r'G:\PDF DATA\2025\2\12895\CASE DATA'
     main(path)
 
 

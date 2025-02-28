@@ -59,6 +59,8 @@ class sequence():
 
     def add_comment(self):
         if self.comment == None:
+            if self.number.startswith("PT"):
+                self.PTs = True
             if self.type == 'BRAIN':
                 self.abbrv += "_X2"
             if self.type == 'LIVER':
@@ -78,6 +80,8 @@ class sequence():
                 self.process_comments(self.comment)
 
     def process_comments(self, item):
+        if self.number.startswith("PT"):
+            self.PTs = True
         if item.startswith('EXTRA:'):
             return        
         if item.startswith('X'):

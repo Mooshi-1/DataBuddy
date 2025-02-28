@@ -78,7 +78,8 @@ sample_type_dict = {
     'BRAIN CLOT': 'BRCLT',
     'BLOOD - ABDOMEN': 'BABD',
     'BRAIN HEMORRHAGE': 'BRHEM',
-    'SMALL INTESTINE': 'SMI'
+    'SMALL INTESTINE': 'SMI',
+    'DONOR BLOOD - FEMORAL VEIN': 'FV'
 }
 
 sample_container_dict = {
@@ -115,7 +116,9 @@ sample_container_dict = {
     'BABY BOTTLE': 'BBTL',
     'CLEAR TOP TUBE SST': 'CSST',
     '50ML GREEN TOP': 'BGT',
-    '60 ML NALGENE BOTTLE': 'BOT'
+    '60 ML NALGENE BOTTLE': 'BOT',
+    '60ML NALGENE BOTTLE': 'BOT',
+    '125 ML NALGENE BOTTL': 'BOT'    
 }
 
 caboose = {
