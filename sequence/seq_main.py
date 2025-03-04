@@ -10,6 +10,7 @@ import seq_cleaner
 import excel_fill
 from sample_dict import method_dict
 import searcher
+import sys
 
 ascii_art = '''
 
@@ -27,7 +28,7 @@ ascii_art = '''
 ╚██████╔╝███████╗██║ ╚████║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
  ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
                                                                              
- Version 1.01 - 2/10/25
+ Version 1.02 - 3/4/25
 '''
 
 def main(initials):
@@ -126,9 +127,15 @@ def main(initials):
 
 if __name__ == '__main__':
 
-    print(ascii_art)
-    print(r'place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')
-    initials = input('Enter your initials: ').upper()
+    #print(ascii_art)
+    print(f"sys.argv: {sys.argv}")
 
+    if len(sys.argv) < 2:
+        print(r'place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')
+        initials = input('Enter your initials: ').upper()
+
+    else:
+        # Use CLI provided arguments
+        initials = sys.argv[1]
 
     main(initials)

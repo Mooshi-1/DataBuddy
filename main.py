@@ -12,26 +12,27 @@ import subprocess
 import os
 import datetime
 
-version = "2.0"
+version = "2.0" #3-4-25
+script_path_screens = r""
+script_path_quants = r""
+script_path_sequence = r"G:\PDF DATA\DataBuddy\python-pdf\sequence\seq_main.py"
+venv_path = r"G:\PDF DATA\DataBuddy\python-pdf\.venv\Scripts\python.exe"
 
-def run_script(script_name, *args):
-    # Path to the virtual environment's Python interpreter
-    venv_python = r"G:\PDF DATA\Python\GUI TESTING\.venv\Scripts\python.exe" #UPDATE LATER
-    py_path = os.path.join(os.getcwd(), script_name)
-    
+def run_script(venv_path, script_path, *args):
+    print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
     try: 
-        subprocess.run([venv_python, py_path] + list(args), check=True)
+        subprocess.run([venv_path, script_path, "ADG"], check=True)
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred while running {script_name}: {e}")
+        print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
-        print(f"Script {script_name} or the Python interpreter could not be found!")
+        print(f"Script or the Python interpreter could not be found!")
 
 def get_weekday():
     today = datetime.date.today()
     return today.strftime("%A")
 
 # Set up the main tkinter window
-def main(version):
+def main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path):
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
     root.geometry("800x400")
@@ -68,10 +69,16 @@ def main(version):
     ttk.Button(screens, text="Run Binder", command=run_binder).pack(padx=10, pady=10)
 
     quants = ttk.Frame(notebook)
-    quants = notebook.add(quants, text="Quants")
+    notebook.add(quants, text="Quants")
     
+    sequence = ttk.Frame(notebook)
+    notebook.add(sequence, text="Sequence")
 
+    ttk.Label(sequence, text="Enter your initials: ").pack()
+    initials = ttk.Entry(sequence)
+    initials.pack()
 
+    ttk.Button(sequence, text="Run Sequence Generator", command=lambda: run_script(venv_path, script_path_sequence, initials.get().upper())).pack()
 
 
     # Add buttons for each script
@@ -83,4 +90,4 @@ def main(version):
     root.mainloop()
 
 if __name__ == "__main__":
-    main(version)
+    main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path)
