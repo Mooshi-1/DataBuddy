@@ -2,7 +2,9 @@
 Created 03-03-25 -- adg
 """
 #other options available
-
+# check_var = tk.BooleanVar()
+# checkbutton = ttk.Checkbutton(root, text="Enable Feature", variable=check_var)
+# checkbutton.pack()
 
 import tkinter as tk
 from tkinter import ttk
@@ -24,7 +26,7 @@ def run_script(script_name, *args):
     except FileNotFoundError:
         print(f"Script {script_name} or the Python interpreter could not be found!")
 
-def get_time():
+def get_weekday():
     today = datetime.date.today()
     return today.strftime("%A")
 
@@ -34,7 +36,7 @@ def main(version):
     root.title(f"Data Buddy - {version}")
     root.geometry("800x400")
 
-    date = get_time()
+    date = get_weekday()
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.pack(pady=10)
     
