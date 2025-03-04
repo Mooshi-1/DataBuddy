@@ -6,7 +6,6 @@
 !*/
 
 build/
-dist/
 *.spec
 *.xlsx
 *.tmp

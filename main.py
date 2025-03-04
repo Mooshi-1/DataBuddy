@@ -13,10 +13,10 @@ import os
 import datetime
 
 version = "2.0" #3-4-25
-script_path_screens = r"G:\PDF DATA\DataBuddy\python-pdf\screens\screen_main.py"
-script_path_quants = r"G:\PDF DATA\DataBuddy\python-pdf\quants\quant_main.py"
-script_path_sequence = r"G:\PDF DATA\DataBuddy\python-pdf\sequence\seq_main.py"
-venv_path = r"G:\PDF DATA\DataBuddy\python-pdf\.venv\Scripts\python.exe"
+script_path_screens = r"G:\PDF DATA\DataBuddy\screens\screen_main.py"
+script_path_quants = r"G:\PDF DATA\DataBuddy\quants\quant_main.py"
+script_path_sequence = r"G:\PDF DATA\DataBuddy\sequence\seq_main.py"
+venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
 
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
@@ -121,6 +121,8 @@ You can think of it like a 'face' to the same commands you've been running befor
 This new setup makes it much easier for the maintainer (me) to not only push updates, but also continue to scale it with more and more features. 
 
 There will be constant updates as I'm learning my own way around the GUI, so don't be too surprised as things shift around. 
+
+Should something appear to be terribly wrong, the old versions of the data-binders will be in "G:\PDF DATA\Python" for a few weeks.
 """
     help_box = tk.Text(help, wrap="word", font=("Arial", 13))
     help_box.insert("1.0", help_text)
