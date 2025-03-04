@@ -127,7 +127,7 @@ def main(initials):
 
 if __name__ == '__main__':
 
-    #print(ascii_art)
+    print(ascii_art)
     print(f"sys.argv: {sys.argv}")
 
     if len(sys.argv) < 2:

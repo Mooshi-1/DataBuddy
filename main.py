@@ -21,7 +21,7 @@ venv_path = r"G:\PDF DATA\DataBuddy\python-pdf\.venv\Scripts\python.exe"
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
     try: 
-        subprocess.run([venv_path, script_path, "ADG"], check=True)
+        subprocess.run([venv_path, script_path] + list(args), check=True)
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
@@ -52,9 +52,9 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     screens = ttk.Frame(notebook)
     notebook.add(screens, text="Screens")
 
-    ttk.Label(screens, text="input 1:").pack(padx=10, pady=10)
-    input1 = ttk.Entry(screens)
-    input1.pack(padx=10, pady=10)
+    ttk.Label(screens, text="Batch Number: ").pack(padx=10, pady=10)
+    sc_batch = ttk.Entry(screens)
+    sc_batch.pack(padx=10, pady=10)
 
     ttk.Label(screens, text="Method: ").pack(padx=10, pady=10)
     sc_methods = ["SCRNZ", "SCLCMSMS", "SCGEN"]
@@ -62,11 +62,12 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     combobox = ttk.Combobox(screens, textvariable=sc_var, values=sc_methods)
     combobox.pack(padx=10, pady=10)
 
-    def run_binder():
-        arg1 = input1.get()
-        arg2 = sc_var.get()
+    renamer_var = tk.StringVar(value=None)
+    renamer_check = ttk.Checkbutton(screens, text="Renamer mode?", onvalue='-r', offvalue=None, variable=renamer_var).pack()
 
-    ttk.Button(screens, text="Run Binder", command=run_binder).pack(padx=10, pady=10)
+    ttk.Button(screens, text="Run Screen Binder", command=lambda: run_script(venv_path, script_path_screens, \
+                    sc_batch.get(), sc_var.get())).pack()
+
 
     quants = ttk.Frame(notebook)
     notebook.add(quants, text="Quants")
@@ -80,11 +81,6 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
 
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: run_script(venv_path, script_path_sequence, initials.get().upper())).pack()
 
-
-    # Add buttons for each script
-    ttk.Button(root, text="Run Script 1", command=lambda: run_script("script1.py")).pack(pady=5)
-    ttk.Button(root, text="Run Script 2", command=lambda: run_script("script2.py")).pack(pady=5)
-    ttk.Button(root, text="Run Script 3", command=lambda: run_script("script3.py")).pack(pady=5)
 
     # Start the tkinter main loop
     root.mainloop()
