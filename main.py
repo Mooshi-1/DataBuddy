@@ -1,7 +1,6 @@
 """
 Created 03-03-25 -- adg
 """
-#!G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe
 
 import tkinter as tk
 from tkinter import ttk

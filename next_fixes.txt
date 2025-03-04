@@ -1,4 +1,0 @@
-
-incorporate sequence and reinjects into screens
-
-work on sequence gen
