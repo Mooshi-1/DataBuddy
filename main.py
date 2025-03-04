@@ -1,10 +1,7 @@
 """
 Created 03-03-25 -- adg
 """
-#other options available
-# check_var = tk.BooleanVar()
-# checkbutton = ttk.Checkbutton(root, text="Enable Feature", variable=check_var)
-# checkbutton.pack()
+#!G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe
 
 import tkinter as tk
 from tkinter import ttk
@@ -20,6 +17,7 @@ venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
 
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
+
     try: 
         subprocess.run([venv_path, script_path] + list(args), check=True)
     except subprocess.CalledProcessError as e:
