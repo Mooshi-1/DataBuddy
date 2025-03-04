@@ -33,7 +33,7 @@ ascii_art = """
 Version 1.10 - 02/12/2025
 """
 
-def main(batch, method, extraction_date):
+def main(batch, method, extraction_date, initials):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
@@ -184,6 +184,7 @@ def main(batch, method, extraction_date):
     
 if __name__ == "__main__":
     print(ascii_art)
+    print(f"sys.argv: {sys.argv}")
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 5:
         batch = input("Enter the batch number: ")
@@ -194,11 +195,11 @@ if __name__ == "__main__":
     else:
         # Use CLI provided arguments
         batch = sys.argv[1]
-        method = sys.argv[2]
+        method = sys.argv[2].upper()
         extraction_date = sys.argv[3]
-        initials = sys.argv[4]
+        initials = sys.argv[4].upper()
 
     # Call the main function with the provided or inputted arguments
-    main(batch, method, extraction_date)
+    main(batch, method, extraction_date, initials)
 
     input("Press Enter to exit...")

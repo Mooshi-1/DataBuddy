@@ -128,6 +128,7 @@ def main(batch_num, method, flag=None):
     
 if __name__ == "__main__":
     print(ascii_art)
+    print(f"sys.argv: {sys.argv}")
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 4:
         batch_num = input("Enter the batch number: ")
@@ -136,7 +137,7 @@ if __name__ == "__main__":
     else:
         # Use CLI provided arguments
         batch_num = sys.argv[1]
-        method = sys.argv[2]
+        method = sys.argv[2].upper()
         flag = sys.argv[3]
 
     # Call the main function with the provided or inputted arguments
