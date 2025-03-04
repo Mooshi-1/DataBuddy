@@ -14,7 +14,7 @@ import datetime
 
 version = "2.0" #3-4-25
 script_path_screens = r"G:\PDF DATA\DataBuddy\python-pdf\screens\screen_main.py"
-script_path_quants = r""
+script_path_quants = r"G:\PDF DATA\DataBuddy\python-pdf\quants\quant_main.py"
 script_path_sequence = r"G:\PDF DATA\DataBuddy\python-pdf\sequence\seq_main.py"
 venv_path = r"G:\PDF DATA\DataBuddy\python-pdf\.venv\Scripts\python.exe"
 
@@ -36,14 +36,14 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
 ## TK MAIN WINDOW
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
-    root.geometry("800x400")
+    root.geometry("800x700")
 
     date = get_weekday()
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.pack(pady=10)
     
     readme = ttk.Label(root, text="Use the tabs below to navigate the program \
-                       \nIt may take a moment to load a tab after swapping \
+                       \nAfter pressing 'Run', please wait a moment while it loads the relevant files \
                        \nFor more info, check the 'help' tab", font=("Arial", 14))
     readme.pack(pady=10)
 
@@ -89,7 +89,7 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     qt_date.pack()
 
     ttk.Label(quants, text="Enter your initials: ").pack()
-    qt_initials = ttk.Entry(sequence)
+    qt_initials = ttk.Entry(quants)
     qt_initials.pack()
 
     ttk.Button(quants, text="Run Quants Binder", command=lambda: run_script(venv_path, script_path_quants, \
@@ -105,6 +105,27 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
 
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: run_script(venv_path, script_path_sequence, initials.get().upper())).pack()
 
+## START HELP TAB ##
+    help = ttk.Frame(root)
+    notebook.add(help, text="Help")
+
+    help_text = """
+What's going on here?
+
+In previous versions of the data manipulation scripts, each one would be a separate executable file.
+This new program is GUI (graphical user interface) that serves as a launch-pad for the same data manipulation scripts.
+Each of the tabs corresponds to a separate script, and the data entered before you hit "RUN" is passed as a command-line argument, in the same way you were prompted before. 
+
+You can think of it like a 'face' to the same commands you've been running before.
+
+This new setup makes it much easier for the maintainer (me) to not only push updates, but also continue to scale it with more and more features. 
+
+There will be constant updates as I'm learning my own way around the GUI, so don't be too surprised as things shift around. 
+"""
+    help_box = tk.Text(help, wrap="word", font=("Arial", 13))
+    help_box.insert("1.0", help_text)
+    help_box.config(state="disabled")
+    help_box.pack(padx=10, pady=10)
 
 ## TK MAIN LOOP ##
     root.mainloop()
