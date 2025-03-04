@@ -107,7 +107,7 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     help = ttk.Frame(root)
     notebook.add(help, text="Help")
 
-    help_text = """
+    help_text = """ \
 What's going on here?
 
 In previous versions of the data manipulation scripts, each one would be a separate executable file.
