@@ -9,6 +9,4 @@ build/
 dist/
 *.spec
 *.xlsx
-venv/
 *.tmp
-.venv
