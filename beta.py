@@ -7,34 +7,61 @@ from tkinter import ttk
 import subprocess
 import os
 import datetime
+import threading
+from queue import Queue
 
-version = "2.0" #3-4-25
+version = "2.1" #3-5-25
 script_path_screens = r"G:\PDF DATA\DataBuddy\screens\screen_main.py"
 script_path_quants = r"G:\PDF DATA\DataBuddy\quants\quant_main.py"
 script_path_sequence = r"G:\PDF DATA\DataBuddy\sequence\seq_main.py"
 venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
 
-def run_script(venv_path, script_path, *args):
+def run_script(queue, venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
-
+    queue.put("starting script...")
     try: 
-        subprocess.run([venv_path, script_path] + list(args), check=True)
+        process = subprocess.Popen([venv_path, script_path] + list(args), check=True)
+        queue.put(f"script complete {result.stdout}")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
         print(f"Script or the Python interpreter could not be found!")
+    finally:
+        queue.put("COMPLETE")
 
 def get_weekday():
     today = datetime.date.today()
     return today.strftime("%A")
 
+def start_thread(queue, progress_bar, venv_path, script_path, *args):
+    thread = threading.Thread(target=run_script, args=(queue, venv_path, script_path, *args))
+    thread.start()
+    check_queue(queue, progress_bar)
+
+def check_queue(queue, progress_bar):
+    try:
+        while not queue.empty():
+            message = queue.get_nowait()
+            if message == "COMPLETE":
+                progress_bar.stop()
+            else:
+                progress_bar.start()
+            print(message) #replace with gui logic
+    except Exception as e:
+        print(f"error checking queue | {e}")
+    finally:
+        progress_bar.after(100, check_queue, queue, progress_bar)
 
 def main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path):
-## TK MAIN WINDOW
+# # TK MAIN WINDOW
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
     root.geometry("800x700")
 
+# start Queue
+    queue = Queue()
+
+# header
     date = get_weekday()
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.pack(pady=10)
@@ -46,6 +73,10 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
 
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
+
+#progress bar
+    progress_bar = ttk.Progressbar(root, mode="indeterminate")
+    progress_bar.pack(pady=10, fill="x")
 
 ## START SCREENS TAB ##
     screens = ttk.Frame(notebook)
@@ -125,6 +156,10 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     help_box.insert("1.0", help_text)
     help_box.config(state="disabled")
     help_box.pack(padx=10, pady=10)
+
+## IO ##
+    io = ttk.Frame(root)
+    io.pack()
 
 ## TK MAIN LOOP ##
     root.mainloop()
