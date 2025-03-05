@@ -12,7 +12,9 @@ version = "2.0" #3-4-25
 script_path_screens = r"G:\PDF DATA\DataBuddy\screens\screen_main.py"
 script_path_quants = r"G:\PDF DATA\DataBuddy\quants\quant_main.py"
 script_path_sequence = r"G:\PDF DATA\DataBuddy\sequence\seq_main.py"
+script_path_carryover = r"G:\PDF DATA\DataBuddy\autoprintZ\carryover.py"
 venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
+
 
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
@@ -101,6 +103,17 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     initials.pack()
 
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: run_script(venv_path, script_path_sequence, initials.get().upper())).pack()
+
+## START CARRYOVER TAB ##
+    carryover = ttk.Frame(notebook)
+    notebook.add(carryover, text="Z Carryover")
+
+    ttk.Label(carryover, text="Enter the network path where the raw data is: ").pack()
+    location = ttk.Entry(carryover)
+    location.pack()
+    ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").pack()
+
+    ttk.Button(carryover, text="Run Carryover Check", command=lambda: run_script(venv_path, script_path_carryover, location.get())).pack()
 
 ## START HELP TAB ##
     help = ttk.Frame(root)

@@ -3,6 +3,7 @@ from PyPDF2 import PdfReader
 import pandas as pd
 import openpyxl
 import openpyxl.cell._writer #pyinstaller needs this specific line or will be missing dependancy
+import sys
 
 def extract_info_from_page(page):
     text = page.extract_text()
@@ -149,7 +150,20 @@ def main(path):
 
 
 if __name__ == "__main__":
-    path = r'G:\PDF DATA\2025\2\12895\CASE DATA'
+
+    print(f"sys.argv: {sys.argv}")
+
+    if len(sys.argv) < 2:
+
+        path = input("enter the directory where the data is located")
+
+    else:
+        # Use CLI provided arguments
+        path = sys.argv[1]
+    
+    path = os.path.normpath(path)
+
+
     main(path)
 
 
