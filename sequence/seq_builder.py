@@ -88,14 +88,14 @@ def build_screens(samples, interval):
     if PTs:
         PTs = PTs[::-1]
         flag = input('Do you want your PTs in duplicate? [Y/n]').upper()
+        PTs_rpt = []
         if flag.startswith('Y'):
             PTs_rpt = PTs.copy()
             for case in PTs_rpt:
                 case.abbrv = case.abbrv.split("_")[0] + "_RPT"
-            PTs += PTs_rpt
     bad_matrix = bad_matrix[::-1]
     bad_matrix = sorted(bad_matrix, key=lambda x: caboose.get(x.type, 99))
-    samples = PTs + priority[::-1] + samples + bad_matrix
+    samples = PTs + PTs_rpt + priority[::-1] + samples + bad_matrix
 
 
     screen_samples.append(make_solvent())
