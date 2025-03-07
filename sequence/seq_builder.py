@@ -1,5 +1,6 @@
 from seq_init import sequence
 from sample_dict import caboose
+import copy
 
 # class sequence():
 #     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None):
@@ -88,14 +89,14 @@ def build_screens(samples, interval):
     if PTs:
         PTs = PTs[::-1]
         flag = input('Do you want your PTs in duplicate? [Y/n]').upper()
-        PTs_rpt = []
         if flag.startswith('Y'):
-            PTs_rpt = PTs.copy()
+            PTs_rpt = copy.deepcopy(PTs)
             for case in PTs_rpt:
                 case.abbrv = case.abbrv.split("_")[0] + "_RPT"
+            PTs += PTs_rpt
     bad_matrix = bad_matrix[::-1]
     bad_matrix = sorted(bad_matrix, key=lambda x: caboose.get(x.type, 99))
-    samples = PTs + PTs_rpt + priority[::-1] + samples + bad_matrix
+    samples = PTs + priority[::-1] + samples + bad_matrix
 
 
     screen_samples.append(make_solvent())
