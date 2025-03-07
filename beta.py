@@ -18,13 +18,13 @@ venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
 
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
-
     try: 
         subprocess.run([venv_path, script_path] + list(args), check=True)
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
         print(f"Script or the Python interpreter could not be found!")
+
 
 def start_thread(venv_path, script_path, *args):
     thread = threading.Thread(target=run_script, args=(venv_path, script_path, *args))
