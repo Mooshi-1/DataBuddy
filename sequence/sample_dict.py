@@ -79,7 +79,8 @@ sample_type_dict = {
     'BLOOD - ABDOMEN': 'BABD',
     'BRAIN HEMORRHAGE': 'BRHEM',
     'SMALL INTESTINE': 'SMI',
-    'DONOR BLOOD - FEMORAL VEIN': 'FV'
+    'DONOR BLOOD - FEMORAL VEIN': 'DFV',
+    'DONOR BLOOD - SAPHENOUS VEIN': 'DSV'
 }
 
 sample_container_dict = {
