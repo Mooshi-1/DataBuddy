@@ -9,12 +9,15 @@ import os
 import datetime
 import threading
 
-version = "2.1" #3-7-25
-script_path_screens = r"G:\PDF DATA\DataBuddy\screens\screen_main.py"
-script_path_quants = r"G:\PDF DATA\DataBuddy\quants\quant_main.py"
-script_path_sequence = r"G:\PDF DATA\DataBuddy\sequence\seq_main.py"
-script_path_carryover = r"G:\PDF DATA\DataBuddy\autoprintZ\carryover.py"
-venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
+version = "2.2" #3-7-25
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+# Construct paths dynamically
+script_path_screens = os.path.join(base_dir, "screens", "screen_main.py")
+script_path_quants = os.path.join(base_dir, "quants", "quant_main.py")
+script_path_sequence = os.path.join(base_dir, "sequence", "seq_main.py")
+script_path_carryover = os.path.join(base_dir, "autoprintZ", "carryover.py")
+venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
