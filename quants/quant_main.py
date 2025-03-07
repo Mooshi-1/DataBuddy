@@ -30,7 +30,7 @@ ascii_art = """
 ██████╔╝██║██║ ╚████║██████╔╝███████╗██║  ██║
 ╚═════╝ ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝
                                             
-Version 1.10 - 02/12/2025
+Version 1.11 - 03/07/2025
 """
 
 def main(batch, method, extraction_date, initials):

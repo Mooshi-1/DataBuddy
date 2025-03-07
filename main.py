@@ -1,20 +1,20 @@
 """
 Created 03-03-25 -- adg
 """
-
+from tkinter import messagebox
 import tkinter as tk
 from tkinter import ttk
 import subprocess
 import os
 import datetime
+import threading
 
-version = "2.0" #3-4-25
+version = "2.1" #3-7-25
 script_path_screens = r"G:\PDF DATA\DataBuddy\screens\screen_main.py"
 script_path_quants = r"G:\PDF DATA\DataBuddy\quants\quant_main.py"
 script_path_sequence = r"G:\PDF DATA\DataBuddy\sequence\seq_main.py"
 script_path_carryover = r"G:\PDF DATA\DataBuddy\autoprintZ\carryover.py"
 venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
-
 
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
@@ -26,17 +26,26 @@ def run_script(venv_path, script_path, *args):
     except FileNotFoundError:
         print(f"Script or the Python interpreter could not be found!")
 
+def start_thread(venv_path, script_path, *args):
+    thread = threading.Thread(target=run_script, args=(venv_path, script_path, *args))
+    thread.start()
+
 def get_weekday():
     today = datetime.date.today()
     return today.strftime("%A")
 
 
-def main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path):
-## TK MAIN WINDOW
+def show_popup():
+    messagebox.showinfo("Notification", "The script is running and your files are loading. Check the terminal!")
+
+def main():
+# # TK MAIN WINDOW
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
     root.geometry("800x700")
 
+
+# header
     date = get_weekday()
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.pack(pady=10)
@@ -46,8 +55,13 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
                        \nFor more info, check the 'help' tab", font=("Arial", 14))
     readme.pack(pady=10)
 
+## create notebook tabs ##
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
+
+## IO ##
+    io = ttk.Frame(root)
+    io.pack(pady=10)
 
 ## START SCREENS TAB ##
     screens = ttk.Frame(notebook)
@@ -66,8 +80,8 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     renamer_var = tk.StringVar(value=None)
     renamer_check = ttk.Checkbutton(screens, text="Rename only mode?", onvalue='-r', offvalue=None, variable=renamer_var).pack()
 
-    ttk.Button(screens, text="Run Screen Binder", command=lambda: run_script(venv_path, script_path_screens, \
-                    sc_batch.get(), sc_var.get(), renamer_var.get())).pack()
+    ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
+                    sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack()
 
 ## START QUANTS TAB ##
     quants = ttk.Frame(notebook)
@@ -91,8 +105,8 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     qt_initials = ttk.Entry(quants)
     qt_initials.pack()
 
-    ttk.Button(quants, text="Run Quants Binder", command=lambda: run_script(venv_path, script_path_quants, \
-                            qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper())).pack()
+    ttk.Button(quants, text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants, \
+                            qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper()), show_popup()]).pack()
 
 ## START SEQUENCE TAB ##
     sequence = ttk.Frame(notebook)
@@ -102,7 +116,7 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     initials = ttk.Entry(sequence)
     initials.pack()
 
-    ttk.Button(sequence, text="Run Sequence Generator", command=lambda: run_script(venv_path, script_path_sequence, initials.get().upper())).pack()
+    ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper()), show_popup()]).pack()
 
 ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
@@ -113,7 +127,7 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
     location.pack()
     ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").pack()
 
-    ttk.Button(carryover, text="Run Carryover Check", command=lambda: run_script(venv_path, script_path_carryover, location.get())).pack()
+    ttk.Button(carryover, text="Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get()), show_popup()]).pack()
 
 ## START HELP TAB ##
     help = ttk.Frame(root)
@@ -139,8 +153,10 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     help_box.config(state="disabled")
     help_box.pack(padx=10, pady=10)
 
+
+
 ## TK MAIN LOOP ##
     root.mainloop()
 
 if __name__ == "__main__":
-    main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path)
+    main()
