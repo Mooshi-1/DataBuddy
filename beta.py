@@ -14,45 +14,65 @@ version = "2.1" #3-5-25
 script_path_screens = r"G:\PDF DATA\DataBuddy\screens\screen_main.py"
 script_path_quants = r"G:\PDF DATA\DataBuddy\quants\quant_main.py"
 script_path_sequence = r"G:\PDF DATA\DataBuddy\sequence\seq_main.py"
+script_path_carryover = r"G:\PDF DATA\DataBuddy\autoprintZ\carryover.py"
 venv_path = r"G:\PDF DATA\DataBuddy\.venv\Scripts\python.exe"
 
 def run_script(queue, venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
-    queue.put("starting script...")
     try: 
-        process = subprocess.Popen([venv_path, script_path] + list(args), check=True)
-        queue.put(f"script complete {result.stdout}")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred while running script: {e}")
+        process = subprocess.Popen([venv_path, script_path] + list(args), 
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, text=True)
+
+        while True:
+            output = process.stdout.readline()
+            if output:
+                queue.put(output.strip())
+            if process.poll() is not None:
+                break
+
+        stderr = process.stderr.read().strip()
+        if stderr:
+            queue.put(f"Error: {stderr}")
+        queue.put("COMPLETE")
+
     except FileNotFoundError:
         print(f"Script or the Python interpreter could not be found!")
-    finally:
-        queue.put("COMPLETE")
+    except Exception as e:
+        queue.put(f"Unexpected error: {e}")
+
+def send_input_to_process(process, input_text):
+    if process and process.stdin:
+        process.stdin.write(input_text + "\n")
+        process.stdin.flush()
 
 def get_weekday():
     today = datetime.date.today()
     return today.strftime("%A")
 
-def start_thread(queue, progress_bar, venv_path, script_path, *args):
+def start_thread(queue, progress_bar, status_label, input_box, venv_path, script_path, *args):
+    status_label.config(text="Running script...", foreground="blue")
     thread = threading.Thread(target=run_script, args=(queue, venv_path, script_path, *args))
     thread.start()
-    check_queue(queue, progress_bar)
+    check_queue(queue, progress_bar, status_label, input_box)
 
-def check_queue(queue, progress_bar):
+def check_queue(queue, progress_bar, status_label, input_box):
     try:
         while not queue.empty():
             message = queue.get_nowait()
             if message == "COMPLETE":
                 progress_bar.stop()
+                status_label.config(text="Script completed!", foreground="green")
+                input_box.config(state="disabled")
             else:
-                progress_bar.start()
-            print(message) #replace with gui logic
+                status_label.config(text=message, foreground="blue")
     except Exception as e:
-        print(f"error checking queue | {e}")
+        status_label.config(text=f"Error: {e}", foreground="red")
     finally:
-        progress_bar.after(100, check_queue, queue, progress_bar)
+        if progress_bar["value"] < 100:
+            progress_bar.after(100, check_queue, queue, progress_bar, status_label, input_box)
 
-def main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path):
+def main():
 # # TK MAIN WINDOW
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
@@ -133,6 +153,17 @@ def main(version, script_path_screens, script_path_quants, script_path_sequence,
 
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: run_script(venv_path, script_path_sequence, initials.get().upper())).pack()
 
+## START CARRYOVER TAB ##
+    carryover = ttk.Frame(notebook)
+    notebook.add(carryover, text="Z Carryover")
+
+    ttk.Label(carryover, text="Enter the network path where the raw data is: ").pack()
+    location = ttk.Entry(carryover)
+    location.pack()
+    ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").pack()
+
+    ttk.Button(carryover, text="Run Carryover Check", command=lambda: run_script(venv_path, script_path_carryover, location.get())).pack()
+
 ## START HELP TAB ##
     help = ttk.Frame(root)
     notebook.add(help, text="Help")
@@ -157,12 +188,29 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     help_box.config(state="disabled")
     help_box.pack(padx=10, pady=10)
 
+#status, progress, input, output
+    status_label = ttk.Label(root, text="Ready", font=("Arial", 12), foreground="green")
+    status_label.pack(pady=10)
+
+    # Progress Bar
+    progress_bar = ttk.Progressbar(root, mode="indeterminate")
+    progress_bar.pack(pady=10, fill="x")
+
+    # Output Box
+    output_box = tk.Text(root, wrap="word", height=15, font=("Arial", 12))
+    output_box.pack(pady=10, padx=10, fill="both", expand=True)
+
+    # Input Box
+    input_box = ttk.Entry(root)
+    input_box.pack(pady=10, padx=10, fill="x")
+    input_box.bind("<Return>", lambda event: send_input_to_process(process, input_box.get()))
+
 ## IO ##
     io = ttk.Frame(root)
-    io.pack()
+    io.pack(pady=10)
 
 ## TK MAIN LOOP ##
     root.mainloop()
 
 if __name__ == "__main__":
-    main(version, script_path_screens, script_path_quants, script_path_sequence, venv_path)
+    main()

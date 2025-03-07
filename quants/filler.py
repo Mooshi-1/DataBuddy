@@ -77,7 +77,7 @@ def SR_fill(cases, batch, path):
 def output_LJ_2(controls, serum_controls, batch, path, extraction_date):
     analyte_dataframes = {}
 
-    single_control = controls[0]
+    single_control = controls[0] or serum_controls[0]
     def get_indexes(single_control):
         for tuples in single_control.results_analyte:
             return tuples.index('Conc.'), tuples.index('Name')

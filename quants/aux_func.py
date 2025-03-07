@@ -72,6 +72,7 @@ def compare_and_bind_duplicates(samples, output_dir, batch):
 #used to take list of objects and bind them together (batch pack, MSA cases)
 #added optional name parameter, used specifically in batch pack
 def list_binder(list, output_dir, batch, name=None):
+    #print(list)
     if len(list) < 2:
         print(f"Cannot bind - 1 sample in list {list}")
         return
@@ -159,9 +160,9 @@ def serum_batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,d
         if len(controls) > 2:
             c_split_1 = controls[:2]
             c_split_2 = controls[2:]
-            batch_pack = (curve + shooter + neg_ctl + cal_curve + c_split_1 + dil_controls + c_split_2 +
-                        serum_shooter + serum_neg + serum_cal_curve + s_split_1 + serum_dil_controls + s_split_2 + sequence)  
-            return batch_pack      
+        batch_pack = (curve + shooter + neg_ctl + cal_curve + c_split_1 + dil_controls + c_split_2 +
+                    serum_shooter + serum_neg + serum_cal_curve + s_split_1 + serum_dil_controls + s_split_2 + sequence)  
+        return batch_pack      
 
 
 #currently only functions when L0 sample does not have an L suffix

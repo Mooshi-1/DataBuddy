@@ -161,6 +161,7 @@ def sample_handler(all_samples):
     serum_cal_curve = []
     solvents = [] #currently not being returned but collecting so that they don't interfere with cases
     for sample in all_samples:
+        #print(sample)
         if sample.type == {QCTYPE.CAL}:
             cal_curve.append(sample)
         elif sample.type == {QCTYPE.SEQ}:
