@@ -138,13 +138,30 @@ def build_vols(samples, interval):
     samples_final = []
     for sample in samples:
         if sample.single:
-            #bring single inject to the front
-            if samples_final and sample == samples_final[-1] and not hasattr(sample, 'ex'):
-                print('rearranged single injection')
-                samples_final.insert(-2, sample)
-            else:
-                samples_final.append(sample)
+            if len(samples_final) >= 2:
+                if sample == samples_final[-1] and sample == samples_final[-2]:
+                    print(f'rearranged single injection {sample.abbrv}')
+                    samples_final.insert(-2, sample)
+                    continue
+                elif sample == samples_final[-1] and "BLOOD" in sample.type:
+                    samples_final.insert(-1, sample)
+                    continue
+            samples_final.append(sample)
         if sample.double:
+            if len(samples_final) >= 2:
+                if samples_final[-1] == sample and samples_final[-2] == sample:
+                    if "BLOOD" in sample.type:
+                        samples_final.insert(-2, sample)
+                        samples_final.insert(-2, sample.copy())
+                        continue
+                    if "OCULAR" in sample.type and "BLOOD" not in samples_final[-1].type:
+                        samples_final.insert(-2, sample)
+                        samples_final.insert(-2, sample.copy())
+                        continue
+                    if "BRAIN" in sample.type and "LIVER" in samples_final[-1].type:
+                        samples_final.insert(-2, sample)
+                        samples_final.insert(-2, sample.copy())
+                        continue      
             samples_final.append(sample)
             samples_final.append(sample.copy())
 
