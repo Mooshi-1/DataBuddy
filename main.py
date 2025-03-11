@@ -85,6 +85,13 @@ def main():
 
     ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
                     sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack()
+    
+    chem_var = tk.StringVar(value=None)
+    chem_check = ttk.Checkbutton(screens, text="Chemstation reports?", onvalue='??????????', offvalue=None, variable=chem_var).pack()
+
+    mass_var = tk.StringVar(value=None)
+    mass_check = ttk.Checkbutton(screens, text="MassHunter reports?", onvalue="??????", offvalue=None, variable=mass_var).pack()
+
 
 ## START QUANTS TAB ##
     quants = ttk.Frame(notebook)
