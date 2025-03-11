@@ -26,19 +26,21 @@ def Zrename(batch_dir):
             doc = fitz.open(pdf_path)
             # Extract text from the first page
             page = doc[0]
-            text = page.get_text()
+            text = page.get_text().strip()
             lines = text.split('\n')
-            #print(lines)
+            # print(lines)
             
             #iterate lines and search for case number
             MH_case_number = None
             AM_case_number = None
             
             try:
-                if "GC-MS-NPD Analysis Report" in lines:
-                    sample_name_index = lines.index("Sample Name")
-                    MH_case_number = lines[sample_name_index + 1]
-                    MH_case_number = MH_case_number.upper()
+                if lines[0].startswith("Quantitation Report"):
+                    MH_case_number = lines[6].strip().split(':')[1].strip()
+                    print(MH_case_number)
+                    # sample_name_index = lines.index("Sample Name")
+                    # MH_case_number = lines[sample_name_index + 1]
+                    # MH_case_number = MH_case_number.upper()
                     #print(f"MH found {MH_case_number}")
                     
                 elif lines[0].startswith("GC/MS Analysis"):
@@ -154,11 +156,11 @@ def Zcontrols(output_dir, batch_num):
         print("--error-- could not find control data")
 
 if __name__ == "__main__":
-    batch_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\BATCH PACK DATA"
+    batch_dir = r"/Users/mooshi1/desktop"
     output_dir = r"C:\Users\e314883\Desktop\python pdf\PDF DATA\2024\12\12778\CASE DATA\--binder files--"
     batch_num = 12778
 
     Zrename(batch_dir)
-    Zbinder(batch_dir, output_dir, batch_num)
-    Zcontrols(output_dir, batch_num)
+    #Zbinder(batch_dir, output_dir, batch_num)
+    #Zcontrols(output_dir, batch_num)
 

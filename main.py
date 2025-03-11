@@ -85,12 +85,6 @@ def main():
 
     ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
                     sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack()
-    
-    chem_var = tk.StringVar(value=None)
-    chem_check = ttk.Checkbutton(screens, text="Chemstation reports?", onvalue='??????????', offvalue=None, variable=chem_var).pack()
-
-    mass_var = tk.StringVar(value=None)
-    mass_check = ttk.Checkbutton(screens, text="MassHunter reports?", onvalue="??????", offvalue=None, variable=mass_var).pack()
 
 
 ## START QUANTS TAB ##
@@ -102,7 +96,7 @@ def main():
     qt_batch.pack(padx=10, pady=10)
 
     ttk.Label(quants, text="Method: ").pack()
-    qt_methods = ["SQVOL", "QTABUSE", "QT"]
+    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QT"]
     qt_var = tk.StringVar()
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.pack()
