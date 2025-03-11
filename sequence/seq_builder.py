@@ -136,6 +136,8 @@ def build_vols(samples, interval):
         # make sure to not disrupt index of samples
     samples = priority[::-1] + samples
     samples_final = []
+
+    ## if continued issues here, order the list all in single and then loop through samples again and apply duplicates ##
     for sample in samples:
         if sample.single:
             if len(samples_final) >= 2:
