@@ -1,11 +1,13 @@
 # Laboratory Data Automation
 
-Automated naming, binding, and Excel sheet generation for laboratory data.
+Automated naming, binding, data handling, sheet generation, and more for laboratory pdf data.
 
 This program is used by the Miami-Dade Medical Examiner Toxicology Laboratory staff.
 
 ## Program Structure
-The program is split into 3 separate `MAIN.py` entry-points, in 3 separate folders:
+A GUI written with tkinter is launched from main.py. The DataBuddy.bat file can be launched if a python interpreter is not installed on your computer. The necessary dependencies are located in the .venv folder, and automatically called when using the program.
+Within the GUI, there are notebook tabs corresponding to different scripts, which are launched as a separate thread when pressing the "RUN" button.
+
 
 ### Screens
 - Find batch data on networked drive by searching batch number
@@ -24,6 +26,11 @@ The program is split into 3 separate `MAIN.py` entry-points, in 3 separate folde
 - Output sequence as an Excel file, CSV or XLSX depending on method
 - Create year/month/date directory in LF-23 INSTRUMENT CHECKLISTS
 - Copy new sequence, test batch report, and specific LF-23 form into the new directory
+
+### Z Carryover
+- Check AMDIS reports for carryover
+- Create summary sheet of AMDIS results
+- Prepare new sequence based on carryover results
 
 ## Technical Details
 The program is built in Python 3.12 and packaged into an executable (EXE) for use by other analysts on a networked drive. The packaged EXE is not included in this repository.
@@ -45,14 +52,30 @@ A number of Python libraries are used for different functions throughout the scr
 - **win32com.client**: Engine for Excel manipulation used specifically for writing into LF-10 and LF-11
 
 ## TODO List
+### Overall
+- track total number of times used, usage statistics, etc
+
+### Aux/Searcher algorithms
+- refactor shuttle/shuttlehome, sometimes they don't work properly... move QC to batch pack data, etc
+
 ### Screens
 - Reinject handling
+- SCRNZ - new report, addition of unknown spectra
+
+### Z carryover
+- expand 2 instrument run, with 1 doing bases and 1 doing acids, with additional functionality
+- automate transfer of results from 1 computer to another and transfer to TA-DATA directory on G-drive
+- then bring batch from G drive to local computer for processing
 
 ### Sequence
+- method dictionary for LF-23 creation not using .startswith() properly
+- Handle multiple quants gracefully, while not impacting multiple screen batches
 - Urine handling
 - Scion-specific sequences
 - Reinject creation
 - Additional statistics related to batch
 
 ### Quants
+- SQVOL reinject aggregator
+- some sort of recognition of undiluted MSA's (Gx0) and other non-routine tissue specimens
 - Scion init, then work into QuantMain

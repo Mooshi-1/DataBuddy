@@ -35,7 +35,7 @@ def Zrename(batch_dir):
             AM_case_number = None
             
             try:
-                if lines[0].startswith("Quantitation Report"):
+                if lines[0].startswith("Screening Report"):
                     MH_case_number = lines[6].strip().split(':')[1].strip()
                     print(MH_case_number)
                     # sample_name_index = lines.index("Sample Name")
