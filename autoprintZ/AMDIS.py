@@ -18,11 +18,11 @@ def main():
     if target_windows:
         AMDIS_program = gw.getWindowsWithTitle(target_windows[0])[0]
         AMDIS_program.minimize()
-        time.sleep(1)
+        time.sleep(2)
         AMDIS_program.restore()
-        time.sleep(1)
+        time.sleep(2)
         AMDIS_program.resizeTo(600, 600)
-        time.sleep(1)
+        time.sleep(2)
 
         print('initialization successful, starting loop... do not operate the computer')
         print_report(counter)
@@ -38,7 +38,8 @@ def print_report(counter):
     sample_name = target_windows[0].split(' - ')[2].strip()
     print(f'printing report #{counter} - {sample_name}')
     #active = target_windows[0].activate()
-
+    
+    time.sleep(2)
     pyautogui.press('alt')
     time.sleep(0.3)
     pyautogui.press('m')
@@ -57,11 +58,11 @@ def print_report(counter):
     time.sleep(3) 
 
     window = gw.getWindowsWithTitle("Results of Last Batch Job")[0]
-    time.sleep(1)
+    time.sleep(3)
     window.activate()
-    time.sleep(1)
+    time.sleep(3)
     pyautogui.press('down')
-    time.sleep(4)
+    time.sleep(5)
 
     active_window = gw.getActiveWindow()
 
