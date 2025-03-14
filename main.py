@@ -53,7 +53,7 @@ def main():
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.pack(pady=10)
     
-    readme = ttk.Label(root, text="Use the tabs below to navigate the program \
+    readme = ttk.Label(root, text=r"Use the tabs below to navigate the program \
                        \nAfter pressing 'Run', please wait a moment while it loads the relevant files \
                        \nFor more info, check the 'help' tab", font=("Arial", 14))
     readme.pack(pady=10)
@@ -86,7 +86,7 @@ def main():
     ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
                     sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack()
     
-    ttk.Label(screens, text="Requirements: \
+    ttk.Label(screens, text=r"Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
               \n-Data that is not in the directories listed above will be ignored by the script \
               \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
@@ -124,7 +124,7 @@ def main():
     ttk.Button(quants, text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants, \
                             qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper()), show_popup()]).pack()
     
-    ttk.Label(quants, text="Requirements: \
+    ttk.Label(quants, text=r"Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
               \n-Data that is not in the directories listed above will be ignored by the script \
               \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
@@ -147,7 +147,7 @@ def main():
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper()), show_popup()]).pack()
 
 
-    ttk.Label(sequence, text="Requirements: \
+    ttk.Label(sequence, text=r"Requirements: \
               \n-This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for your initials input above\
               \n-All CME TEST BATCHES placed in the folder will be converted into a single sequence \
               \n-You can make extra directories, 'Archive', 'Old batches', etc, without issue -- they are not checked or recognized by the script \
