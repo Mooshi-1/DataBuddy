@@ -53,14 +53,13 @@ def binder_dir(input_dir, counter=0):
 def ShuttleHome(input_dir):
     #list contents
     print("returning contents to individual case folders:")
-    for contents in os.listdir(input_dir):
-        content_path = os.path.join(input_dir, contents)
-        
+    for contents in os.listdir(input_dir):        
         #look for pdfs, extract last 4 of case number as string
         if contents.endswith('.pdf'):
+            content_path = os.path.join(input_dir, contents)
             #print("found a pdf")
             try:
-                number = str(contents.split('_')[0].split('-')[1])
+                number = str(contents.split('_')[0])
                 part_1 = number.split("-")[0]
                 part_2 = number.split("-")[1]
                 number = part_1 + "-0" + part_2
@@ -71,7 +70,6 @@ def ShuttleHome(input_dir):
             for folder in os.listdir(input_dir):
                 folder_path = os.path.join(input_dir, folder)
                 if os.path.isdir(folder_path) and number in folder:
-                    #if found, attempt to move
                     try:
                         shutil.move(content_path, os.path.join(folder_path, contents))
                         #print(f"moved {contents} to {folder}")

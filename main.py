@@ -127,7 +127,7 @@ def main():
     ttk.Label(quants, text="Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
               \n-Data that is not in the directories listed above will be ignored by the script \
-              \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
+              \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them \
               \n \
               \n-If you have MSA's, Excel must be closed on your computer to fill the LF-10/LF-11 forms \
               \n-Make sure your curve and sequence are printed, the script will handle them appropriately. \

@@ -10,7 +10,8 @@ import datetime
 import threading
 
 #things to test before deploy:
-#searcher in quants updated with new check -- also update screens
+#searcher in quants updated with new shuttlehome check -- also update screens
+#updated seq to handle multiple sequences for quants. check thoroughly with 1, 2, 3 pdfs
 
 version = "2.3" #3-14-25
 

@@ -57,6 +57,7 @@ A number of Python libraries are used for different functions throughout the scr
 
 ### Aux/Searcher algorithms
 - refactor shuttle/shuttlehome, sometimes they don't work properly... move QC to batch pack data, etc
+- updated shuttlehome for more accurate number checking... see if it works?
 
 ### Screens
 - Reinject handling
@@ -69,7 +70,6 @@ A number of Python libraries are used for different functions throughout the scr
 
 ### Sequence
 - method dictionary for LF-23 creation not using .startswith() properly
-- Handle multiple quants gracefully, while not impacting multiple screen batches
 - Urine handling
 - Scion-specific sequences
 - Reinject creation
