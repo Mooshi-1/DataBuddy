@@ -34,22 +34,52 @@ ascii_art = '''
 
 def main(initials):
     seq_dir = fr'G:\PDF DATA\TEST BATCH REPORTS\{initials}'
-    #create sequence objects, stored in list samples
-    try:
-        samples, method, batches = seq_init.read_sequence(seq_dir)
-    except Exception as e:
-        print(f'INIT FAILED -- Umm... is your file in the right place? -- {e}')
-        input('Press enter to exit...')
-        return
-    
-    def sort_batches(seq_dir):
-        #need to call build and export with appropriate samples, methods, and batches
-        #situations...: 
-        #2 pdfs, 1 list of samples, 1 method, 2 batches
-        #1 pdf, 1 list of samples, 1 method, 1 batch
-        #3 pdfs, 3 lists of samples, 3 methods, 3 batches
-        all_sequences = []
 
+    try: 
+        all_sequences = sort_batches(seq_dir)
+    except Exception as e:
+        if all_sequences:
+            print(f"PARTIAL INIT FAILURE -- ATTEMPTING TO PROCEED | error={e}")
+        else:
+            print(f"INIT FAILED -- CANNOT MAKE SEQUENCE -- EXITING SCRIPT | error={e}")
+            return
+    
+    for seq in all_sequences:
+        samples = seq[0]
+        method = seq[1]
+        batch_num = seq[2]
+        print(f"creating {len(all_sequences)} sequences")
+
+        try:
+            build_and_export(samples, method, batch_num, seq_dir)
+            print('-----------------------------------------------------------------------------------------')
+            print(f'sequence building is complete! An excel file has been created where your TEST BATCH is.')
+            print('-----------------------------------------------------------------------------------------')
+        except Exception as e:
+            print(f'Sequence build and export failed | error={e}')
+
+        try:
+            var = input('Would you like an LF-23 INSTRUMENT CHECKLIST folder created for you? [Y/n]:').upper()
+            if var.startswith('Y'):
+                print('comparing method to instruments available...')
+                instrument = find_instrument(method)
+                print(f'Make sure your files are closed. Attempting to move to {instrument} folder')
+                input('press enter to continue')
+                searcher.LF_plumbing(seq_dir, instrument, initials)
+                print('-----------------------------------------------------------------------------------------')
+                print('                Successful! Your files have been copied :) Bye!')
+                print('-----------------------------------------------------------------------------------------')
+
+            if var.startswith('N'):
+                print("COMPLETE")
+                return
+        except Exception as e:
+            print(f'theres been a problem... unable to create LF-23 directory | {e}')
+            print("COMPLETE")
+            return
+
+    def sort_batches(seq_dir):
+        all_sequences = []
         for filename in os.listdir(seq_dir):
             if filename.endswith(".pdf"):
                 #read test batch, get info
@@ -61,15 +91,8 @@ def main(initials):
                     samples = all_sequences[-1][0].extend(samples)
                     batch = all_sequences[-1][2] + "-" + batch
                     all_sequences.pop()
-
                 all_sequences.append((samples, method, batch))
-
-
-
-        
-    batch_num = "-".join(sorted(batches))
-
-    print(f"{len(samples)} samples found, method = {method}, batch number = {batch_num}")
+        return all_sequences
 
     def build_and_export(samples, method, batch_num, seq_dir):
         if method.startswith("SC") or method.startswith('CO'):
@@ -110,13 +133,6 @@ def main(initials):
             method = input('Enter another/similar method and attemp to re-run?: ').upper()
             build_and_export(samples, method, batch_num, seq_dir)
 
-    try:
-        build_and_export(samples, method, batch_num, seq_dir)
-        print('-----------------------------------------------------------------------------------------')
-        print(f'sequence building is complete! An excel file has been created where your TEST BATCH is.')
-        print('-----------------------------------------------------------------------------------------')
-    except Exception as e:
-        print(f'Sequence build and export failed :[   | {e}')
 
     def find_instrument(method):
         matched_methods = [methods for methods in method_dict if methods.startswith(method)]
@@ -131,25 +147,6 @@ def main(initials):
             choice = int(choice) - 1
             return method_dict[matched_methods[0]][choice]
 
-    try:
-        var = input('Would you like an LF-23 INSTRUMENT CHECKLIST folder created for you? [Y/n]:').upper()
-        if var.startswith('Y'):
-            print('comparing method to instruments available...')
-            instrument = find_instrument(method)
-            print(f'Make sure your files are closed. Attempting to move to {instrument} folder')
-            input('press enter to continue')
-            searcher.LF_plumbing(seq_dir, instrument, initials)
-            print('-----------------------------------------------------------------------------------------')
-            print('                Successful! Your files have been copied :) Bye!')
-            input('-----------------------------------------------------------------------------------------')
-
-        if var.startswith('N'):
-            input('Press enter to exit...')
-            return
-    except Exception as e:
-        print(f'theres been a problem... unable to create LF-23 directory | {e}')
-        input('Exiting...')
-        return
 
 if __name__ == '__main__':
 
