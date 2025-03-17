@@ -9,6 +9,9 @@ import os
 import datetime
 import threading
 
+#things to test before deploy:
+#searcher in quants updated with new check -- also update screens
+
 version = "2.3" #3-14-25
 
 base_dir = os.path.dirname(os.path.abspath(__file__))

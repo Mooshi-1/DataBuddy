@@ -206,92 +206,89 @@ class quants(sequence):
     
 #probably need to handle how it will be called... where to save pdf... what info to get from the user
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
-def read_sequence(seq_dir):
+def read_sequence(pdf_path):
     samples = [] # holds created class objects, returned at end
-    batches = set() # only 1 of each batch number, concat in main()
-    for filename in os.listdir(seq_dir):
-        if filename.endswith(".pdf"):
-            pdf_path = os.path.join(seq_dir, filename)        
-            doc = fitz.open(pdf_path)
-            # check all pages
-            for page_num in range(len(doc)):
-                page = doc[page_num]
-                text = page.get_text()
-                lines = text.strip().split('\n')
-                batch_number = lines[3].strip().replace(",","")
-                batches.add(batch_number)
-            #remove non-sample indexes
-                start_index = lines.index('TEST BATCH ') + 1
-                end_index = lines.index('CRTestBatch') - 1
-                cases = lines[start_index:end_index]
-            #start case info loop
-                for i in range(0, len(cases), 5):
-                    sample_number = (cases[i])
-                    sample_type = (cases[i+1]).upper()
-                    barcode = (cases[i+2]).strip()
-                    method = cases[i+3]
-                    sample_container = cases[i+4].upper()
-                #find comments block:
-                    comment = None
-                    extra = False #flag to create extra sample
-                    barcode_rect = page.search_for(barcode)
-                    expand = 2
-                    sample_rect = barcode_rect[0]
-                    search_area = fitz.Rect(sample_rect.x0 - 285, #expand this one more to cover sample
-                                            sample_rect.y0 - expand,
-                                            sample_rect.x1 + expand, 
-                                            sample_rect.y1 + expand)
-                    annots = page.annots()
-                    #find where annotation and search area intersect
-                    if annots is not None:
-                        for annot in annots:
-                            if search_area.intersects(annot.rect):
-                                comment = annot.info.get('content', '').strip().upper()
-                                #print(comment)
-                                if 'EXTRA:' in comment:
-                                    extra = True
-                                    e_comment = comment.split(':')[1].strip()
-                #end comments block, continue to list append
-                    case_ID = barcode
-                #remove CME TEST BATCH duplicate barcodes
-                    if samples and samples[-1].barcode == case_ID:
-                        print(f'skipping duplicate barcode {barcode}')
-                        extra=False
-                        continue
-                #create object, use subclass if necessary
-                    if method == 'SQVOL': #SQVOL
-                        #print('converting to volatiles')
-                        case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
-                        case_ID.add_duplicate()
-                        if extra:
-                            samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate().add_extra())
-                    elif method.startswith('QT'): #QUANTS
-                        case_ID = quants(sample_number, sample_type, sample_container, barcode, None, comment)
-                        case_ID.find_serums()
-                        if extra:
-                            samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment).find_serums().add_extra())
-                    else: #SCRNZ, SCGEN, SCLCMSMS, ALL OTHER
-                        #print('converting to sequence')
-                        case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
-                        if extra:
-                            samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment).add_extra())
+    batches = set() # only 1 of each batch number, concat in main()       
+    doc = fitz.open(pdf_path)
+    # check all pages
+    for page_num in range(len(doc)):
+        page = doc[page_num]
+        text = page.get_text()
+        lines = text.strip().split('\n')
+        batch_number = lines[3].strip().replace(",","")
+        batches.add(batch_number)
+    #remove non-sample indexes
+        start_index = lines.index('TEST BATCH ') + 1
+        end_index = lines.index('CRTestBatch') - 1
+        cases = lines[start_index:end_index]
+    #start case info loop
+        for i in range(0, len(cases), 5):
+            sample_number = (cases[i])
+            sample_type = (cases[i+1]).upper()
+            barcode = (cases[i+2]).strip()
+            method = cases[i+3]
+            sample_container = cases[i+4].upper()
+        #find comments block:
+            comment = None
+            extra = False #flag to create extra sample
+            barcode_rect = page.search_for(barcode)
+            expand = 2
+            sample_rect = barcode_rect[0]
+            search_area = fitz.Rect(sample_rect.x0 - 285, #expand this one more to cover sample
+                                    sample_rect.y0 - expand,
+                                    sample_rect.x1 + expand, 
+                                    sample_rect.y1 + expand)
+            annots = page.annots()
+            #find where annotation and search area intersect
+            if annots is not None:
+                for annot in annots:
+                    if search_area.intersects(annot.rect):
+                        comment = annot.info.get('content', '').strip().upper()
+                        #print(comment)
+                        if 'EXTRA:' in comment:
+                            extra = True
+                            e_comment = comment.split(':')[1].strip()
+        #end comments block, continue to list append
+            case_ID = barcode
+        #remove CME TEST BATCH duplicate barcodes
+            if samples and samples[-1].barcode == case_ID:
+                print(f'skipping duplicate barcode {barcode}')
+                extra=False
+                continue
+        #create object, use subclass if necessary
+            if method == 'SQVOL': #SQVOL
+                #print('converting to volatiles')
+                case_ID = volatiles(sample_number, sample_type, sample_container, barcode, None, comment)
+                case_ID.add_duplicate()
+                if extra:
+                    samples.append(volatiles(sample_number, sample_type, sample_container, barcode, None, e_comment).add_duplicate().add_extra())
+            elif method.startswith('QT'): #QUANTS
+                case_ID = quants(sample_number, sample_type, sample_container, barcode, None, comment)
+                case_ID.find_serums()
+                if extra:
+                    samples.append(quants(sample_number, sample_type, sample_container, barcode, None, e_comment).find_serums().add_extra())
+            else: #SCRNZ, SCGEN, SCLCMSMS, ALL OTHER
+                #print('converting to sequence')
+                case_ID = sequence(sample_number, sample_type, sample_container, barcode, None, comment)
+                if extra:
+                    samples.append(sequence(sample_number, sample_type, sample_container, barcode, None, e_comment).add_extra())
 
-                    samples.append(case_ID)
-                #assign abbrv, chain return self
-                    case_ID.transform_number().abbreviate_type().abbreviate_container()
-                #assign comments, subclass override -- comments must be separated by comma
-                    case_ID.add_comment()
-                #confirmation print
-                    print(case_ID)
-                    if extra:
-                    #does not include add_duplicate() specific to volatiles class, or find_serums() for quants
-                        print(f'transforming extra sample')
-                        samples[-2].transform_number()
-                        samples[-2].abbreviate_type()
-                        samples[-2].abbreviate_container()
-                        samples[-2].add_comment()
-                        print(samples[-2])
-                        extra=False
+            samples.append(case_ID)
+        #assign abbrv, chain return self
+            case_ID.transform_number().abbreviate_type().abbreviate_container()
+        #assign comments, subclass override -- comments must be separated by comma
+            case_ID.add_comment()
+        #confirmation print
+            print(case_ID)
+            if extra:
+            #does not include add_duplicate() specific to volatiles class, or find_serums() for quants
+                print(f'transforming extra sample')
+                samples[-2].transform_number()
+                samples[-2].abbreviate_type()
+                samples[-2].abbreviate_container()
+                samples[-2].add_comment()
+                print(samples[-2])
+                extra=False
 
     return samples, method, batches
 

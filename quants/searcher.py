@@ -45,6 +45,11 @@ def binder_dir(input_dir, counter=0):
         return binder_path
 
 
+
+#does not currently use regex string matching... separating last 4 of case number
+#and checking if that string is in the directory name...
+#should probably add leading 0 after hyphen
+
 def ShuttleHome(input_dir):
     #list contents
     print("returning contents to individual case folders:")
@@ -56,6 +61,9 @@ def ShuttleHome(input_dir):
             #print("found a pdf")
             try:
                 number = str(contents.split('_')[0].split('-')[1])
+                part_1 = number.split("-")[0]
+                part_2 = number.split("-")[1]
+                number = part_1 + "-0" + part_2
             except Exception as e:
                 print(f"could not find folder for {contents}")
                 continue

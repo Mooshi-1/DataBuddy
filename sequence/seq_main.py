@@ -11,6 +11,7 @@ import excel_fill
 from sample_dict import method_dict
 import searcher
 import sys
+import os
 
 ascii_art = '''
 
@@ -40,6 +41,28 @@ def main(initials):
         print(f'INIT FAILED -- Umm... is your file in the right place? -- {e}')
         input('Press enter to exit...')
         return
+    
+    def sort_batches(seq_dir):
+        #need to call build and export with appropriate samples, methods, and batches
+        #situations...: 
+        #2 pdfs, 1 list of samples, 1 method, 2 batches
+        #1 pdf, 1 list of samples, 1 method, 1 batch
+        #3 pdfs, 3 lists of samples, 3 methods, 3 batches
+        all_sequences = []
+        #make a tuple or a dict?
+        #if method == method, combine samples
+        #else create new tuple/dict
+        for filename in os.listdir(seq_dir):
+            if filename.endswith(".pdf"):
+                path = os.path.join(seq_dir, filename)
+                samples, method, batch = seq_init.read_sequence(path)
+                all_sequences.append((samples, method, batch))
+
+                #check method portion of tuple
+                if len(all_sequences) >= 1 and method == all_sequences[-1][1]:
+
+
+
         
     batch_num = "-".join(sorted(batches))
 

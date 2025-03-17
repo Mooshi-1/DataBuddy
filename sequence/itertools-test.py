@@ -1,12 +1,9 @@
-import itertools
-
 def main():
-    available = ['RA', 'RB', 'RC', 'RD', 'RE']
-    itertools.product(available, 1)
+    tuple_test = []
+    tuple_test.append((100, 200, 300))
     
-
-    test = itertools.product('ABCD', repeat = 2)
-    print(test)
+    if 200 == tuple_test[-1][1]:
+        print(True)
 
 
 if __name__ == '__main__':
