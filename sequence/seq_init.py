@@ -208,7 +208,6 @@ class quants(sequence):
 #maybe a search to see if 'TEST BATCH ' is in lines before proceeding
 def read_sequence(pdf_path):
     samples = [] # holds created class objects, returned at end
-    batches = set() # only 1 of each batch number, concat in main()       
     doc = fitz.open(pdf_path)
     # check all pages
     for page_num in range(len(doc)):
@@ -216,7 +215,6 @@ def read_sequence(pdf_path):
         text = page.get_text()
         lines = text.strip().split('\n')
         batch_number = lines[3].strip().replace(",","")
-        batches.add(batch_number)
     #remove non-sample indexes
         start_index = lines.index('TEST BATCH ') + 1
         end_index = lines.index('CRTestBatch') - 1
@@ -290,8 +288,7 @@ def read_sequence(pdf_path):
                 print(samples[-2])
                 extra=False
 
-    return samples, method, batches
-
+    return samples, method, batch_number
 
 
 

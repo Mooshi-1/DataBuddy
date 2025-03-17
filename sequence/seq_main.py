@@ -49,17 +49,20 @@ def main(initials):
         #1 pdf, 1 list of samples, 1 method, 1 batch
         #3 pdfs, 3 lists of samples, 3 methods, 3 batches
         all_sequences = []
-        #make a tuple or a dict?
-        #if method == method, combine samples
-        #else create new tuple/dict
+
         for filename in os.listdir(seq_dir):
             if filename.endswith(".pdf"):
+                #read test batch, get info
                 path = os.path.join(seq_dir, filename)
                 samples, method, batch = seq_init.read_sequence(path)
-                all_sequences.append((samples, method, batch))
+                #check method portion of existing batch tuples, combine if method is the same
+                #index 0 = samples, index 1 = method, index 2 = batch
+                if all_sequences and method == all_sequences[-1][1]:
+                    samples = all_sequences[-1][0].extend(samples)
+                    batch = all_sequences[-1][2] + "-" + batch
+                    all_sequences.pop()
 
-                #check method portion of tuple
-                if len(all_sequences) >= 1 and method == all_sequences[-1][1]:
+                all_sequences.append((samples, method, batch))
 
 
 
