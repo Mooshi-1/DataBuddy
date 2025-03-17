@@ -9,7 +9,7 @@ import os
 import datetime
 import threading
 
-version = "2.1" #3-7-25
+version = "2.3" #3-14-25
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 # Construct paths dynamically
@@ -19,16 +19,15 @@ script_path_sequence = os.path.join(base_dir, "sequence", "seq_main.py")
 script_path_carryover = os.path.join(base_dir, "autoprintZ", "carryover.py")
 venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
-
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
+
     try: 
         subprocess.run([venv_path, script_path] + list(args), check=True)
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
         print(f"Script or the Python interpreter could not be found!")
-
 
 def start_thread(venv_path, script_path, *args):
     thread = threading.Thread(target=run_script, args=(venv_path, script_path, *args))
@@ -86,6 +85,19 @@ def main():
 
     ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
                     sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack()
+    
+    ttk.Label(screens, text="Requirements: \
+              \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
+              \n-Data that is not in the directories listed above will be ignored by the script \
+              \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
+              \n \
+              \n-If you have reinjects, manually bind them to the appropriate file beforehand and ensure that no duplicate files are present \
+              \n-Manually bind your sequence to the batch pack after running. \
+              \n \
+              \n \
+              \n future improvements are coming!").pack(pady=20)
+    
+
 
 ## START QUANTS TAB ##
     quants = ttk.Frame(notebook)
@@ -96,7 +108,7 @@ def main():
     qt_batch.pack(padx=10, pady=10)
 
     ttk.Label(quants, text="Method: ").pack()
-    qt_methods = ["SQVOL", "QTABUSE", "QT"]
+    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QT"]
     qt_var = tk.StringVar()
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.pack()
@@ -111,6 +123,18 @@ def main():
 
     ttk.Button(quants, text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants, \
                             qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper()), show_popup()]).pack()
+    
+    ttk.Label(quants, text="Requirements: \
+              \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
+              \n-Data that is not in the directories listed above will be ignored by the script \
+              \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
+              \n \
+              \n-If you have MSA's, Excel must be closed on your computer to fill the LF-10/LF-11 forms \
+              \n-Make sure your curve and sequence are printed, the script will handle them appropriately. \
+              \n-Extraction date and initials can be left empty -- these are for the LJ charts which are not being used currently \
+              \n \
+              \n \
+              \n future improvements are coming!").pack(pady=20)
 
 ## START SEQUENCE TAB ##
     sequence = ttk.Frame(notebook)
@@ -122,6 +146,17 @@ def main():
 
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper()), show_popup()]).pack()
 
+
+    ttk.Label(sequence, text="Requirements: \
+              \n-This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for your initials input above\
+              \n-All CME TEST BATCHES placed in the folder will be converted into a single sequence \
+              \n-You can make extra directories, 'Archive', 'Old batches', etc, without issue -- they are not checked or recognized by the script \
+              \n-If you are running multiple quant methods, you'll have to run them separately \
+              \n \
+              \n-This script takes 5-10 seconds to load due to the hundreds of sample types/containers that we have. Don't worry, it's working! \
+              \n \
+              \n future improvements are coming!").pack(pady=20)
+    
 ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
     notebook.add(carryover, text="Z Carryover")
