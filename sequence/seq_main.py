@@ -44,11 +44,16 @@ def main(initials):
             print(f"INIT FAILED -- CANNOT MAKE SEQUENCE -- EXITING SCRIPT | error={e}")
             return
     
+    counter = 0
     for seq in all_sequences:
+        counter += 1
         samples = seq[0]
         method = seq[1]
         batch_num = seq[2]
-        print(f"creating {len(all_sequences)} sequences")
+        print('-----------------------------------------------------------------------------------------')
+        print(f"                    creating {len(all_sequences)} sequence(s)")
+        print(f"    current sequence: number={counter}, method={method}, batch={batch_num}")
+        print('-----------------------------------------------------------------------------------------')
 
         try:
             build_and_export(samples, method, batch_num, seq_dir)
@@ -72,11 +77,12 @@ def main(initials):
 
             if var.startswith('N'):
                 print("COMPLETE")
-                return
+                continue
         except Exception as e:
             print(f'theres been a problem... unable to create LF-23 directory | {e}')
             print("COMPLETE")
-            return
+            continue
+    print("END SCRIPT")
 
     def sort_batches(seq_dir):
         all_sequences = []

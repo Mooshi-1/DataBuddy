@@ -277,7 +277,7 @@ def read_sequence(pdf_path):
         #assign comments, subclass override -- comments must be separated by comma
             case_ID.add_comment()
         #confirmation print
-            print(case_ID)
+            #print(case_ID)
             if extra:
             #does not include add_duplicate() specific to volatiles class, or find_serums() for quants
                 print(f'transforming extra sample')
