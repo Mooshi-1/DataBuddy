@@ -13,6 +13,7 @@ Created on Mon Dec 23 12:21:22 2024
 #use pyinstaller or py2exe libs to create .exe file
 
 import sys
+import logging
 
 import searcher
 import SCRNZ_omni
@@ -129,6 +130,8 @@ def main(batch_num, method, flag=None):
 if __name__ == "__main__":
     print(ascii_art)
     print(f"sys.argv: {sys.argv}")
+    logger = logging.getLogger(__name__)
+
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 4:
         batch_num = input("Enter the batch number: ")
@@ -140,7 +143,9 @@ if __name__ == "__main__":
         method = sys.argv[2].upper()
         flag = sys.argv[3]
 
-    # Call the main function with the provided or inputted arguments
-    main(batch_num, method, flag)
-
-    input("Press Enter to exit...")
+    try:
+        logger.info("Starting screen batch %s",batch_num)
+        main(batch_num, method, flag)
+        logger.info("Completed batch %s",batch_num)
+    except Exception as e:
+        logger.error("Could not run batch %s: %s", batch_num, e)

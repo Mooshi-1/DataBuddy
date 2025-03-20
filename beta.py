@@ -9,9 +9,13 @@ import os
 import datetime
 import threading
 
+import audit  # Ensure logging is configured first
+import logging
+
 #things to test before deploy:
 #searcher in quants updated with new shuttlehome check -- also update screens
 #updated seq to handle multiple sequences for quants. check thoroughly with 1, 2, 3 pdfs
+#check if logging works on child scripts -- only screen edited for now
 
 version = "2.3" #3-14-25
 
@@ -26,8 +30,13 @@ venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
 
+    env = os.environ.copy()
+    env["LOG_FILE"] = "log.log"
+
     try: 
-        subprocess.run([venv_path, script_path] + list(args), check=True)
+        logging.info("Subprocess started")
+        subprocess.run([venv_path, script_path] + list(args), check=True, env=env)
+        logging.info("Subprocess completed")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
@@ -202,4 +211,5 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     root.mainloop()
 
 if __name__ == "__main__":
+    logging.info("Application started")
     main()

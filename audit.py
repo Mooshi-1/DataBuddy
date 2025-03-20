@@ -15,3 +15,14 @@
 # XlsxWriter==3.2.1
 
 
+# logging_config.py
+import logging
+
+# Configure the logging
+logging.basicConfig(
+    filename="log.log",
+    format="%(asctime)s-%(name)s-%(levelname)s:%(message)s",
+    datefmt="%m/%d/%Y %I:%M:%S %p",
+    encoding="utf-8",
+    level=logging.DEBUG,
+)
