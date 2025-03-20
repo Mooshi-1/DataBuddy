@@ -14,6 +14,7 @@ import sample_sorter
 import aux_func
 import filler
 import sqvol_init
+import logging
 
 ascii_art = """
  ██████╗ ██╗   ██╗ █████╗ ███╗   ██╗████████╗
@@ -51,10 +52,6 @@ def main(batch, method, extraction_date, initials):
     #move files from individual folders
     searcher.Shuttle(case_dir)
 
-    #delete these later
-    #case_dir = r'/mnt/c/Users/Mooshi/Desktop/work-locked/private/12786/CASE DATA'
-    #qc_dir = r'/mnt/c/Users/Mooshi/Desktop/work-locked/private/12786/BATCH PACK DATA'
-   
     #create binder output
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
@@ -185,6 +182,9 @@ def main(batch, method, extraction_date, initials):
 if __name__ == "__main__":
     print(ascii_art)
     print(f"sys.argv: {sys.argv}")
+
+    logger = logging.getLogger(__name__)
+
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 5:
         batch = input("Enter the batch number: ")
@@ -201,5 +201,5 @@ if __name__ == "__main__":
 
     # Call the main function with the provided or inputted arguments
     main(batch, method, extraction_date, initials)
+    logger.info("Completed batch %s", batch)
 
-    input("Press Enter to exit...")

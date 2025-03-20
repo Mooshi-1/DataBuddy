@@ -14,8 +14,10 @@
 # pywin32==308
 # XlsxWriter==3.2.1
 
+# files right now are 100755
+# old way was 100644
+# chmod -R 644 /path
 
-# logging_config.py
 import logging
 
 # Configure the logging

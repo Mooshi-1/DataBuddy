@@ -4,13 +4,6 @@ Created on Mon Dec 23 12:21:22 2024
 
 @author: e314883
 """
-#pyinstaller main.py -- to package .exe file
-#make shortcut from dist folder
-#export QC data to pdf
-#handle reinjects
-#integrate sequence generation from test batch
-##export sequence as pdf
-#use pyinstaller or py2exe libs to create .exe file
 
 import sys
 import logging
@@ -90,7 +83,6 @@ def main(batch_num, method, flag=None):
             renamer_mode(case_dir, qc_dir, method)
 
     if flag == "-r" or flag == "-R":
-        input("Entering Renamer Mode, press Enter to continue")
         renamer_mode(case_dir, qc_dir, method)
     
     #create binder output
@@ -126,6 +118,8 @@ def main(batch_num, method, flag=None):
             
     #return files to individual directory
     searcher.ShuttleHome(case_dir)
+
+    print("complete")
     
 if __name__ == "__main__":
     print(ascii_art)
@@ -144,7 +138,6 @@ if __name__ == "__main__":
         flag = sys.argv[3]
 
     try:
-        logger.info("Starting screen batch %s",batch_num)
         main(batch_num, method, flag)
         logger.info("Completed batch %s",batch_num)
     except Exception as e:

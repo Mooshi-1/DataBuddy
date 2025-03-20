@@ -12,6 +12,7 @@ from sample_dict import method_dict
 import searcher
 import sys
 import os
+import logging
 
 ascii_art = '''
 
@@ -158,6 +159,7 @@ if __name__ == '__main__':
 
     print(ascii_art)
     print(f"sys.argv: {sys.argv}")
+    logger = logging.getLogger(__name__)
 
     if len(sys.argv) < 2:
         print(r'place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')
@@ -168,3 +170,4 @@ if __name__ == '__main__':
         initials = sys.argv[1]
 
     main(initials)
+    logger.info("Completed creating sequence, user=%s", initials)

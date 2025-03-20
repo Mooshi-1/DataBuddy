@@ -34,7 +34,6 @@ def run_script(venv_path, script_path, *args):
     env["LOG_FILE"] = "log.log"
 
     try: 
-        logging.info("Subprocess started")
         subprocess.run([venv_path, script_path] + list(args), check=True, env=env)
         logging.info("Subprocess completed")
     except subprocess.CalledProcessError as e:
