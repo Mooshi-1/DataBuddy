@@ -1,7 +1,7 @@
+.venv/
 *.pdf
 **/__pycache__/
 **/*.pyc
-.venv/
 WPy64-31320/
 
 build/
