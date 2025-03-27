@@ -2,7 +2,8 @@ import os
 import re
 import shutil
 
-folder_pattern = re.compile(r'([A-Za-z]{0,2}\d+-\d+)')
+folder_pattern = re.compile(r'([A-Za-z]{0,2})(\d{4})-(\d{5})')
+file_pattern = re.compile(r'([A-Za-z]{0,2})(\d{2})-(\d{4})')
 
 def Shuttle(input_dir):
     for folders in os.listdir(input_dir):
@@ -41,33 +42,41 @@ def binder_dir(input_dir, counter=0):
 
 
 def ShuttleHome(input_dir):
-    #list contents
     print("returning contents to individual case folders:")
-    for contents in os.listdir(input_dir):
-
-        
-        #look for pdfs, extract last 4 of case number as string
+    for contents in os.listdir(input_dir):        
         if contents.endswith('.pdf'):
-            content_path = os.path.join(input_dir, contents)
-            #print("found a pdf")
-            try:
-                number = str(contents.split('_')[0].split('-')[1])
+            file_prefix, file_year, file_case, folder_prefix, folder_year, folder_case = "0","0","0","0","0","0", 
+            try: 
+                content_path = os.path.join(input_dir, contents)
+                file_match = file_pattern.search(contents)
+                if file_match:
+                    file_prefix, file_year, file_case = file_match.groups()
+                    file_year = f"20{file_year}"
+                    file_case = f"0{file_case}"
+
+                for folder in os.listdir(input_dir):
+                    if os.path.isdir(os.path.join(input_dir, folder)):
+                        folder_path = os.path.join(input_dir, folder)
+                        folder_match = folder_pattern.search(folder)
+                        if folder_match:
+                            folder_prefix, folder_year, folder_case = folder_match.groups()
+
+                        if file_prefix == folder_prefix and \
+                        file_year == folder_year and \
+                        file_case == folder_case:
+
+                            try: 
+                                shutil.move(content_path, os.path.join(folder_path, contents))
+                                break
+                            except Exception as e:
+                                print(f"error while moving file {contents} | {e}")
+                                continue
+
             except Exception as e:
-                print(f"could not find folder for {contents}")
+                print(f"error recognizing filename -- cannot perform file moves for {contents} | {e}")
                 continue
-            #check folders and look for case number in folder
-            for folder in os.listdir(input_dir):
-                folder_path = os.path.join(input_dir, folder)
-                if os.path.isdir(folder_path) and number in folder:
-                    #if found, attempt to move
-                    try:
-                        shutil.move(content_path, os.path.join(folder_path, contents))
-                        #print(f"moved {contents} to {folder}")
-                        continue
-                    except Exception as e:
-                        print(e)
-                        continue                           
-    print("completed moving data files to individual directories")
+    print("completed moving data files to individual directories")                    
+
 
 def FindBatch(data_dir, batch_num):
     

@@ -9,7 +9,13 @@ import os
 import datetime
 import threading
 
-version = "2.3" #3-14-25
+import audit
+import logging
+
+#things to code:
+#sequence instrument 1/2 and enter extraction date (leave blank for today)
+
+version = "2.4" #3-27-25
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 # Construct paths dynamically
@@ -22,8 +28,12 @@ venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 def run_script(venv_path, script_path, *args):
     print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
 
+    env = os.environ.copy()
+    env["LOG_FILE"] = "log.log"
+
     try: 
-        subprocess.run([venv_path, script_path] + list(args), check=True)
+        subprocess.run([venv_path, script_path] + list(args), check=True, env=env)
+        logging.info("Subprocess completed")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running script: {e}")
     except FileNotFoundError:
@@ -127,7 +137,7 @@ def main():
     ttk.Label(quants, text="Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
               \n-Data that is not in the directories listed above will be ignored by the script \
-              \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them \
+              \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
               \n \
               \n-If you have MSA's, Excel must be closed on your computer to fill the LF-10/LF-11 forms \
               \n-Make sure your curve and sequence are printed, the script will handle them appropriately. \
@@ -147,15 +157,22 @@ def main():
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper()), show_popup()]).pack()
 
 
-    ttk.Label(sequence, text="Requirements: \
-              \n-This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for your initials input above\
-              \n-All CME TEST BATCHES placed in the folder will be converted into a single sequence \
-              \n-You can make extra directories, 'Archive', 'Old batches', etc, without issue -- they are not checked or recognized by the script \
-              \n-If you are running multiple quant methods, you'll have to run them separately \
-              \n \
-              \n-This script takes 5-10 seconds to load due to the hundreds of sample types/containers that we have. Don't worry, it's working! \
-              \n \
-              \n future improvements are coming!").pack(pady=20)
+    ttk.Label(sequence, text=r""" 
+-New feature: CME Test Batches with different Methods is now supported.
+    A test batch report for QTABUSE and separate batch report for QTSTIM will be separated into 
+    two sequences automatically. 2 test batch reports for SCRNZ will still create only one sequence.
+
+Requirements:
+    -This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for pdf printed Test Batches,
+    then prepares a sequence suitable for the instrument/method being prepared
+    -You can make extra directories, 'Archive', 'Old batches', etc, without issue -- 
+    they are not checked or recognized by the script
+                
+-This script takes 5-10 seconds to load due to the hundreds of sample types/containers that we have. 
+Don't worry, it's working!
+
+future improvements are coming!""").pack(pady=20)
+    
     
 ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
@@ -167,6 +184,33 @@ def main():
     ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").pack()
 
     ttk.Button(carryover, text="Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get()), show_popup()]).pack()
+
+
+    ttk.Label(carryover, text=r""" 
+Requirements:
+    -This script only accepts entire network paths to a directory
+    -The only files inside the above directory are the printed AMDIS reports, in the order they were injected
+    -It is important to not rename these files before running carryover to ensure proper order
+    
+Output:
+    -A single excel file with 3 tabs. 
+    -The first tab contains a list of samples for reinject and the analytes which are potentially carryover
+        The script checks for carryover in a rudimentary manner, and should be overridden by an 
+        analyst if necessary.
+              
+    -The second tab contains a summation of each AMDIS pdf report fed into it.
+        The analyte name and abundance found in each report is compared to the previous report.
+        If the same analyte appeared in the previous sample at a larger abundance, the current sample
+        is marked for carryover. 
+              
+        If this tab is not accurate to the injection order or contains "ERROR"/repeated fields, 
+        the automated carryover check is invalid and should be done manually instead.
+              
+    -The third tab contains a new sequence directly for copy/paste into Agilent instrument software.
+        Adjust with analyst discretion as necessary.
+
+future improvements are coming!""").pack(pady=20)
+
 
 ## START HELP TAB ##
     help = ttk.Frame(root)
@@ -198,4 +242,5 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     root.mainloop()
 
 if __name__ == "__main__":
+    logging.info("Application started")
     main()

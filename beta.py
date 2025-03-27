@@ -12,9 +12,6 @@ import threading
 import audit
 import logging
 
-
-#searcher in quants updated with new shuttlehome check -- also update screens
-
 #things to code:
 #sequence instrument 1/2 and enter extraction date (leave blank for today)
 
