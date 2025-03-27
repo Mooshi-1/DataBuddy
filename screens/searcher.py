@@ -2,7 +2,7 @@ import os
 import re
 import shutil
 
-folder_pattern = re.compile(r'([A-Za-z]{0,2}\d+-\d)')
+folder_pattern = re.compile(r'([A-Za-z]{0,2}\d+-\d+)')
 
 def Shuttle(input_dir):
     for folders in os.listdir(input_dir):

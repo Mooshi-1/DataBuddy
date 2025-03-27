@@ -7,12 +7,17 @@ Created on Mon Dec 23 12:21:22 2024
 
 import sys
 import logging
+import os
 
 import searcher
 import SCRNZ_omni
 import SCGEN_OMNI
 import SCLCMSMS_OMNI
 
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(parent_dir)
+import audit
+sys.path.remove(parent_dir)
 
 ascii_art = """
 ███████╗ ██████╗██████╗ ███████╗███████╗███╗   ██╗

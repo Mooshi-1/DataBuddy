@@ -62,6 +62,10 @@ def make_SR(sample):
     return sequence('SPIKED RECOVERY', 'SR', '', sample.barcode, sample.abbrv + '_SR')
 
 def build_screens(samples, interval):
+    make_neg_ctl.counter = 0
+    make_pos_ctl.counter = 0
+    make_solvent.counter = 0
+
     print('starting builder')
     screen_samples = []
     z = 0
@@ -114,6 +118,10 @@ def build_screens(samples, interval):
     return screen_samples
 
 def build_vols(samples, interval):
+    make_solvent.counter = 0
+    make_neg_ctl.counter = 0
+    make_LH.counter = 0
+
     print('starting builder')
     vol_list = []
     z = 0
@@ -184,6 +192,11 @@ def build_vols(samples, interval):
 
 
 def build_quants(samples, interval, method):
+    make_neg_ctl.counter = 0
+    make_LH.counter = 0
+    make_solvent.counter = 0
+    make_shooter.counter = 0
+
     print('starting builder')
     quant_list = []
     z = 0

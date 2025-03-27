@@ -9,18 +9,16 @@ import os
 import datetime
 import threading
 
-import audit  # Ensure logging is configured first
+import audit
 import logging
 
-#things to test before deploy:
+
 #searcher in quants updated with new shuttlehome check -- also update screens
-#updated seq to handle multiple sequences for quants. check thoroughly with 1, 2, 3 pdfs
-#check if logging works on child scripts -- only screen edited for now
 
 #things to code:
 #sequence instrument 1/2 and enter extraction date (leave blank for today)
 
-version = "2.3" #3-14-25
+version = "2.4" #3-27-25
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 # Construct paths dynamically

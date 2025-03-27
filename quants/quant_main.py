@@ -15,6 +15,12 @@ import aux_func
 import filler
 import sqvol_init
 import logging
+import os
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(parent_dir)
+import audit
+sys.path.remove(parent_dir)
 
 ascii_art = """
  ██████╗ ██╗   ██╗ █████╗ ███╗   ██╗████████╗
