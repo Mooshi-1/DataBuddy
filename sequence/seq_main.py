@@ -161,13 +161,11 @@ def main(initials):
     print("END SCRIPT")
 
 
-
-
 if __name__ == '__main__':
 
     print(ascii_art)
     print(f"sys.argv: {sys.argv}")
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("Sequence")
 
     if len(sys.argv) < 2:
         print(r'place your sequence in G:\PDF DATA\TEST BATCH REPORTS under your initials')

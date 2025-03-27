@@ -242,5 +242,5 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     root.mainloop()
 
 if __name__ == "__main__":
-    logging.info("Application started")
+
     main()

@@ -282,6 +282,7 @@ def build_quants(samples, interval, method):
         quant_list.append(make_neg_ctl().add_serum())
         if method.startswith('QTACET'):
             quant_list.extend([cal.add_serum() for cal in make_curve(6)])
+        quant_list.append(make_solvent())
         quant_list.extend([ctl.add_serum() for ctl in make_LH(0)])
         if dilns_s:
             sorted_dilns = sorted(dilns_s, key=lambda x: int(x[1:]), reverse=True)
