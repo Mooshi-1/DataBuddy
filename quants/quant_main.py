@@ -179,12 +179,11 @@ def main(batch, method, extraction_date, initials):
     #send batch pack to binder
     aux_func.list_binder(batch_pack, output_dir, batch, method)
 
-
-    print("complete")
-
     #return files to individual directory
     searcher.ShuttleHome(case_dir)
     
+    print("END SCRIPT")
+
 if __name__ == "__main__":
     print(ascii_art)
     print(f"sys.argv: {sys.argv}")

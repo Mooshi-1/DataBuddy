@@ -45,7 +45,7 @@ def ShuttleHome(input_dir):
     print("returning contents to individual case folders:")
     for contents in os.listdir(input_dir):        
         if contents.endswith('.pdf'):
-            file_prefix, file_year, file_case, folder_prefix, folder_year, folder_case = "0","0","0","0","0","0", 
+            file_prefix, file_year, file_case, folder_prefix, folder_year, folder_case = None, None, None, None, None, None
             try: 
                 content_path = os.path.join(input_dir, contents)
                 file_match = file_pattern.search(contents)
@@ -60,17 +60,19 @@ def ShuttleHome(input_dir):
                         folder_match = folder_pattern.search(folder)
                         if folder_match:
                             folder_prefix, folder_year, folder_case = folder_match.groups()
+                        
+                        if (file_prefix == "" and file_year and file_case) or \
+                            (file_prefix and file_year and file_case):
+                            if file_prefix == folder_prefix and \
+                            file_year == folder_year and \
+                            file_case == folder_case:
 
-                        if file_prefix == folder_prefix and \
-                        file_year == folder_year and \
-                        file_case == folder_case:
-
-                            try: 
-                                shutil.move(content_path, os.path.join(folder_path, contents))
-                                break
-                            except Exception as e:
-                                print(f"error while moving file {contents} | {e}")
-                                continue
+                                try: 
+                                    shutil.move(content_path, os.path.join(folder_path, contents))
+                                    break
+                                except Exception as e:
+                                    print(f"error while moving file {contents} | {e}")
+                                    continue
 
             except Exception as e:
                 print(f"error recognizing filename -- cannot perform file moves for {contents} | {e}")
