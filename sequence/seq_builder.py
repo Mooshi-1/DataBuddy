@@ -72,12 +72,10 @@ def build_screens(samples, interval):
     bad_matrix = []
     priority = []
     PTs = []
-
-    #make sure to add PT list back into samples
-
     temp = samples.copy()
 
     for i in range(len(temp) -1, -1, -1):
+        #print(temp[i].abbrv)
         if hasattr(temp[i], 'PTs'):
             PTs.append(samples.pop(i))
             print(f'found proficiency {temp[i]}')

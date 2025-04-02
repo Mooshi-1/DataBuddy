@@ -30,7 +30,7 @@ venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
 class ProcessManager:
     def __init__(self, command, env=None, ui_callback=None):
-        print('starting pm class')
+        #print('starting pm class')
         self.process = subprocess.Popen(
             command,
             stdin=subprocess.PIPE,
@@ -79,7 +79,7 @@ def main():
 # # TK MAIN WINDOW
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
-    root.geometry("1300x800")
+    root.geometry("1500x800")
 
     pm = None
 
@@ -92,9 +92,9 @@ def main():
 
         try: 
             nonlocal pm
-            print('starting pm')
+            #print('starting pm')
             pm = ProcessManager([venv_path, script_path] + list(args), env=env, ui_callback=update_output)
-            logging.info("Subprocess completed")
+            #logging.info("Subprocess completed")
         except subprocess.CalledProcessError as e:
             print(f"An error occurred while running script: {e}")
         except FileNotFoundError:
@@ -114,25 +114,25 @@ def main():
 # header
     date = get_weekday()
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
-    header.pack(pady=10)
+    header.pack(pady=10, side='top')
     
     readme = ttk.Label(root, text="Use the tabs below to navigate the program \
                        \nAfter pressing 'Run', please wait a moment while it loads the relevant files \
                        \nFor more info, check the 'help' tab", font=("Arial", 14))
-    readme.pack(pady=10)
+    readme.pack(pady=10, side="top")
 
 ## create notebook tabs ##
     notebook = ttk.Notebook(root)
-    notebook.pack(fill="both", expand=True, side='left')
+    notebook.pack(fill="both", side='left')
 
 ## IO ##
-    io = ttk.Frame(root, width=200, height=150)
-    io.pack(side='right')
+    io = ttk.Frame(root)
+    io.pack(expand=True, side='right')
 
     io_label = ttk.Label(io, text="Terminal")
     io_label.pack(side='top')
 
-    output_text = tk.Text(io, height = 20, width=100, wrap="word", state="disabled")
+    output_text = tk.Text(io, height = 33, width=90, wrap="word", state="disabled")
     output_text.pack(side='top')
 
     def update_output(text):
@@ -142,7 +142,7 @@ def main():
         output_text.yview_moveto(1)
         output_text.config(state="disabled")
 
-    entry_widget = ttk.Entry(io, width=80)
+    entry_widget = ttk.Entry(io, width=90)
     entry_widget.pack(pady=10, side="left")
 
     def send_command(event=None):
@@ -157,7 +157,8 @@ def main():
 
 
     def on_close():
-        pm.terminate()
+        if pm:
+            pm.terminate()
         root.destroy()
     root.protocol("WM_DELETE_WINDOW", on_close)
 

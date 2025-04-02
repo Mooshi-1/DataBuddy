@@ -51,10 +51,12 @@ def main(initials):
                 #check method portion of existing batch tuples, combine if method is the same
                 #index 0 = samples, index 1 = method, index 2 = batch
                 if all_sequences and method == all_sequences[-1][1]:
-                    all_sequences[-1][0].extend(samples)
+                    samples = all_sequences[-1][0] + samples
                     batch = all_sequences[-1][2] + "-" + batch
                     all_sequences.pop()
-                all_sequences.append((samples, method, batch))
+                    all_sequences.append((samples, method, batch))
+                else:
+                    all_sequences.append((samples, method, batch))
         return all_sequences    
 
     def build_and_export(samples, method, batch_num, seq_dir):
