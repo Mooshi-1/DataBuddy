@@ -37,7 +37,7 @@ class sequence():
             self.abbrv += sample_type_dict[self.type]
             return self
         except KeyError:
-            print(f"Sample type {self.type} not found in Sample Type Dictionary")
+            print(f"Sample type {self.type} not found in Sample Type Dictionary", flush=True)
             sample_type_dict[self.type] = input(f"Enter the desired abbreviation for {self.type}: ").upper()
             return self.abbreviate_type()
 
@@ -46,8 +46,9 @@ class sequence():
             self.abbrv += sample_container_dict[self.container]
             return self
         except KeyError:
-            print(f"Sample container {self.container} not found in Sample Container Dictionary")
-            sample_container_dict[self.container] = input(f"Enter the desired abbreviation for {self.container}: ").upper()
+            print(f"Sample container {self.container} not found in Sample Container Dictionary", flush=True)
+            print(f"Enter the desired abbreviation for {self.container}: ")
+            sample_container_dict[self.container] = input().upper()
             return self.abbreviate_container()
 
     def add_serum(self):

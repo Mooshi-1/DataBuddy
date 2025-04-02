@@ -19,7 +19,6 @@ sys.path.append(parent_dir)
 import audit
 sys.path.remove(parent_dir)
 
-sys.stdout.reconfigure(line_buffering=True)
 
 ascii_art = '''
 

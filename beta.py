@@ -50,6 +50,7 @@ class ProcessManager:
     def read_output(self):
         """Read output asynchronously and update GUI"""
         for line in iter(self.process.stdout.readline, ''):
+            #print(f'raw line received: {repr(line)}')
             self.handle_output(line)
 
     def handle_output(self, line):
@@ -62,6 +63,8 @@ class ProcessManager:
     def send_input(self, input_text):
         """Send input to the subprocess."""
         if self.process and self.process.stdin:
+            if self.ui_callback:
+                self.ui_callback(f"> {input_text}\n")
             self.process.stdin.write(input_text + "\n")
             self.process.stdin.flush()
 
@@ -69,8 +72,6 @@ class ProcessManager:
         """Terminate the subprocess."""
         if self.process:
             self.process.terminate()
-
-
 
 ##### MAIN FUNCTION #####
 
@@ -144,13 +145,16 @@ def main():
     entry_widget = ttk.Entry(io, width=80)
     entry_widget.pack(pady=10, side="left")
 
-    def send_command():
+    def send_command(event=None):
         command = entry_widget.get()
         pm.send_input(command)
         entry_widget.delete(0, tk.END)
 
     send_button = ttk.Button(io, text="Send", command=send_command)
     send_button.pack(side='right')
+
+    entry_widget.bind("<Return>", send_command)
+
 
     def on_close():
         pm.terminate()
@@ -184,9 +188,7 @@ def main():
               \n \
               \n-If you have reinjects, manually bind them to the appropriate file beforehand and ensure that no duplicate files are present \
               \n-Manually bind your sequence to the batch pack after running. \
-              \n \
-              \n \
-              \n future improvements are coming!").pack(pady=20)
+              \n ").pack(pady=20)
     
 
 
