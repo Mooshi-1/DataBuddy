@@ -16,7 +16,7 @@ import logging
 #sequence instrument 1/2 and enter extraction date (leave blank for today)
 #create window just for renaming, especially hans/shimadzu1-2, validations
 
-version = "2.4" #3-27-25
+version = "3.0" #4-2-25?
 
 ##### SUBPROCESSES ######
 
@@ -30,25 +30,30 @@ venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
 class ProcessManager:
     def __init__(self, command, env=None, ui_callback=None):
+        print('starting pm class')
         self.process = subprocess.Popen(
             command,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
-            env=env
+            bufsize=1,
+            universal_newlines=True,
+            env=env,
+            encoding='utf-8',
+            errors='replace'
         )
         self.ui_callback = ui_callback
         self.output_thread = threading.Thread(target=self.read_output, daemon=True)
         self.output_thread.start()
 
     def read_output(self):
-        """Read output asynchronously and handle it (e.g., update UI)."""
+        """Read output asynchronously and update GUI"""
         for line in iter(self.process.stdout.readline, ''):
             self.handle_output(line)
 
     def handle_output(self, line):
-        """send subprocess output to UI"""
+        """send subprocess output to GUI"""
         if self.ui_callback:
             self.ui_callback(line)
         else:
@@ -86,6 +91,7 @@ def main():
 
         try: 
             nonlocal pm
+            print('starting pm')
             pm = ProcessManager([venv_path, script_path] + list(args), env=env, ui_callback=update_output)
             logging.info("Subprocess completed")
         except subprocess.CalledProcessError as e:
@@ -122,10 +128,10 @@ def main():
     io = ttk.Frame(root, width=200, height=150)
     io.pack(side='right')
 
-    io_label = ttk.Label(io, text="right side")
+    io_label = ttk.Label(io, text="Terminal")
     io_label.pack(side='top')
 
-    output_text = tk.Text(io, height = 20, width=200, wrap="word", state="disabled")
+    output_text = tk.Text(io, height = 20, width=100, wrap="word", state="disabled")
     output_text.pack(side='top')
 
     def update_output(text):
@@ -135,7 +141,7 @@ def main():
         output_text.yview_moveto(1)
         output_text.config(state="disabled")
 
-    entry_widget = ttk.Entry(io, width=180)
+    entry_widget = ttk.Entry(io, width=80)
     entry_widget.pack(pady=10, side="left")
 
     def send_command():
@@ -316,5 +322,5 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     root.mainloop()
 
 if __name__ == "__main__":
-    logging.info("Application started")
+    #logging.info("Application started")
     main()

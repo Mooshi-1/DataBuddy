@@ -19,6 +19,8 @@ sys.path.append(parent_dir)
 import audit
 sys.path.remove(parent_dir)
 
+sys.stdout.reconfigure(line_buffering=True)
+
 ascii_art = '''
 
 ███████╗███████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗ ██████╗███████╗         
@@ -163,7 +165,7 @@ def main(initials):
 
 if __name__ == '__main__':
 
-    print(ascii_art)
+    #print(ascii_art.encode('utf-8').decode('utf-8'))
     print(f"sys.argv: {sys.argv}")
     logger = logging.getLogger("Sequence")
 

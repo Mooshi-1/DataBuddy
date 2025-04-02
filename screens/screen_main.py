@@ -127,7 +127,7 @@ def main(batch_num, method, flag=None):
     print("complete")
     
 if __name__ == "__main__":
-    print(ascii_art)
+    #print(ascii_art)
     print(f"sys.argv: {sys.argv}")
     logger = logging.getLogger(__name__)
 
@@ -138,6 +138,7 @@ if __name__ == "__main__":
         flag = input("Reminder: Unable to handle reinjects. Bind your sequence manually. Press Enter to continue... or -r to enter naming mode")
     else:
         # Use CLI provided arguments
+        print('using CLI args')
         batch_num = sys.argv[1]
         method = sys.argv[2].upper()
         flag = sys.argv[3]
