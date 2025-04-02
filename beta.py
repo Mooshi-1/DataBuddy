@@ -14,10 +14,15 @@ import audit
 import logging
 
 #things to code:
-#sequence instrument 1/2 and enter extraction date (leave blank for today)
-#create window just for renaming, especially hans/shimadzu1-2, validations
+#figure out how to encode ascii art into terminal
+#some sort of loading/confirmation that script has started in terminal
+#get rid of notification popup once working
+#font / font size overhaul
+#button styles with ttk bootstrap
+#bootstyle = "success"
+#explore other widgets
 
-version = "3.0" #4-2-25?
+version = "3.0" #4-2-25
 
 ##### SUBPROCESSES ######
 
