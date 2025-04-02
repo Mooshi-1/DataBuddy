@@ -110,15 +110,15 @@ def main():
         return today.strftime("%A")
 
     def show_popup():
-        messagebox.showinfo("Notification", "The script is running and your files are loading. Check the terminal!")
+        messagebox.showinfo("Notification", "The script is running and your files are loading.")
 
 # header
     date = get_weekday()
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.pack(pady=10, side='top')
     
-    readme = ttk.Label(root, text="Use the tabs below to navigate the program \
-                       \nAfter pressing 'Run', please wait a moment while it loads the relevant files \
+    readme = ttk.Label(root, text="Use the tabs on the left to start a script \
+                       \nCheck the terminal on the right for verification and user-input \
                        \nFor more info, check the 'help' tab", font=("Arial", 14))
     readme.pack(pady=10, side="top")
 
@@ -167,21 +167,21 @@ def main():
     screens = ttk.Frame(notebook)
     notebook.add(screens, text="Screens")
 
-    ttk.Label(screens, text="Batch Number: ").pack(padx=10, pady=10)
+    ttk.Label(screens, text="Batch Number: ").pack()
     sc_batch = ttk.Entry(screens)
-    sc_batch.pack(padx=10, pady=10)
+    sc_batch.pack()
 
-    ttk.Label(screens, text="Method: ").pack(padx=10, pady=10)
+    ttk.Label(screens, text="Method: ").pack()
     sc_methods = ["SCRNZ", "SCLCMSMS", "SCGEN"]
     sc_var = tk.StringVar()
     combobox = ttk.Combobox(screens, textvariable=sc_var, values=sc_methods)
-    combobox.pack(padx=10, pady=10)
+    combobox.pack()
 
     renamer_var = tk.StringVar(value=None)
-    renamer_check = ttk.Checkbutton(screens, text="Rename only mode?", onvalue='-r', offvalue=None, variable=renamer_var).pack()
+    renamer_check = ttk.Checkbutton(screens, text="Rename only mode?", onvalue='-r', offvalue=None, variable=renamer_var).pack(pady=5)
 
     ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
-                    sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack()
+                    sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack(pady=10)
     
     ttk.Label(screens, text="Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
@@ -198,9 +198,9 @@ def main():
     quants = ttk.Frame(notebook)
     notebook.add(quants, text="Quants")
 
-    ttk.Label(quants, text="Batch Number: ").pack(padx=10, pady=10)
+    ttk.Label(quants, text="Batch Number: ").pack()
     qt_batch = ttk.Entry(quants)
-    qt_batch.pack(padx=10, pady=10)
+    qt_batch.pack()
 
     ttk.Label(quants, text="Method: ").pack()
     qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QTANTIDEP1", "QTANTIHIST", "QTMEPIRIDINE", "QTMETHADONE", "QTACETAMINOPHEN", "QTSALICYLATE", "QTDASH"]
@@ -208,7 +208,8 @@ def main():
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.pack()
 
-    ttk.Label(quants, text="Date in MM/DD/YY format WITH slashes: ").pack()
+    ttk.Label(quants, text="The 2 boxes below can be left blank", font=('Arial', 12, 'bold')).pack(pady=10)
+    ttk.Label(quants, text="Extraction date in MM/DD/YY format WITH slashes: ").pack()
     qt_date = ttk.Entry(quants)
     qt_date.pack()
 
@@ -217,7 +218,7 @@ def main():
     qt_initials.pack()
 
     ttk.Button(quants, text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants, \
-                            qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper()), show_popup()]).pack()
+                            qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper()), show_popup()]).pack(pady=10)
     
     ttk.Label(quants, text="Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
@@ -227,9 +228,7 @@ def main():
               \n-If you have MSA's, Excel must be closed on your computer to fill the LF-10/LF-11 forms \
               \n-Make sure your curve and sequence are printed, the script will handle them appropriately. \
               \n-Extraction date and initials can be left empty -- these are for the LJ charts which are not being used currently \
-              \n \
-              \n \
-              \n future improvements are coming!").pack(pady=20)
+              \n ").pack(pady=20,)
 
 ## START SEQUENCE TAB ##
     sequence = ttk.Frame(notebook)
@@ -253,10 +252,7 @@ Requirements:
     -You can make extra directories, 'Archive', 'Old batches', etc, without issue -- 
     they are not checked or recognized by the script
                 
--This script takes 5-10 seconds to load due to the hundreds of sample types/containers that we have. 
-Don't worry, it's working!
-
-future improvements are coming!""").pack(pady=20)
+""").pack(pady=20)
     
     
 ## START CARRYOVER TAB ##
@@ -332,13 +328,11 @@ In previous versions of the data manipulation scripts, each one would be a separ
 This new program is GUI (graphical user interface) that serves as a launch-pad for the same data manipulation scripts.
 Each of the tabs corresponds to a separate script, and the data entered before you hit "RUN" is passed as a command-line argument, in the same way you were prompted before. 
 
-You can think of it like a 'face' to the same commands you've been running before.
+The program is split into 2 main windows. A "Notebook" which holds all the tabs for different ways we process data, and a "Terminal" which shows the output of the script.
+The terminal will remain empty until a script is started. 
 
 This new setup makes it much easier for the maintainer (me) to not only push updates, but also continue to scale it with more and more features. 
 
-There will be constant updates as I'm learning my own way around the GUI, so don't be too surprised as things shift around. 
-
-Should something appear to be terribly wrong, the old versions of the data-binders will be in "G:\PDF DATA\Python" for a few weeks.
 """
     help_box = tk.Text(help, wrap="word", font=("Arial", 13))
     help_box.insert("1.0", help_text)
