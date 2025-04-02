@@ -4,6 +4,7 @@ Created 03-03-25 -- adg
 from tkinter import messagebox
 import tkinter as tk
 from tkinter import ttk
+import ttkbootstrap as ttk
 import subprocess
 import os
 import datetime
@@ -78,7 +79,8 @@ class ProcessManager:
 
 def main():
 # # TK MAIN WINDOW
-    root = tk.Tk()
+    #root = tk.Tk()
+    root = ttk.Window(themename="darkly")
     root.title(f"Data Buddy - {version}")
     root.geometry("1500x800")
 
