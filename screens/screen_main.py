@@ -58,8 +58,8 @@ def main(batch_num, method, flag=None):
                 print("p = move files from CASE DATA into individual folders")
                 print("q = Quit")
                 print("bind = exit rename mode and continue immediately to binder")
-
-                choice = input("Enter your choice: ").strip().lower()
+                print("Enter your choice: ")
+                choice = input().strip().lower()
 
                 if choice == "r":
                     print("Renaming files in BATCH PACK DATA and CASE DATA")
