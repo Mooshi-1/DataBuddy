@@ -22,6 +22,8 @@ import logging
 #bootstyle = "success"
 #explore other widgets
 
+#rewrite AMDIS printer
+
 version = "3.0" #4-2-25
 
 ##### SUBPROCESSES ######
