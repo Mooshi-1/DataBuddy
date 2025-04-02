@@ -185,7 +185,7 @@ def main(batch, method, extraction_date, initials):
     print("END SCRIPT")
 
 if __name__ == "__main__":
-    print(ascii_art)
+    #print(ascii_art)
     print(f"sys.argv: {sys.argv}")
 
     logger = logging.getLogger(__name__)
