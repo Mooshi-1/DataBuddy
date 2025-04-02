@@ -26,6 +26,7 @@ script_path_screens = os.path.join(base_dir, "screens", "screen_main.py")
 script_path_quants = os.path.join(base_dir, "quants", "quant_main.py")
 script_path_sequence = os.path.join(base_dir, "sequence", "seq_main.py")
 script_path_carryover = os.path.join(base_dir, "autoprintZ", "carryover.py")
+script_path_rename = os.path.join(base_dir,"rename", "file_renamer.py")
 venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
 class ProcessManager:
@@ -144,17 +145,17 @@ def main():
 
     entry_widget = ttk.Entry(io, width=90)
     entry_widget.pack(pady=10, side="left")
-
-    def send_command(event=None):
-        command = entry_widget.get()
-        pm.send_input(command)
-        entry_widget.delete(0, tk.END)
+    try:
+        def send_command(event=None):
+            command = entry_widget.get()
+            pm.send_input(command)
+            entry_widget.delete(0, tk.END)
+    except Exception as e:
+        print(e)
 
     send_button = ttk.Button(io, text="Send", command=send_command)
     send_button.pack(side='right')
-
     entry_widget.bind("<Return>", send_command)
-
 
     def on_close():
         if pm:
@@ -202,7 +203,7 @@ def main():
     qt_batch.pack(padx=10, pady=10)
 
     ttk.Label(quants, text="Method: ").pack()
-    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QT"]
+    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QTANTIDEP1", "QTANTIHIST", "QTMEPIRIDINE", "QTMETHADONE", "QTACETAMINOPHEN", "QTSALICYLATE", "QTDASH"]
     qt_var = tk.StringVar()
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.pack()
@@ -263,7 +264,7 @@ future improvements are coming!""").pack(pady=20)
     notebook.add(carryover, text="Z Carryover")
 
     ttk.Label(carryover, text="Enter the network path where the raw data is: ").pack()
-    location = ttk.Entry(carryover)
+    location = ttk.Entry(carryover, width=80)
     location.pack()
     ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").pack()
 
@@ -292,10 +293,34 @@ Output:
               
     -The third tab contains a new sequence directly for copy/paste into Agilent instrument software.
         Adjust with analyst discretion as necessary.
+""").pack(pady=20)
 
-future improvements are coming!""").pack(pady=20)
+## START PDF RENAME TAB ##
+    rename = ttk.Frame(notebook)
+    notebook.add(rename, text="Rename")
+
+    ttk.Label(rename, text="Enter the full network path where the raw data is: ").pack()
+    rename_ent = ttk.Entry(rename, width=80)
+    rename_ent.pack()
+
+    ttk.Label(rename, text="Instrument: ").pack()
+    rename_methods = ["Shimadzu", "Hans", ]
+    rename_var = tk.StringVar()
+    combobox3 = ttk.Combobox(rename, textvariable=rename_var, values=rename_methods)
+    combobox3.pack()
+
+    ttk.Button(rename, text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get()), show_popup()]).pack()
 
 
+
+    ttk.Label(rename, text=r"""
+              This script will simply check the directory for instrument raw data reports.
+              If the format matches a supported type... then the file will be renamed by the sample ID field.
+              This tab should only be used if the data you are producing is not part of a routine batch (validation, etc)
+              
+              To rename files but not bind a routine batch, use the checkbox on the 'screens' tab.
+                """).pack()
+    
 ## START HELP TAB ##
     help = ttk.Frame(root)
     notebook.add(help, text="Help")
