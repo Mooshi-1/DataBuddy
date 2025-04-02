@@ -38,7 +38,8 @@ class sequence():
             return self
         except KeyError:
             print(f"Sample type {self.type} not found in Sample Type Dictionary", flush=True)
-            sample_type_dict[self.type] = input(f"Enter the desired abbreviation for {self.type}: ").upper()
+            print(f"Enter the desired abbreviation for {self.type}: ")
+            sample_type_dict[self.type] = input().upper()
             return self.abbreviate_type()
 
     def abbreviate_container(self):

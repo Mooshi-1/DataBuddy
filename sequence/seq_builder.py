@@ -92,7 +92,8 @@ def build_screens(samples, interval):
     
     if PTs:
         PTs = PTs[::-1]
-        flag = input('Do you want your PTs in duplicate? [Y/n]').upper()
+        print('Do you want your PTs in duplicate? [Y/n]')
+        flag = input().upper()
         if flag.startswith('Y'):
             PTs_rpt = copy.deepcopy(PTs)
             for case in PTs_rpt:

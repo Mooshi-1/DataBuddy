@@ -93,19 +93,22 @@ def main(initials):
         
         else:
             print('Unable to find a sequence builder for the method listed in the TEST BATCH.')
-            method = input('Enter another/similar method and attemp to re-run?: ').upper()
+            print('Enter another/similar method and attemp to re-run?: ')
+            method = input().upper()
             build_and_export(samples, method, batch_num, seq_dir)
 
     def find_instrument(method):
         matched_methods = [methods for methods in method_dict if methods.startswith(method)]
         if not matched_methods:
             print(f'Unable to find instrument associated with {method}')
-            method = input('Enter another method name that uses the same instrument?: ').upper()
+            print('Enter another method name that uses the same instrument?: ')
+            method = input().upper()
             return find_instrument(method)
         elif len(method_dict[matched_methods[0]]) == 1:
             return method_dict[matched_methods[0]][0]
         else:
-            choice = input(f'type 1 for {method_dict[matched_methods[0]][0]} OR 2 for {method_dict[matched_methods[0]][1]}: ')
+            print(f'type 1 for {method_dict[matched_methods[0]][0]} OR 2 for {method_dict[matched_methods[0]][1]}: ')
+            choice = input()
             choice = int(choice) - 1
             return method_dict[matched_methods[0]][choice]    
         
@@ -141,12 +144,11 @@ def main(initials):
             print(f'Sequence build and export failed | error={e}')
 
         try:
-            var = input('Would you like an LF-23 INSTRUMENT CHECKLIST folder created for you? [Y/n]:').upper()
+            print('Would you like an LF-23 INSTRUMENT CHECKLIST folder created for you? [Y/n]:')
+            var = input().upper()
             if var.startswith('Y'):
                 print('comparing method to instruments available...')
                 instrument = find_instrument(method)
-                print(f'Make sure your files are closed. Attempting to move to {instrument} folder')
-                input('press enter to continue')
                 searcher.LF_plumbing(seq_dir, instrument, initials)
                 print('-----------------------------------------------------------------------------------------')
                 print('                Successful! Your files have been copied :) Bye!')
