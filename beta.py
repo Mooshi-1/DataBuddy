@@ -14,8 +14,11 @@ import logging
 
 #things to code:
 #sequence instrument 1/2 and enter extraction date (leave blank for today)
+#create window just for renaming, especially hans/shimadzu1-2, validations
 
 version = "2.4" #3-27-25
+
+##### SUBPROCESSES ######
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 # Construct paths dynamically
@@ -25,38 +28,81 @@ script_path_sequence = os.path.join(base_dir, "sequence", "seq_main.py")
 script_path_carryover = os.path.join(base_dir, "autoprintZ", "carryover.py")
 venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
-def run_script(venv_path, script_path, *args):
-    print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
+class ProcessManager:
+    def __init__(self, command, env=None, ui_callback=None):
+        self.process = subprocess.Popen(
+            command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env
+        )
+        self.ui_callback = ui_callback
+        self.output_thread = threading.Thread(target=self.read_output, daemon=True)
+        self.output_thread.start()
 
-    env = os.environ.copy()
-    env["LOG_FILE"] = "log.log"
+    def read_output(self):
+        """Read output asynchronously and handle it (e.g., update UI)."""
+        for line in iter(self.process.stdout.readline, ''):
+            self.handle_output(line)
 
-    try: 
-        subprocess.run([venv_path, script_path] + list(args), check=True, env=env)
-        logging.info("Subprocess completed")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred while running script: {e}")
-    except FileNotFoundError:
-        print(f"Script or the Python interpreter could not be found!")
+    def handle_output(self, line):
+        """send subprocess output to UI"""
+        if self.ui_callback:
+            self.ui_callback(line)
+        else:
+            print(line,end="")
 
-def start_thread(venv_path, script_path, *args):
-    thread = threading.Thread(target=run_script, args=(venv_path, script_path, *args))
-    thread.start()
+    def send_input(self, input_text):
+        """Send input to the subprocess."""
+        if self.process and self.process.stdin:
+            self.process.stdin.write(input_text + "\n")
+            self.process.stdin.flush()
 
-def get_weekday():
-    today = datetime.date.today()
-    return today.strftime("%A")
+    def terminate(self):
+        """Terminate the subprocess."""
+        if self.process:
+            self.process.terminate()
 
 
-def show_popup():
-    messagebox.showinfo("Notification", "The script is running and your files are loading. Check the terminal!")
+
+##### MAIN FUNCTION #####
 
 def main():
 # # TK MAIN WINDOW
     root = tk.Tk()
     root.title(f"Data Buddy - {version}")
-    root.geometry("800x700")
+    root.geometry("1300x800")
 
+    pm = None
+
+    # RUN
+    def run_script(venv_path, script_path, *args):
+        print(f"running script with args: {venv_path}\n{script_path}\n{list(args)}")
+
+        env = os.environ.copy()
+        env["LOG_FILE"] = "log.log"
+
+        try: 
+            nonlocal pm
+            pm = ProcessManager([venv_path, script_path] + list(args), env=env, ui_callback=update_output)
+            logging.info("Subprocess completed")
+        except subprocess.CalledProcessError as e:
+            print(f"An error occurred while running script: {e}")
+        except FileNotFoundError:
+            print(f"Script or the Python interpreter could not be found!")
+
+    def start_thread(venv_path, script_path, *args):
+        thread = threading.Thread(target=run_script, args=(venv_path, script_path, *args))
+        thread.start()
+
+    def get_weekday():
+        today = datetime.date.today()
+        return today.strftime("%A")
+
+    def show_popup():
+        messagebox.showinfo("Notification", "The script is running and your files are loading. Check the terminal!")
 
 # header
     date = get_weekday()
@@ -70,11 +116,40 @@ def main():
 
 ## create notebook tabs ##
     notebook = ttk.Notebook(root)
-    notebook.pack(fill="both", expand=True)
+    notebook.pack(fill="both", expand=True, side='left')
 
 ## IO ##
-    io = ttk.Frame(root)
-    io.pack(pady=10)
+    io = ttk.Frame(root, width=200, height=150)
+    io.pack(side='right')
+
+    io_label = ttk.Label(io, text="right side")
+    io_label.pack(side='top')
+
+    output_text = tk.Text(io, height = 20, width=200, wrap="word", state="disabled")
+    output_text.pack(side='top')
+
+    def update_output(text):
+        #send subprocess output to text widget
+        output_text.config(state="normal")
+        output_text.insert(tk.END, text)
+        output_text.yview_moveto(1)
+        output_text.config(state="disabled")
+
+    entry_widget = ttk.Entry(io, width=180)
+    entry_widget.pack(pady=10, side="left")
+
+    def send_command():
+        command = entry_widget.get()
+        pm.send_input(command)
+        entry_widget.delete(0, tk.END)
+
+    send_button = ttk.Button(io, text="Send", command=send_command)
+    send_button.pack(side='right')
+
+    def on_close():
+        pm.terminate()
+        root.destroy()
+    root.protocol("WM_DELETE_WINDOW", on_close)
 
 ## START SCREENS TAB ##
     screens = ttk.Frame(notebook)
@@ -235,7 +310,6 @@ Should something appear to be terribly wrong, the old versions of the data-binde
     help_box.insert("1.0", help_text)
     help_box.config(state="disabled")
     help_box.pack(padx=10, pady=10)
-
 
 
 ## TK MAIN LOOP ##
