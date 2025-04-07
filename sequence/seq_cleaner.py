@@ -10,7 +10,7 @@ def finalize_SCRNZ(seq):
     #sample name, vial, datafile
     filename_count = 0
     vial_count = 0
-    acid_vial_count = 0
+    acid_vial_count = 50
     solvent_base = 101
     solvent_acid = 102
     # ^ init counters
