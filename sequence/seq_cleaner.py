@@ -10,6 +10,7 @@ def finalize_SCRNZ(seq):
     #sample name, vial, datafile
     filename_count = 0
     vial_count = 0
+    acid_vial_count = 0
     solvent_base = 101
     solvent_acid = 102
     # ^ init counters
@@ -40,8 +41,8 @@ def finalize_SCRNZ(seq):
         if sample.type == 'SOLVENT':
             col_2 = solvent_acid
         else:
-            vial_count += 1
-            col_2 = vial_count
+            acid_vial_count += 1
+            col_2 = acid_vial_count
         filename_count += 1
         col_3 = f"{filename_count:03}_{col_1}_{col_2}.D"
         final_list.append((col_1, col_2, col_3))       
