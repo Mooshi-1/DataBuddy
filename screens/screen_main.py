@@ -129,7 +129,7 @@ def main(batch_num, method, flag=None):
 if __name__ == "__main__":
     #print(ascii_art)
     print(f"sys.argv: {sys.argv}")
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("screens")
 
     # Check if the required arguments are passed via sys.argv
     if len(sys.argv) < 4:

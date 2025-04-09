@@ -26,13 +26,18 @@ def main():
     print(f"printing {len(filtered_items)} reports")
     counter = 0
 
-    for item in filtered_items[1:]:
+    file = main_window.child_window(title="File", control_type = "MenuItem", found_index = 0, visible_only=False)
+    main_window.set_focus()
+
+    for item in filtered_items:
         start_time = time.time()
         counter += 1
         item_string = str(item)
-        print(f"{counter} / {len(items[1:])}, {item_string.split("'")[1]}")
+        print(f"{counter} / {len(filtered_items)}, {item_string.split("'")[1]}")
 
-        file = main_window.child_window(title="File", control_type = "MenuItem", found_index = 0, visible_only=False)
+        print('starting ready check')
+        main_window.wait("ready", timeout=10)
+        print('ready')
         file.click_input()
 
         send_keys("%m")
@@ -44,7 +49,6 @@ def main():
         time.sleep(0.5)
         send_keys("%p")
 
-        time.sleep(1)
         process_list.set_focus()
         time.sleep(1)
         send_keys("{DOWN}")
@@ -53,11 +57,13 @@ def main():
 
         elapsed_time = end_time - start_time
         print(f"{elapsed_time:.2f} seconds this loop")
-        remaining_items = len(items) - (counter + 1)
+        remaining_items = len(filtered_items) - (counter)
         expected_time = elapsed_time * remaining_items / 60
         print(f"expected {expected_time:.2f} minutes remaining to complete")
 
 
+
+    main_window.minimize()
 
     # def printer(main_window, process_list, counter):
     #     counter += 1
