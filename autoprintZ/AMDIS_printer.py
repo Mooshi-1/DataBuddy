@@ -59,7 +59,7 @@ def main():
         print(f"{elapsed_time:.2f} seconds this loop")
         remaining_items = len(filtered_items) - (counter)
         expected_time = elapsed_time * remaining_items / 60
-        print(f"expected {expected_time:.2f} minutes remaining to complete")
+        print(f"expected {expected_time:.2f} minutes remaining to complete", flush=True)
 
 
 

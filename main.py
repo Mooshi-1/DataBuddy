@@ -14,9 +14,27 @@ import audit
 import logging
 
 #things to code:
-#sequence instrument 1/2 and enter extraction date (leave blank for today)
+#figure out how to encode ascii art into terminal
+#some sort of loading/confirmation that script has started in terminal
+#get rid of notification popup once working
 
-version = "3.0" #4-2-25
+#font / font size overhaul
+#button styles with ttk bootstrap
+#bootstyle = "success"
+#explore other widgets
+
+#SQVOL - anything in CUP -- add blanks
+#reinject/reassign tracker + whole batch analysis
+
+#Z SCREENS - what else do we need?
+# C > G > C transfer and folder creation
+# AMDIS printer updates, choose which iteration to start the loop on
+# fix extra spaces in RI generation
+
+#quant reports / tox req time and case assignment time, update stats
+
+
+version = "3.1" #4-10-25
 
 ##### SUBPROCESSES ######
 
@@ -26,6 +44,7 @@ script_path_screens = os.path.join(base_dir, "screens", "screen_main.py")
 script_path_quants = os.path.join(base_dir, "quants", "quant_main.py")
 script_path_sequence = os.path.join(base_dir, "sequence", "seq_main.py")
 script_path_carryover = os.path.join(base_dir, "autoprintZ", "carryover.py")
+script_path_Zprint = os.path.join(base_dir,"autoprintZ", "AMDIS_printer.py")
 script_path_rename = os.path.join(base_dir,"rename", "file_renamer.py")
 venv_path = os.path.join(base_dir, ".venv", "Scripts", "python.exe")
 
@@ -259,6 +278,9 @@ Requirements:
 ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
     notebook.add(carryover, text="Z Carryover")
+
+    ttk.Label(carryover, text="start AMDIS printer: Your files must be processed already").pack()
+    ttk.Button(carryover, text="Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint), show_popup()]).pack()
 
     ttk.Label(carryover, text="Enter the network path where the raw data is: ").pack()
     location = ttk.Entry(carryover, width=80)

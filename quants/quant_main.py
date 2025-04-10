@@ -47,7 +47,7 @@ def main(batch, method, extraction_date, initials):
     LF_directory = r'G:\LABORATORY OPERATIONS\06 - LABORATORY FORMS'
     TP_directory = r'G:\LABORATORY OPERATIONS\07 - TESTING PROCEDURES'
     data_dir = r"G:\PDF DATA"
-    print(f"Starting in: {data_dir}")
+    print(f"Starting in: {data_dir}", flush=True)
     
     #call FindBatch function to locate directories
     case_dir, qc_dir = searcher.FindBatch(data_dir, batch)

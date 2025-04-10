@@ -17,17 +17,24 @@ import logging
 #figure out how to encode ascii art into terminal
 #some sort of loading/confirmation that script has started in terminal
 #get rid of notification popup once working
+
 #font / font size overhaul
 #button styles with ttk bootstrap
 #bootstyle = "success"
 #explore other widgets
 
-#rewrite AMDIS printer
-
 #SQVOL - anything in CUP -- add blanks
 #reinject/reassign tracker + whole batch analysis
 
-version = "3.1" #4-8-25
+#Z SCREENS - what else do we need?
+# C > G > C transfer and folder creation
+# AMDIS printer updates, choose which iteration to start the loop on
+# fix extra spaces in RI generation
+
+#quant reports / tox req time and case assignment time, update stats
+
+
+version = "3.1" #4-10-25
 
 ##### SUBPROCESSES ######
 
