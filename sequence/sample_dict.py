@@ -21,6 +21,7 @@ sample_type_dict = {
     'BLOOD - SAPHENOUS VEIN': 'SVB',
     'BLOOD - SUBDURAL': 'SUBDB',
     'BLOOD - SVC': 'SVCB',
+    'BLOOD - SUBCLAVIAN': 'SUBC',
     'BRAIN HOMOGENATE': 'BRNHOM',
     'CHEST FLUID - LEFT CHEST': 'LCF',
     'CHEST FLUID - RIGHT CHEST': 'RCF',
@@ -81,6 +82,7 @@ sample_type_dict = {
     'SMALL INTESTINE': 'SMI',
     'DONOR BLOOD - FEMORAL VEIN': 'DFV',
     'DONOR BLOOD - SAPHENOUS VEIN': 'DSV'
+
 }
 
 sample_container_dict = {
@@ -119,7 +121,12 @@ sample_container_dict = {
     '50ML GREEN TOP': 'BGT',
     '60 ML NALGENE BOTTLE': 'BOT',
     '60ML NALGENE BOTTLE': 'BOT',
-    '125 ML NALGENE BOTTL': 'BOT'    
+    '125 ML NALGENE BOTTL': 'BOT',
+    'PLASTIC TUBE': 'PLT',
+    '30 ML NALGENE BOTTLE': 'BOT',
+    '30ML NALGENE BOTTLE': 'BOT',
+    'AMBER GLASS BOTTLE': 'BOT',
+
 }
 
 caboose = {

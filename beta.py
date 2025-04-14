@@ -16,6 +16,7 @@ import logging
 #things to code:
 #figure out how to encode ascii art into terminal
 #some sort of loading/confirmation that script has started in terminal
+#spinny/loady wheel
 #get rid of notification popup once working
 
 #font / font size overhaul
@@ -32,6 +33,9 @@ import logging
 # fix extra spaces in RI generation
 
 #quant reports / tox req time and case assignment time, update stats
+
+#"help" tab to open training docs like 'how to use sequence generator'
+#helpful images to explain the process
 
 
 version = "3.1" #4-10-25
