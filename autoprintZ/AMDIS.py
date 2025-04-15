@@ -8,6 +8,7 @@ Created on Mon Feb 17 16:15:00 2025
 import pyautogui
 import time
 import pygetwindow as gw
+import sys
 
 def main():
     counter = 0
@@ -75,5 +76,5 @@ def print_report(counter):
 
 
 if __name__ == '__main__':
-
+    print(f"sys.argv: {sys.argv}")
     main()

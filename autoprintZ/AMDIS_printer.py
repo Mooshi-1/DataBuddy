@@ -2,6 +2,7 @@ from pywinauto import Application
 from pywinauto.keyboard import send_keys
 import pygetwindow as gw
 import time
+import sys
 
 def main():
 
@@ -122,5 +123,5 @@ def main():
 
 
 if __name__ == '__main__':
-
+    print(f"sys.argv: {sys.argv}")
     main()

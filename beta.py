@@ -161,7 +161,6 @@ def main():
             spinner = Spinner(update_output, message=f"Loading file {script_name}...")
             spinner.start()
             pm = ProcessManager([venv_path, script_path] + list(args), env=env, ui_callback=update_output)
-            spinner.stop()
             #logging.info("Subprocess completed")
         except subprocess.CalledProcessError as e:
             spinner.stop()
@@ -221,13 +220,15 @@ def main():
             output_text.config(state='normal')
             output_text.delete("1.0", tk.END)
             output_text.config(state='disabled')
-        elif text.startswith("sys.argv"):
-            try:
-                spinner.stop()
-            except:
-                print("subprocess not started")
+        # elif text.startswith("sys.argv"):
+        #     try:
+        #         spinner.stop()
+        #     except:
+        #         print("subprocess not started")
         #send subprocess output to text widget
         else:
+            if spinner and spinner.thread and spinner.thread.is_alive():
+                spinner.stop()
             output_text.config(state="normal")
             output_text.insert(tk.END, text)
             output_text.yview_moveto(1)
