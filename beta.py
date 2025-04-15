@@ -9,6 +9,8 @@ import subprocess
 import os
 import datetime
 import threading
+import itertools
+import time
 
 import audit
 import logging
@@ -96,6 +98,40 @@ class ProcessManager:
         """Terminate the subprocess."""
         if self.process:
             self.process.terminate()
+        self.process = None
+
+class Spinner:
+    def __init__(self, ui_callback, message="Working...", delay=0.05):
+        self.spinner = itertools.cycle(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'])
+        self.delay = delay
+        self.message = message
+        self.ui_callback = ui_callback
+        self._stop_event = threading.Event()
+        self.thread = None
+        self._last_spinner_line = ""
+
+    def _spin(self):
+        while not self._stop_event.is_set():
+            spinner_char = next(self.spinner)
+            current_line = f"\r{self.message} {spinner_char}"
+            self.ui_callback(f"SPINNER:{current_line}")
+            self._last_spinner_line = current_line
+            time.sleep(self.delay)
+
+    def start(self):
+        if self.thread and self.thread.is_alive():
+            return
+        self._stop_event.clear()
+        self.ui_callback(f"SPINNER:{self.message} ")
+        self.thread = threading.Thread(target=self._spin, daemon=True)
+        self.thread.start()
+
+    def stop(self):
+        if not self.thread and self.thread.is_alive():
+            return
+        self._stop_event.set()
+        self.thread.join(timeout=1.0)
+        self.ui_callback(f"\nSCRIPT START\n")
 
 ##### MAIN FUNCTION #####
 
@@ -107,6 +143,7 @@ def main():
     root.geometry("1500x800")
 
     pm = None
+    spinner = None
 
     # RUN
     def run_script(venv_path, script_path, *args):
@@ -115,14 +152,22 @@ def main():
         env = os.environ.copy()
         env["LOG_FILE"] = "log.log"
 
+        script_name = os.path.basename(script_path)
+
         try: 
-            nonlocal pm
+            nonlocal pm, spinner
             #print('starting pm')
+            update_output("CLEAR_ALL")
+            spinner = Spinner(update_output, message=f"Loading file {script_name}...")
+            spinner.start()
             pm = ProcessManager([venv_path, script_path] + list(args), env=env, ui_callback=update_output)
+            spinner.stop()
             #logging.info("Subprocess completed")
         except subprocess.CalledProcessError as e:
+            spinner.stop()
             print(f"An error occurred while running script: {e}")
         except FileNotFoundError:
+            spinner.stop()
             print(f"Script or the Python interpreter could not be found!")
 
     def start_thread(venv_path, script_path, *args):
@@ -132,9 +177,6 @@ def main():
     def get_weekday():
         today = datetime.date.today()
         return today.strftime("%A")
-
-    def show_popup():
-        messagebox.showinfo("Notification", "The script is running and your files are loading.")
 
 # header
     date = get_weekday()
@@ -160,12 +202,32 @@ def main():
     output_text = tk.Text(io, height = 33, width=90, wrap="word", state="disabled")
     output_text.pack(side='top')
 
+    scrollbar = ttk.Scrollbar(io, command=output_text.yview)
+    scrollbar.pack(side='right', fill='y')
+    output_text['yscrollcommand'] = scrollbar.set
+
     def update_output(text):
+        if text.startswith("SPINNER:"):
+            message = text[8:]
+            output_text.config(state='normal')
+            output_text.delete("end-1l linestart", "end")
+            output_text.insert(tk.END, message)
+            output_text.config(state='disabled')
+        elif text == "SPINNER:CLEAR":
+            output_text.config(state="normal")
+            output_text.delete("end-1l linestart", "end")
+            output_text.config(state='disabled')
+        elif text == "CLEAR_ALL":
+            output_text.config(state='normal')
+            output_text.delete("1.0", tk.END)
+            output_text.config(state='disabled')
         #send subprocess output to text widget
-        output_text.config(state="normal")
-        output_text.insert(tk.END, text)
-        output_text.yview_moveto(1)
-        output_text.config(state="disabled")
+        else:
+            output_text.config(state="normal")
+            output_text.insert(tk.END, text)
+            output_text.yview_moveto(1)
+            output_text.config(state="disabled")
+
 
     entry_widget = ttk.Entry(io, width=90)
     entry_widget.pack(pady=10, side="left")
@@ -205,7 +267,7 @@ def main():
     renamer_check = ttk.Checkbutton(screens, text="Rename only mode?", onvalue='-r', offvalue=None, variable=renamer_var).pack(pady=5)
 
     ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens, \
-                    sc_batch.get(), sc_var.get(), renamer_var.get()), show_popup()]).pack(pady=10)
+                    sc_batch.get(), sc_var.get(), renamer_var.get())]).pack(pady=10)
     
     ttk.Label(screens, text="Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
@@ -242,7 +304,7 @@ def main():
     qt_initials.pack()
 
     ttk.Button(quants, text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants, \
-                            qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper()), show_popup()]).pack(pady=10)
+                            qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper())]).pack(pady=10)
     
     ttk.Label(quants, text="Requirements: \
               \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
@@ -262,7 +324,7 @@ def main():
     initials = ttk.Entry(sequence)
     initials.pack()
 
-    ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper()), show_popup()]).pack()
+    ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper())]).pack()
 
 
     ttk.Label(sequence, text=r""" 
@@ -284,14 +346,14 @@ Requirements:
     notebook.add(carryover, text="Z Carryover")
 
     ttk.Label(carryover, text="start AMDIS printer: Your files must be processed already").pack()
-    ttk.Button(carryover, text="Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint), show_popup()]).pack()
+    ttk.Button(carryover, text="Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint)]).pack()
 
     ttk.Label(carryover, text="Enter the network path where the raw data is: ").pack()
     location = ttk.Entry(carryover, width=80)
     location.pack()
     ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").pack()
 
-    ttk.Button(carryover, text="Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get()), show_popup()]).pack()
+    ttk.Button(carryover, text="Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get())]).pack()
 
 
     ttk.Label(carryover, text=r""" 
@@ -332,7 +394,7 @@ Output:
     combobox3 = ttk.Combobox(rename, textvariable=rename_var, values=rename_methods)
     combobox3.pack()
 
-    ttk.Button(rename, text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get()), show_popup()]).pack()
+    ttk.Button(rename, text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get())]).pack()
 
 
 
