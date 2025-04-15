@@ -250,6 +250,8 @@ def main():
     entry_widget.bind("<Return>", send_command)
 
     def on_close():
+        if spinner:
+            spinner.stop()
         if pm:
             pm.terminate()
         root.destroy()
