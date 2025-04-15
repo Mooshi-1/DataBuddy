@@ -40,7 +40,7 @@ import logging
 #helpful images to explain the process
 
 
-version = "3.1" #4-10-25
+version = "3.2" #4-15-25
 
 ##### SUBPROCESSES ######
 
@@ -221,6 +221,11 @@ def main():
             output_text.config(state='normal')
             output_text.delete("1.0", tk.END)
             output_text.config(state='disabled')
+        elif text.startswith("sys.argv"):
+            try:
+                spinner.stop()
+            except:
+                print("subprocess not started")
         #send subprocess output to text widget
         else:
             output_text.config(state="normal")
