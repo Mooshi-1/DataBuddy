@@ -140,7 +140,7 @@ def main():
     #root = tk.Tk()
     root = ttk.Window(themename="darkly")
     root.title(f"Data Buddy - {version}")
-    root.geometry("1500x800")
+    root.geometry("1300x800")
 
     pm = None
     spinner = None
@@ -183,28 +183,43 @@ def main():
     header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
     header.grid(row=0, column=0, columnspan=2, pady=10)
 
-    readme = ttk.Label(root, text="Use the tabs on the left to start a script \
-                                    \nCheck the terminal on the right for verification and user-input \
-                                    \nFor more info, check the 'help' tab", font=("Arial", 14))
-    readme.grid(row=1, column=0, columnspan=2, pady=10)
+    readme = ttk.Label(root, text="Use the tabs to start a Python script", font=("Arial", 14))
+    readme.grid(row=1, column=0, pady=10)
+
+    readme2 = ttk.Label(root, text="Use the terminal for verification and script input", font=("Arial", 14))
+    readme2.grid(row=1, column=1, pady=10)
 
     ## create notebook tabs ##
     notebook = ttk.Notebook(root)
-    notebook.grid(row=2, column=0, sticky="nsew")
+    notebook.grid(row=2, column=0)
 
     ## IO ##
     io = ttk.Frame(root)
-    io.grid(row=2, column=1, sticky="nsew", padx=5)
+    io.grid(row=2, column=1, padx=5, sticky='nsew')
 
     io_label = ttk.Label(io, text="Terminal")
-    io_label.grid(row=0, column=0, columnspan=2, sticky="ew")
+    io_label.grid(row=0, column=0, columnspan=2)
 
     output_text = tk.Text(io, wrap="word", state="disabled")
-    output_text.grid(row=1, column=0, sticky="nsew")
+    output_text.grid(row=1, column=0, sticky="nsew", columnspan=2, rowspan=6, padx=5)
 
     scrollbar = ttk.Scrollbar(io, command=output_text.yview)
-    scrollbar.grid(row=1, column=1, sticky="ns")
+    scrollbar.grid(row=1, column=1, sticky="nse", rowspan=6)
     output_text['yscrollcommand'] = scrollbar.set
+
+    # Configure row and column weights
+    root.columnconfigure(0, weight=1, uniform='equal_width')
+    root.columnconfigure(1, weight=1, uniform='equal_width')
+    io.columnconfigure(0, weight=1, uniform='equal_width')
+    io.columnconfigure(1, weight=1, uniform='equal_width')
+    io.rowconfigure(0, weight=1, uniform='equal_width')
+    io.rowconfigure(1, weight=1, uniform='equal_width')
+    io.rowconfigure(2, weight=1, uniform='equal_width')
+    io.rowconfigure(3, weight=1, uniform='equal_width')
+    io.rowconfigure(4, weight=1, uniform='equal_width')
+    io.rowconfigure(5, weight=1, uniform='equal_width')
+    io.rowconfigure(6, weight=1, uniform='equal_width')
+    io.rowconfigure(7, weight=1, uniform='equal_width')
 
     def update_output(text):
         if text.startswith("SPINNER:"):
@@ -230,7 +245,7 @@ def main():
             output_text.config(state="disabled")
 
     entry_widget = ttk.Entry(io, width=90)
-    entry_widget.grid(row=2, column=0, sticky="w", columnspan=2, pady=10)
+    entry_widget.grid(row=7, column=0, sticky="ew", columnspan=2, pady=10)
 
     try:
         def send_command(event=None):
@@ -241,7 +256,7 @@ def main():
         print(e)
 
     send_button = ttk.Button(io, text="Send", command=send_command)
-    send_button.grid(row=2, column=1, pady=10, sticky="w")
+    send_button.grid(row=7, column=1, pady=10, sticky="e")
     entry_widget.bind("<Return>", send_command)
 
     def on_close():
@@ -255,6 +270,9 @@ def main():
     ## START SCREENS TAB ##
     screens = ttk.Frame(notebook)
     notebook.add(screens, text="Screens")
+
+    screens.columnconfigure(0, weight=1, uniform='equal_width')
+    screens.columnconfigure(1, weight=1, uniform='equal_width')
 
     ttk.Label(screens, text="Batch Number: ").grid(row=0, column=0, sticky='e', pady=10)
     sc_batch = ttk.Entry(screens)
@@ -281,12 +299,12 @@ def main():
                                     \n-Manually bind your sequence to the batch pack after running. \
                                     \n ").grid(row=4, column=0, columnspan=2, pady=20)
 
-    screens.columnconfigure(0, weight=1)
-    screens.columnconfigure(1, weight=1)
-
     ## START QUANTS TAB ##
     quants = ttk.Frame(notebook)
     notebook.add(quants, text="Quants")
+
+    quants.columnconfigure(0, weight=1, uniform="equal_width")
+    quants.columnconfigure(1, weight=1, uniform="equal_width")
 
     ttk.Label(quants, text="Batch Number: ").grid(row=0, column=0, sticky='e', pady=10)
     qt_batch = ttk.Entry(quants)
@@ -324,7 +342,10 @@ def main():
     sequence = ttk.Frame(notebook)
     notebook.add(sequence, text="Sequence")
 
-    ttk.Label(sequence, text="Enter your initials: ").grid(row=0, column=0, sticky='e', pady=10)
+    sequence.columnconfigure(0, weight=1, uniform='equal_width')
+    sequence.columnconfigure(1, weight=1, uniform='equal_width')
+
+    ttk.Label(sequence, text="Enter your initials: ").grid(row=0, column=0, pady=10, sticky='e')
     initials = ttk.Entry(sequence)
     initials.grid(row=0, column=1, sticky='w')
 
@@ -341,20 +362,21 @@ def main():
         -You can make extra directories, 'Archive', 'Old batches', etc, without issue -- 
         they are not checked or recognized by the script
                         
-    """).grid(row=2, column=0, columnspan=1, pady=20)
-
-    sequence.columnconfigure(1, weight=1)
+    """).grid(row=2, column=0, columnspan=2, pady=20)
 
     ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
     notebook.add(carryover, text="Z Carryover")
 
+    carryover.columnconfigure(0, weight=1, uniform='equal_width')
+    carryover.columnconfigure(1, weight=1, uniform='equal_width')
+
     ttk.Label(carryover, text="start AMDIS printer: Your files must be processed already").grid(row=0, column=0, columnspan=2, pady=10)
     ttk.Button(carryover, text="Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint)]).grid(row=1, column=0, columnspan=2, pady=10)
 
-    ttk.Label(carryover, text="Enter the network path where the raw data is: ").grid(row=2, column=0)
+    ttk.Label(carryover, text="Enter the network path where the raw data is: ").grid(row=2, sticky='e', column=0)
     location = ttk.Entry(carryover, width=80)
-    location.grid(row=2, column=1)
+    location.grid(row=2, column=1, sticky='w')
     ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").grid(row=3, column=0, columnspan=2)
 
     ttk.Button(carryover, text="Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get())]).grid(row=4, column=0, columnspan=2)
@@ -387,15 +409,18 @@ def main():
     rename = ttk.Frame(notebook)
     notebook.add(rename, text="Rename")
 
-    ttk.Label(rename, text="Enter the full network path where the raw data is: ").grid(row=0, column=0)
-    rename_ent = ttk.Entry(rename, width=80)
-    rename_ent.grid(row=0, column=1)
+    rename.columnconfigure(0, weight=1, uniform='equal_width')
+    rename.columnconfigure(1, weight=1, uniform='equal_width')
 
-    ttk.Label(rename, text="Instrument: ").grid(row=1, column=0)
+    ttk.Label(rename, text="Enter the full network path where the raw data is: ").grid(row=0, column=0, pady=10, sticky='e')
+    rename_ent = ttk.Entry(rename)
+    rename_ent.grid(row=0, column=1, sticky='w')
+
+    ttk.Label(rename, text="Instrument: ").grid(row=1, column=0, pady=20, sticky='e')
     rename_methods = ["Shimadzu", "Hans", ]
     rename_var = tk.StringVar()
     combobox3 = ttk.Combobox(rename, textvariable=rename_var, values=rename_methods)
-    combobox3.grid(row=1, column=1)
+    combobox3.grid(row=1, column=1, sticky='w')
 
     ttk.Button(rename, text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get())]).grid(row=2, column=0, columnspan=2)
 
@@ -427,15 +452,10 @@ def main():
     help_box = tk.Text(help, wrap="word", font=("Arial", 13))
     help_box.insert("1.0", help_text)
     help_box.config(state="disabled")
-    help_box.grid(row=0, column=0, padx=10, pady=10)
+    help_box.grid(sticky='nsew')
 
-    # Configure row and column weights
-    root.columnconfigure(1, weight=1)
-    root.rowconfigure(2, weight=1)
-    io.columnconfigure(0, weight=1)
-    io.rowconfigure(1, weight=1)
-
-
+    help.columnconfigure(0, weight=1)
+    help.rowconfigure(0, weight=1)
 ## TK MAIN LOOP ##
     root.mainloop()
 
