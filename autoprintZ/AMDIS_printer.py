@@ -62,8 +62,6 @@ def main():
         expected_time = elapsed_time * remaining_items / 60
         print(f"expected {expected_time:.2f} minutes remaining to complete", flush=True)
 
-
-
     main_window.minimize()
 
     # def printer(main_window, process_list, counter):
@@ -123,5 +121,6 @@ def main():
 
 
 if __name__ == '__main__':
-    print(f"sys.argv: {sys.argv}")
+    print(f"sys.argv: {sys.argv}", flush=True)
     main()
+    print("SCRIPT END")

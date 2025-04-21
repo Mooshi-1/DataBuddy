@@ -165,5 +165,6 @@ if __name__ == "__main__":
 
 
     main(path)
+    print("SCRIPT END")
 
 
