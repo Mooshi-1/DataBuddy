@@ -306,7 +306,7 @@ def main():
     qt_batch.grid(row=0, column=1, sticky='w')
 
     ttk.Label(quants, text="Method: ").grid(row=1, column=0, sticky='e', pady=10)
-    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QTANTIDEP1", "QTANTIHIST", "QTMEPIRIDINE", "QTMETHADONE", "QTACETAMINOPHEN", "QTSALICYLATE", "QTDASH"]
+    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QTANTIDEP1", "QTANTIHIST", "QTMEPIRIDINE", "QTMETHADONE", "QTACETAMINOPHEN", "QTSALICYLATE", "QTDASH", "QTTRAZODONE", "TYPE IN ANY SHIMADZU QUANT"]
     qt_var = tk.StringVar()
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.grid(row=1, column=1, sticky='w')
