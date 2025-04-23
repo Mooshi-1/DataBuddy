@@ -152,6 +152,7 @@ caboose = {
     'MUSCLE HOMOGENATE': 19,
     'BRAIN HOMOGENATE': 20,
     'LIVER HOMOGENATE': 21,
+    'URINE - ANTEMORTEM': 22, 
 }
 
 vol_duplicate = [
