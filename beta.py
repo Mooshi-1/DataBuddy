@@ -25,6 +25,7 @@ import logging
 
 #SQVOL - anything in CUP -- add blanks
 #reinject/reassign tracker + whole batch analysis
+# solution for FDLE's, binding/naming
 
 #Z SCREENS - what else do we need?
 # C > G > C transfer and folder creation
