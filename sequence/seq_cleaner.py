@@ -133,7 +133,7 @@ def finalize_SQVOL(seq, batch):
     for sample in seq:
         final_list.append((batch, tray, vial, sample.abbrv, sample.abbrv, sample.barcode))
         tray, vial = increment_vial(tray, vial)
-        if sample.type in caboose:
+        if sample.type in caboose or sample.abbrv.endswith("CUP"):
             final_list.append((batch, tray, vial, 'BLANK', 'BLANK', ''))
             tray, vial = increment_vial(tray, vial)
 

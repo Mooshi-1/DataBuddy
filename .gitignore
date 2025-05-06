@@ -4,6 +4,8 @@
 **/*.pyc
 WPy64-31320/
 
+completionLogs/
+
 build/
 *.spec
 *.xlsx

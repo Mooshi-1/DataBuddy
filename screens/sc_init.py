@@ -223,7 +223,6 @@ def main(method):
 
     for case in caseDict.keys():
         print(f"processing {case}")
-        #order automatically called by assignType() method
         caseDict[case].assignType()
         caseDict[case].order()
         caseDict[case].checkCompletion()

@@ -218,6 +218,8 @@ def main():
     io.rowconfigure(7, weight=1, uniform='equal_width')
 
     def update_output(text):
+        stdout_log = "stdout.txt"
+
         if text.startswith("SPINNER:"):
             message = text[8:]
             output_text.config(state='normal')
@@ -235,6 +237,11 @@ def main():
         else:
             if spinner and spinner.thread and spinner.thread.is_alive():
                 spinner.stop()
+            try:
+                with open(stdout_log, "a") as log_file:
+                    log_file.write(text)
+            except Exception as e:
+                print(f"stdout log-file error | {e}")
             output_text.config(state="normal")
             output_text.insert(tk.END, text)
             output_text.yview_moveto(1)

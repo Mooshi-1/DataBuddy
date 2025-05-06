@@ -113,7 +113,7 @@ class SQVOL(Sample):
             self.type.add(QCTYPE.CTL)
         if NEG in self.ID:
             self.type.add(QCTYPE.NEG)
-        if 'S' == self.base:
+        if 'S' == self.base or 'BLANK' in self.base:
             self.type.add(QCTYPE.SOL)
                 #print(f"assigned serum {self.ID}, {self.type}")
 
