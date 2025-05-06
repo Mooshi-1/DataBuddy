@@ -128,6 +128,22 @@ def finalize_LCMSMS(seq, batch):
 
     return final_list
 
+def finalize_Nitazene(seq, batch):
+    final_list = []
+    columns=['Batch #', 'Tray', 'Vial#', 'Sample Name']
+    #4 item tuple
+    solvent_vials = itertools.cycle(range(1,3))
+    vial_count = 3
+
+    for sample in seq:
+        if sample.type == 'SOLVENT':
+            final_list.append((batch, 1, next(solvent_vials), sample.abbrv))
+        else:
+            final_list.append((batch, 1, vial_count, sample.abbrv))
+            vial_count += 1
+
+    return final_list
+
 def finalize_SQVOL(seq, batch):
     final_list = []
     columns=['Batch #', 'Tray Name', 'Vial#', 'Sample Name', 'Sample ID', 'barcode']

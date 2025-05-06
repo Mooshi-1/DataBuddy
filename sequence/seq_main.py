@@ -72,9 +72,14 @@ def main(initials):
                 samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
                 excel_fill.export_SCRNZ(samples_for_write, seq_dir, batch_num)
 
-            if method == 'SCLCMSMS' or method == 'COTHC' or method == 'SCNITAZENE':
+            if method == 'SCLCMSMS' or method == 'COTHC':
                 samples_for_write = seq_cleaner.finalize_LCMSMS(samples_for_seq, batch_num)
-                excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)        
+                excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)    
+
+            if method == 'SCNITAZENE':
+                samples_for_write = seq_cleaner.finalize_Nitazene(samples_for_seq, batch_num)
+                excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)
+
             return       
         
         elif method == 'SQVOL':
