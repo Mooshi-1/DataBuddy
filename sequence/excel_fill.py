@@ -20,6 +20,7 @@ def export_SCRNZ(samples, path, batch_num):
     print(f"Data written to {excel_path}")
 
 
+
 def export_SCGEN(samples, path, batch_num):
     print("starting export")
     # Create a DataFrame from the list of tuples

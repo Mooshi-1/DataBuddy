@@ -36,7 +36,7 @@ import logging
 #helpful images to explain the process
 
 
-version = "3.3" #4-20-25
+version = "3.4" #5-06-25
 
 ##### SUBPROCESSES ######
 

@@ -64,8 +64,8 @@ def main(initials):
             slice_interval = 20
             samples_for_seq = seq_builder.build_screens(samples, slice_interval)
             
-            if method == 'SCGEN' or method == 'COSTIM':
-                samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq)
+            if method == 'SCGEN' or method == 'COSTIM' or method == 'SCSYNCANNA':
+                samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq, method)
                 excel_fill.export_SCGEN(samples_for_write, seq_dir, batch_num)        
 
             if method == 'SCRNZ':

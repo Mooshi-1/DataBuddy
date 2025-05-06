@@ -208,7 +208,7 @@ method_dict = {
 
     'SCGEN':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
     'COSTIM':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
-    'SCSYNCAN':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
+    'SCSYNCANNA':['LF-23.6 Bruker ToxTyper LC-Ion Trap-MSn',],
 
     'SCLCMSMS':['LF-23.5 Shimadzu 8060NX LC-MSMS',],
 

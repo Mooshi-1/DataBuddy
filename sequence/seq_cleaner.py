@@ -55,7 +55,7 @@ def finalize_SCRNZ(seq):
 
     return final_list
     
-def finalize_SCGEN(seq):
+def finalize_SCGEN(seq, method):
     print('starting finalizer')
     #excluded RE for now and placing solvents there
     tray_rows = ['GA', 'GB', 'GC', 'GD', 'GE', 'BA', 'BB', 'BC', 'BD', 'BE', 'RA', 'RB', 'RC', 'RD']
@@ -78,25 +78,38 @@ def finalize_SCGEN(seq):
     
     columns=['Sample Name', 'Sample Description', 'Sample Position', 'Method Name', 'Volume']
     final_list = []
-    method = 'Toxtyper 3.0_GEN'
-    volume = 5
+    method = 'Toxtyper 3.0_GEN' if method != "SCSYNCANNA" else 'Toxtyper 3.0_SCSYNCAN'
+    volume = 5 if method != "Toxtyper 3.0_SCSYNCAN" else 10
     solvent_namer = itertools.cycle(range(1,9))
 
-    for sample in seq:
-        #make sure list isn't empty to avoid index error
-        if final_list and final_list[-1][0].startswith('S') and sample.type == 'SOLVENT':
-            continue
-        elif sample.type == 'SOLVENT':
-            final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
-        elif sample.container != '':
-            final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
-            final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))
-            final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
-        else:
-            final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
-            final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))
+    if method == "Toxtyper 3.0_SCSYNCAN":
+        for sample in seq:
+            if final_list and final_list[-1][0].startswith('S') and sample.type == 'SOLVENT':
+                continue
+            elif sample.type == 'SOLVENT':
+                final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))  
+            elif sample.container != '':
+                final_list.append((sample.abbrv, '', get_position(), method, volume))
+                #final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
+            else:
+                final_list.append((sample.abbrv, '', get_position(), method, volume))  
+        final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), 'Toxtyper R_Wash_Column', volume))                                       
+    else:
+        for sample in seq:
+            #make sure list isn't empty to avoid index error
+            if final_list and final_list[-1][0].startswith('S') and sample.type == 'SOLVENT':
+                continue
+            elif sample.type == 'SOLVENT':
+                final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
+            elif sample.container != '':
+                final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
+                final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))
+                final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), method, volume))
+            else:
+                final_list.append((sample.abbrv + ' B', '', get_position(), method, volume))
+                final_list.append((sample.abbrv + ' A', '', get_position(), method, volume))
 
-    final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), 'Toxtyper R_Wash_Column', volume))
+        final_list.append((f'S {next(solvent_namer)}', '', get_solvent(), 'Toxtyper R_Wash_Column', volume))
     return final_list
 
 def finalize_LCMSMS(seq, batch):
@@ -166,7 +179,7 @@ def finalize_quants(seq, batch):
                 final_list.append((batch, tray, next(solvents), 'S'))
                 final_list.append((batch, tray, vial_number, sample.abbrv))
                 vial_number += 1 
-        previous_sample = sample       
-    final_list.append((batch, tray, next(solvents), 'S'))       
+        previous_sample = sample
+    final_list.append((batch, tray, next(solvents), 'S'))
 
     return final_list

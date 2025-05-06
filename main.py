@@ -25,6 +25,7 @@ import logging
 
 #SQVOL - anything in CUP -- add blanks
 #reinject/reassign tracker + whole batch analysis
+# solution for FDLE's, binding/naming
 
 #Z SCREENS - what else do we need?
 # C > G > C transfer and folder creation
@@ -35,7 +36,7 @@ import logging
 #helpful images to explain the process
 
 
-version = "3.3" #4-20-25
+version = "3.4" #5-06-25
 
 ##### SUBPROCESSES ######
 
@@ -217,6 +218,8 @@ def main():
     io.rowconfigure(7, weight=1, uniform='equal_width')
 
     def update_output(text):
+        stdout_log = "stdout.txt"
+
         if text.startswith("SPINNER:"):
             message = text[8:]
             output_text.config(state='normal')
@@ -234,6 +237,11 @@ def main():
         else:
             if spinner and spinner.thread and spinner.thread.is_alive():
                 spinner.stop()
+            try:
+                with open(stdout_log, "a") as log_file:
+                    log_file.write(text)
+            except Exception as e:
+                print(f"stdout log-file error | {e}")
             output_text.config(state="normal")
             output_text.insert(tk.END, text)
             output_text.yview_moveto(1)
