@@ -1,4 +1,4 @@
-from PyPDFForm import FormWrapper # type: ignore # pypdfform
+from PyPDFForm import FormWrapper
 import time
 import pandas # type: ignore # pandas
 import os
@@ -297,12 +297,15 @@ def fill_MSA(case_list, batch, MSA_path, analyte, method):
         workbook.Save()
         workbook.Close()
         excel.Quit()
+        print(f'completed filling {MSA_path}')
         # #
         # # with pandas.ExcelWriter(MSA_path, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
         # #     df.to_excel(writer, sheet_name='Data', header=False, startrow=14, startcol=3, index=False)
 
     except Exception as e:
-        print(f"error | {e}")
+        workbook.Close()
+        excel.Quit()
+        print(f"excel fill error {analyte} | {e}")
 
 def append_LJ_curve(curve, batch, path, extraction_date, initials):
     #[('Amphetamine', 0.999334, 'y=21.561360*x-0.007798', 'Linear', '1/C^2'), 
