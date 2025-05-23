@@ -122,10 +122,17 @@ class SQVOL(Sample):
 #general purpose sorting, calibrators, numerical sequences
 def general_sort_key(sample):
     # extract numerical parts for sorting
-    remove_suffix = re.sub(r'_0$', '', sample.ID)
-    parts = re.findall(r'\d+', remove_suffix)
-    parts = [int(part) for part in parts]
-    return parts
+    level_match = re.search(r'_L(\d+)$', sample.ID)
+    if level_match:
+        # If found, extract the level number and the base ID.
+        level = int(level_match.group(1))
+        base_id = sample.ID[:level_match.start()]
+    else:
+        # If no level suffix exists, treat it as level 0.
+        level = 0
+        base_id = sample.ID
+    return (base_id, level)
+
 def sort_samples(list):
     list.sort(key=general_sort_key)
 
@@ -209,7 +216,6 @@ def sample_handler(all_samples):
         sort_controls(serum_controls); sort_samples(serum_dil_controls); sort_samples(serum_cal_curve)
     except Exception as e:
         print(f"error sorting files | {e}")
-
 
     return (
         cal_curve,
