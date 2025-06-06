@@ -122,15 +122,17 @@ class SQVOL(Sample):
 #general purpose sorting, calibrators, numerical sequences
 def general_sort_key(sample):
     # extract numerical parts for sorting
-    level_match = re.search(r'_L(\d+)$', sample.ID)
+    level_match = re.search(r'_L(\d)', sample.ID)
     if level_match:
         # If found, extract the level number and the base ID.
-        level = int(level_match.group(1))
-        base_id = sample.ID[:level_match.start()]
+        level = int(level_match[1])
+        # remove L# so that base ID is the same, and it moves to level sorting in the tuple
+        base_id = re.sub(r'_L\d', '', sample.ID)
     else:
         # If no level suffix exists, treat it as level 0.
         level = 0
         base_id = sample.ID
+    print(base_id, level)
     return (base_id, level)
 
 def sort_samples(list):
@@ -139,13 +141,15 @@ def sort_samples(list):
 #ensures low then high control for quant batches
 def control_sort_key(sample):
     #sorts low 1 - high 1 - low 2 etc 
-    match = re.match(r'(LOW|HIGH) CTL (\d+)', sample.base)
+    match = re.match(r'(LOW|HIGH) CTL (\d)', sample.base)
     if match:
         control_type, num = match.groups()
         #assign weight so low comes first
         weight = 0 if control_type == 'LOW' else 1
         return (int(num), weight)
-    return (sample.base,)
+    else:
+        print(f'ERROR -- no sorting key found for {sample}')
+        return (-float('inf'), sample.base)
 def sort_controls(list):
     list.sort(key=control_sort_key)
 
@@ -194,10 +198,10 @@ def sample_handler(all_samples):
         elif sample.type.issuperset({QCTYPE.SER,QCTYPE.NEG,QCTYPE.CTL}):
             serum_neg.append(sample)
             #print(f"appended serum_neg {sample}")
+        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL,QCTYPE.DL}):
+            serum_dil_controls.append(sample)        
         elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL}):
             serum_controls.append(sample)
-        elif sample.type.issuperset({QCTYPE.SER,QCTYPE.CTL,QCTYPE.DL}):
-            serum_dil_controls.append(sample)
         elif sample.type.issuperset({QCTYPE.CAL,QCTYPE.SER}):
             serum_cal_curve.append(sample)
         elif QCTYPE.SOL in sample.type:
