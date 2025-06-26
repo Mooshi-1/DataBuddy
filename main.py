@@ -11,6 +11,7 @@ import datetime
 import threading
 import itertools
 import time
+from PIL import Image, ImageTk
 
 import audit
 import logging
@@ -140,6 +141,20 @@ def main():
 
     pm = None
     spinner = None
+    try:
+        gif_path = os.path.join(base_dir, 'misc', 'HappyFriday3.gif')
+        img = Image.open(gif_path)
+
+        frames = []
+        while True:
+            #frame = img.copy()
+            frame = img.copy().resize((341,161))
+            frames.append(ImageTk.PhotoImage(frame))
+            img.seek(img.tell()+1)
+    except EOFError:
+        pass
+    except Exception as e:
+        print(f'unable to load gif | {e}')
 
     # RUN
     def run_script(venv_path, script_path, *args):
@@ -176,8 +191,30 @@ def main():
     ## HEADER ##
 
     date = get_weekday()
-    header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
-    header.grid(row=0, column=0, columnspan=2, pady=10)
+    if date == 'Friday':
+        header = ttk.Label(root)
+
+        ind = 0
+        forward = True
+        def update():
+            nonlocal ind, forward
+            header.configure(image=frames[ind])
+
+            if forward:
+                ind += 1
+                if ind == len(frames) - 1:
+                    forward = False
+            else:
+                ind -= 1
+                if ind == 0:
+                    forward =True
+            root.after(100, update)
+        header.grid(row=0, column=0, columnspan=2, pady=10)
+        update()
+    else:    
+        header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
+        header.grid(row=0, column=0, columnspan=2, pady=10)
+
 
     readme = ttk.Label(root, text="Use the tabs to start a Python script", font=("Arial", 14))
     readme.grid(row=1, column=0, pady=10)
