@@ -192,7 +192,7 @@ method_dict = {
     'QTCCB':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTDASH':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTMEPER':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
-    'QTMETHA':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
+    'QTMETHADON':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTOLANZ':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTPSYCH':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],
     'QTSALICYL':['LF-23.9 Shimadzu 8060 LC-MSMS #1', 'LF-23.10 Shimadzu 8060 LC-MSMS #2'],

@@ -16,6 +16,7 @@ import filler
 import sqvol_init
 import logging
 import os
+import scion_init
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
@@ -62,9 +63,9 @@ def main(batch, method, extraction_date, initials):
     output_dir = searcher.binder_dir(case_dir)
     print(f"Output Directory: {output_dir}")
 
-
     batch_dirs = [case_dir, qc_dir]
 
+    GCQUANTMETHODS = ['COTHC', 'SQGHB', 'SQETGLYCOL', 'QTTRAMADOL', 'QTZOLPIDEM']
     #init list to store sample class
     all_samples = []
     #check CASE DATA and BATCH PACK DATA
@@ -72,6 +73,8 @@ def main(batch, method, extraction_date, initials):
         print(f"checking {dirs}")
         if method == 'SQVOL':
             samples = sqvol_init.sqvol_init(dirs)
+        if method in GCQUANTMETHODS:
+            samples = scion_init.GC_quant_init(dirs)
         else:
             samples = shimadzu_init.LC_quant_init(dirs)
         all_samples.extend(samples)

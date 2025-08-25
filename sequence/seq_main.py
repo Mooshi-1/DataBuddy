@@ -38,87 +38,86 @@ ascii_art = '''
                                                                              
  Version 1.04 - 3/27/25
 '''
+def sort_batches(seq_dir):
+    all_sequences = []
+    for filename in os.listdir(seq_dir):
+        if filename.endswith(".pdf"):
+            #read test batch, get info
+            path = os.path.join(seq_dir, filename)
+            samples, method, batch = seq_init.read_sequence(path)
+            #check method portion of existing batch tuples, combine if method is the same
+            #index 0 = samples, index 1 = method, index 2 = batch
+            if all_sequences and method == all_sequences[-1][1]:
+                samples = all_sequences[-1][0] + samples
+                batch = all_sequences[-1][2] + "-" + batch
+                all_sequences.pop()
+                all_sequences.append((samples, method, batch))
+            else:
+                all_sequences.append((samples, method, batch))
+    return all_sequences    
+
+def build_and_export(samples, method, batch_num, seq_dir):
+    if method.startswith("SC") or method.startswith('CO'):
+        slice_interval = 20
+        samples_for_seq = seq_builder.build_screens(samples, slice_interval)
+        
+        if method == 'SCGEN' or method == 'COSTIM' or method == 'SCSYNCANNA':
+            samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq, method)
+            excel_fill.export_SCGEN(samples_for_write, seq_dir, batch_num)        
+
+        if method == 'SCRNZ':
+            samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
+            excel_fill.export_SCRNZ(samples_for_write, seq_dir, batch_num)
+
+        if method == 'SCLCMSMS' or method == 'COTHC':
+            samples_for_write = seq_cleaner.finalize_LCMSMS(samples_for_seq, batch_num)
+            excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)    
+
+        if method == 'SCNITAZENE':
+            samples_for_write = seq_cleaner.finalize_Nitazene(samples_for_seq, batch_num)
+            excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)
+
+        return       
+    
+    elif method == 'SQVOL':
+        slice_interval = 20
+
+        samples_for_seq = seq_builder.build_vols(samples, slice_interval)
+        samples_for_write = seq_cleaner.finalize_SQVOL(samples_for_seq, batch_num)
+        excel_fill.export_SQVOL(samples_for_write, seq_dir, batch_num)
+        return
+
+    elif method.startswith("QT") or method.startswith("SQ"):
+        slice_interval = 20
+
+        samples_for_seq = seq_builder.build_quants(samples, slice_interval, method)
+        samples_for_write = seq_cleaner.finalize_quants(samples_for_seq, batch_num)
+        excel_fill.export_quants(samples_for_write, seq_dir, batch_num)
+        return
+    
+    else:
+        print('Unable to find a sequence builder for the method listed in the TEST BATCH.')
+        print('Enter another/similar method and attemp to re-run?: ')
+        method = input().upper()
+        build_and_export(samples, method, batch_num, seq_dir)
+
+def find_instrument(method):
+    matched_methods = [methods for methods in method_dict if methods.startswith(method)]
+    if not matched_methods:
+        print(f'Unable to find instrument associated with {method}')
+        print('Enter another method name that uses the same instrument?: ')
+        method = input().upper()
+        return find_instrument(method)
+    elif len(method_dict[matched_methods[0]]) == 1:
+        return method_dict[matched_methods[0]][0]
+    else:
+        print(f'type 1 for {method_dict[matched_methods[0]][0]} OR 2 for {method_dict[matched_methods[0]][1]}: ')
+        choice = input()
+        choice = int(choice) - 1
+        return method_dict[matched_methods[0]][choice]    
+    
 
 def main(initials):
-
-    def sort_batches(seq_dir):
-        all_sequences = []
-        for filename in os.listdir(seq_dir):
-            if filename.endswith(".pdf"):
-                #read test batch, get info
-                path = os.path.join(seq_dir, filename)
-                samples, method, batch = seq_init.read_sequence(path)
-                #check method portion of existing batch tuples, combine if method is the same
-                #index 0 = samples, index 1 = method, index 2 = batch
-                if all_sequences and method == all_sequences[-1][1]:
-                    samples = all_sequences[-1][0] + samples
-                    batch = all_sequences[-1][2] + "-" + batch
-                    all_sequences.pop()
-                    all_sequences.append((samples, method, batch))
-                else:
-                    all_sequences.append((samples, method, batch))
-        return all_sequences    
-
-    def build_and_export(samples, method, batch_num, seq_dir):
-        if method.startswith("SC") or method.startswith('CO'):
-            slice_interval = 20
-            samples_for_seq = seq_builder.build_screens(samples, slice_interval)
-            
-            if method == 'SCGEN' or method == 'COSTIM' or method == 'SCSYNCANNA':
-                samples_for_write = seq_cleaner.finalize_SCGEN(samples_for_seq, method)
-                excel_fill.export_SCGEN(samples_for_write, seq_dir, batch_num)        
-
-            if method == 'SCRNZ':
-                samples_for_write = seq_cleaner.finalize_SCRNZ(samples_for_seq)
-                excel_fill.export_SCRNZ(samples_for_write, seq_dir, batch_num)
-
-            if method == 'SCLCMSMS' or method == 'COTHC':
-                samples_for_write = seq_cleaner.finalize_LCMSMS(samples_for_seq, batch_num)
-                excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)    
-
-            if method == 'SCNITAZENE':
-                samples_for_write = seq_cleaner.finalize_Nitazene(samples_for_seq, batch_num)
-                excel_fill.export_LCMSMS(samples_for_write, seq_dir, batch_num)
-
-            return       
-        
-        elif method == 'SQVOL':
-            slice_interval = 20
-
-            samples_for_seq = seq_builder.build_vols(samples, slice_interval)
-            samples_for_write = seq_cleaner.finalize_SQVOL(samples_for_seq, batch_num)
-            excel_fill.export_SQVOL(samples_for_write, seq_dir, batch_num)
-            return
-
-        elif method.startswith("QT") or method.startswith("SQ"):
-            slice_interval = 20
-
-            samples_for_seq = seq_builder.build_quants(samples, slice_interval, method)
-            samples_for_write = seq_cleaner.finalize_quants(samples_for_seq, batch_num)
-            excel_fill.export_quants(samples_for_write, seq_dir, batch_num)
-            return
-        
-        else:
-            print('Unable to find a sequence builder for the method listed in the TEST BATCH.')
-            print('Enter another/similar method and attemp to re-run?: ')
-            method = input().upper()
-            build_and_export(samples, method, batch_num, seq_dir)
-
-    def find_instrument(method):
-        matched_methods = [methods for methods in method_dict if methods.startswith(method)]
-        if not matched_methods:
-            print(f'Unable to find instrument associated with {method}')
-            print('Enter another method name that uses the same instrument?: ')
-            method = input().upper()
-            return find_instrument(method)
-        elif len(method_dict[matched_methods[0]]) == 1:
-            return method_dict[matched_methods[0]][0]
-        else:
-            print(f'type 1 for {method_dict[matched_methods[0]][0]} OR 2 for {method_dict[matched_methods[0]][1]}: ')
-            choice = input()
-            choice = int(choice) - 1
-            return method_dict[matched_methods[0]][choice]    
-        
 
     seq_dir = fr'G:\PDF DATA\TEST BATCH REPORTS\{initials}'
 

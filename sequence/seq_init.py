@@ -200,14 +200,14 @@ class quants(sequence):
         if item.startswith('SI') or item == '1':
             self.single = True
             self.double = False
+        if item.startswith('B'):
+            self.bad = True
     #class specific
     def find_serums(self):
         if 'SERUM' in self.type or 'PLASMA' in self.type:
             self.serum = True
         return self
     
-#probably need to handle how it will be called... where to save pdf... what info to get from the user
-#maybe a search to see if 'TEST BATCH ' is in lines before proceeding
 def read_sequence(pdf_path):
     samples = [] # holds created class objects, returned at end
     doc = fitz.open(pdf_path)

@@ -201,6 +201,7 @@ def build_quants(samples, interval, method):
     z = 0
     y = 0
     priority = []
+    back = []
     dilns_b = set()
     serums = []
     dilns_s = set()
@@ -234,10 +235,12 @@ def build_quants(samples, interval, method):
             if hasattr(temp[i], 'prio'):
                 priority.append(samples.pop(i))
                 print(f'sending sample to the front {temp[i]}')
+            if hasattr(temp[i], 'bad'):
+                back.append(samples.pop(i))
+                print(f'sending bad sample to back {temp[i]}')
                 
-
-
-    samples = priority[::-1] + samples
+    samples = priority[::-1] + samples + back[::-1]
+    # sort bloods and serums
     bloods_final = []
     serums_final = []
     for sample in samples:
@@ -248,7 +251,6 @@ def build_quants(samples, interval, method):
             bloods_final.append(sample.copy())
         if hasattr(sample, 'SR'):
             bloods_final.append(make_SR(sample))
-    
     if serums:
         for serum in serums[::-1]:
             if serum.single:
@@ -294,12 +296,13 @@ def build_quants(samples, interval, method):
             quant_list.extend([ctl.add_serum() for ctl in make_LH()])
             y += interval
     if MSA:
-        for case in MSA[::-1]:
+        MSA = list(reversed(MSA))
+        reordered_MSA = [case for case in MSA if not hasattr(case, 'bad')] + \
+                        [case for case in MSA if hasattr(case, 'bad')]
+        for case in reordered_MSA:
             quant_list.append(case)
-            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L1'))
-            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L2'))
-            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L3'))
-            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L4'))
-            quant_list.append(sequence(case.number, 'MSA', '', case.barcode, case.abbrv + '_L5'))
+            for i in range(1, 6):
+                label = f"{case.abbrv}_L{i}"
+                quant_list.append(sequence(case.number, 'MSA', '', case.barcode, label))
 
     return quant_list

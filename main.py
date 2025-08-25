@@ -37,7 +37,7 @@ import logging
 #helpful images to explain the process
 
 
-version = "3.4" #5-06-25
+version = "3.5" #8-25-25
 
 ##### SUBPROCESSES ######
 
@@ -351,7 +351,8 @@ def main():
     qt_batch.grid(row=0, column=1, sticky='w')
 
     ttk.Label(quants, text="Method: ").grid(row=1, column=0, sticky='e', pady=10)
-    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QTANTIDEP1", "QTANTIHIST", "QTMEPIRIDINE", "QTMETHADONE", "QTACETAMINOPHEN", "QTSALICYLATE", "QTDASH", "QTTRAZODONE", "TYPE IN ANY SHIMADZU QUANT"]
+    qt_methods = ["SQVOL", "QTABUSE", "QTSTIM", "QTPSYCH", "QTBZO1", "QTBZO2", "QTANTIDEP1", "QTANTIHIST", "QTMEPIRIDINE", "QTMETHADONE", "QTACETAMINOPHEN", "QTSALICYLATE", "QTDASH", "QTTRAZODONE", \
+                  "COTHC", "SQGHB", "SQETGLYCOL", "QTTRAMADOL", "QTZOLPIDEM", "TYPE IN ANY QUANT NOT LISTED"]
     qt_var = tk.StringVar()
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.grid(row=1, column=1, sticky='w')
