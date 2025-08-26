@@ -73,7 +73,8 @@ def main(batch, method, extraction_date, initials):
         print(f"checking {dirs}")
         if method == 'SQVOL':
             samples = sqvol_init.sqvol_init(dirs)
-        if method in GCQUANTMETHODS:
+        elif method in GCQUANTMETHODS:
+            print('starting scion init')
             samples = scion_init.GC_quant_init(dirs)
         else:
             samples = shimadzu_init.LC_quant_init(dirs)
