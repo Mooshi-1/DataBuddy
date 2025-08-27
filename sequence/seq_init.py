@@ -264,7 +264,7 @@ def read_sequence(pdf_path):
                 if extra:
                     samples.append(volatiles(sample_number, sample_type, sample_container, 
                                              barcode, None, e_comment).add_duplicate().add_extra())
-            elif method.startswith('QT'): #QUANTS
+            elif method.startswith('QT') or method.startswith('SQ'): #QUANTS
                 case_ID = quants(sample_number, sample_type, sample_container, 
                                  barcode, None, comment)
                 case_ID.find_serums()
