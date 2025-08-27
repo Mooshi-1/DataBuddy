@@ -65,7 +65,7 @@ def main(batch, method, extraction_date, initials):
 
     batch_dirs = [case_dir, qc_dir]
 
-    GCQUANTMETHODS = ['COTHC', 'SQGHB', 'SQETGLYCOL', 'QTTRAMADOL', 'QTZOLPIDEM']
+    GCQUANTMETHODS = ['COTHC', 'SQGHB', 'SQETGLYCOL', 'QTTRAMADOL', 'QTZOLPIDEM', 'QTOPIATE']
     #init list to store sample class
     all_samples = []
     #check CASE DATA and BATCH PACK DATA
