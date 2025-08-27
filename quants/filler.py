@@ -226,10 +226,14 @@ def interpret_MSA(case_list):
     base_pdf = case_list[0]
     #print(len(base_pdf.results_analyte))
 
+    def get_indexes(single_control):
+        for tuples in single_control.results_ISTD:
+            return tuples.index('Name')
+
     positive_analytes = []
     if len(base_pdf.results_analyte) > 1:
         for tuples in base_pdf.results_analyte[1:]:
-            positive_analytes.append(tuples[1])
+            positive_analytes.append(tuples[get_indexes(base_pdf)])
 
     #print(positive_analytes)
 

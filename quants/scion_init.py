@@ -34,8 +34,10 @@ def df_format(list_of_tuples):
     ISTDs_data = []
     analytes_data = []
 
-    ISTDs_data.append(list_of_tuples[0])
-    analytes_data.append(list_of_tuples[0])
+    header = ("Name", "RT", "Area", "Amount", "Units", "Result Type")
+
+    ISTDs_data.append(header)
+    analytes_data.append(header)
 
     for tuples in list_of_tuples[1:]:
         if re.search(r"-D\d+", tuples[0]) or re.search(r",D\d+", tuples[0]):
@@ -64,24 +66,6 @@ def raw_pdf_handler(cases_to_bind, batch_dir, samples):
 
         filename = f'{case_ID}.pdf'
         output = os.path.join(batch_dir, filename)
-
-        # writer = PdfWriter()
-        # for page_path in case.supporting_sheets:
-        #     try:
-        #         with open(page_path, "rb") as infile:
-        #             data = infile.read()
-        #         reader = PdfReader(io.BytesIO(data))
-        #         writer.append(reader)
-        #     except Exception as e:
-        #         print(f'error binding {page_path} | {e}')
-
-        # try: 
-        #     with open(output, "wb") as outfile:
-        #         writer.write(outfile)
-        # except Exception as e:
-        #     print(f'error writing {output} | {e}')
-        # finally:
-        #     del writer
 
         merger = fitz.open()
         for path in case.supporting_sheets:
@@ -185,7 +169,7 @@ def GC_quant_init(batch_dir):
                 doc.close()
 
             else:
-                print(f'unable to identify file | {lines}')
+                print(f'unable to identify file | {pdf_path}')
 
     return raw_pdf_handler(cases_to_bind, batch_dir, samples)
 

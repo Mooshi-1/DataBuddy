@@ -132,12 +132,12 @@ def main(batch, method, extraction_date, initials):
         print("LJ excel sheet successfully created! - Filled CTL data")
     except Exception as e:
         print(f"--error-- unable to fill LJ - CTL ISSUE | {e}")
-    try:
-        #print(curve)
-        LJ_path = filler.append_LJ_curve(curve, batch, output_dir, extraction_date, initials)
-        print("LJ excel sheet successfully appended! - Filled Curve data")
-    except Exception as e:
-        print(f"--error-- unable to fill LJ - CURVE ISSUE | {e}")
+    # try:
+    #     #print(curve)
+    #     LJ_path = filler.append_LJ_curve(curve, batch, output_dir, extraction_date, initials)
+    #     print("LJ excel sheet successfully appended! - Filled Curve data")
+    # except Exception as e:
+    #     print(f"--error-- unable to fill LJ - CURVE ISSUE | {e}")
     try:
         searcher.copy_excel(LJ_path, qc_dir, 'LJ')
     except Exception as e:
