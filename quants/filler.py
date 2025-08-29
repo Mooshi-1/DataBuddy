@@ -268,7 +268,7 @@ def fill_MSA(case_list, batch, MSA_path, analyte, method):
     df = pandas.DataFrame(d)
 
     try:
-        print(f"filling in your MSA for {analyte}...")
+        print(f"filling in your MSA for {analyte}...", flush=True)
         excel = win32.Dispatch('Excel.Application')
         print(f"opened {excel}")
         workbook = excel.Workbooks.Open(MSA_path)

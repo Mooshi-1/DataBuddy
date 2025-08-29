@@ -36,6 +36,7 @@ class Sample:
         big_dilution = re.compile(r'X(1[1-9]|[2-9][0-9]+|[1-9][0-9]{2,})')
         dilution = re.compile(r'X(10|[0-9])')
         MOA_type = ["BRN", "LIV", "GLG", "SMIC"]
+        MOA_init = "_L0"
         MOA_cal = ["_L1", "_L2", "_L3", "_L4", "_L5", "_L6"]
         SR_type = ["_SR", '_X%R', '_%R']
         serum = ["SERUM"," S"]
@@ -51,6 +52,8 @@ class Sample:
             self.type.add(QCTYPE.DL)
         if dilution.search(self.ID):
             self.type.add(QCTYPE.DL)
+        if MOA_init in self.ID:
+            self.type.add(QCTYPE.MOA)
         for cal in MOA_cal:
             if cal in self.ID:
                 self.type.add(QCTYPE.CAL)
@@ -132,7 +135,7 @@ def general_sort_key(sample):
         # If no level suffix exists, treat it as level 0.
         level = 0
         base_id = sample.ID
-    print(base_id, level)
+    #print(base_id, level)
     return (base_id, level)
 
 def sort_samples(list):

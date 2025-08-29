@@ -300,9 +300,11 @@ def build_quants(samples, interval, method):
         reordered_MSA = [case for case in MSA if not hasattr(case, 'bad')] + \
                         [case for case in MSA if hasattr(case, 'bad')]
         for case in reordered_MSA:
+            original = case.abbrv
+            case.abbrv = f"{original}_L0"
             quant_list.append(case)
             for i in range(1, 6):
-                label = f"{case.abbrv}_L{i}"
+                label = f"{original}_L{i}"
                 quant_list.append(sequence(case.number, 'MSA', '', case.barcode, label))
 
     return quant_list

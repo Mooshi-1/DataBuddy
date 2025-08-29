@@ -114,6 +114,7 @@ def main(batch, method, extraction_date, initials):
     #grab ISAR from TP directory and put in output dir
     #then fill
     try:
+        print('starting ISAR fill', flush=True)
         if len(controls) >= 4:
             print("getting blood ISAR")
             output_path = searcher.copy_file(aux_func.get_ISAR(method,TP_directory), output_dir, "ISAR_blood")
@@ -186,7 +187,7 @@ def main(batch, method, extraction_date, initials):
     #return files to individual directory
     searcher.ShuttleHome(case_dir)
     
-    print("END SCRIPT")
+    print("END SCRIPT", flush=True)
 
 if __name__ == "__main__":
     #print(ascii_art)
