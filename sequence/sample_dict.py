@@ -126,6 +126,8 @@ sample_container_dict = {
     '30 ML NALGENE BOTTLE': 'BOT',
     '30ML NALGENE BOTTLE': 'BOT',
     'AMBER GLASS BOTTLE': 'BOT',
+    'BLUE TOP SST': 'BTSST',
+    'GREEN TOP SST': 'GTSST',
 
 }
 
