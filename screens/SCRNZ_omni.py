@@ -28,7 +28,7 @@ def Zrename(batch_dir):
             page = doc[0]
             text = page.get_text().strip()
             lines = text.split('\n')
-            # print(lines)
+            print(lines)
             
             #iterate lines and search for case number
             MH_case_number = None
@@ -36,8 +36,9 @@ def Zrename(batch_dir):
             
             try:
                 if lines[0].startswith("Screening Report"):
-                    MH_case_number = lines[6].strip().split(':')[1].strip()
-                    print(MH_case_number)
+                    sample_index = next(i for i, line in enumerate(lines) if line.lstrip().startswith('Sample'))
+                    MH_case_number = lines[sample_index].strip().split(':')[1].strip()
+                    #print(MH_case_number)
                     # sample_name_index = lines.index("Sample Name")
                     # MH_case_number = lines[sample_name_index + 1]
                     # MH_case_number = MH_case_number.upper()
@@ -52,8 +53,8 @@ def Zrename(batch_dir):
                         AM_case_number = (control_pattern.search(lines[0]).group().strip())[1:]
                         #print(f"control matched {AM_case_number}")
                         
-            except (ValueError, IndexError): 
-                print(f"invalid sample {filename}")
+            except Exception as e: 
+                print(f"invalid sample {filename} | {e}")
                 doc.close() 
                 continue
 

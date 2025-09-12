@@ -216,6 +216,9 @@ def read_sequence(pdf_path):
         page = doc[page_num]
         text = page.get_text()
         lines = text.strip().split('\n')
+        if 'TEST BATCH ' not in lines:
+            print('INIT FAILED -- PLEASE REMOVE NON-TEST BATCH FILES')
+            return
         batch_number = lines[3].strip().replace(",","")
     #remove non-sample indexes
         start_index = lines.index('TEST BATCH ') + 1
