@@ -5,9 +5,12 @@ import time
 import sys
 
 def main():
-
-    app = Application(backend="uia").connect(title_re="AMDIS Chromatogram.*", class_name="GCMSANAL")
-
+    try:
+        app = Application(backend="uia").connect(title_re="AMDIS Chromatogram.*", class_name="GCMSANAL")
+    except Exception as e:
+        print(f'An Error Ocurred: Unable to establish connection to AMDIS | {e}',flush=True)
+        print(f'Is this program running on the same computer as AMDIS?', flush=True)
+        return
     main_window = app.window(title_re="AMDIS Chromatogram.*")
     print('found AMDIS application; starting loop')
     process_list = main_window.child_window(title="Results of Last Batch Job")
@@ -63,62 +66,6 @@ def main():
         print(f"expected {expected_time:.2f} minutes remaining to complete", flush=True)
 
     main_window.minimize()
-
-    # def printer(main_window, process_list, counter):
-    #     counter += 1
-    #     main_window.set_focus()
-
-    #     all_windows = gw.getAllTitles()
-    #     target_windows = [w for w in all_windows if w.startswith("AMDIS Chromatogram")]
-    #     sample_name = target_windows[0].split(' - ')[2].strip()
-    #     print(f'printing report #{counter} - {sample_name}')
-
-    #     file = main_window.child_window(title="File", control_type = "MenuItem", found_index = 0, visible_only=False)
-    #     file.click_input()
-
-    #     send_keys("%m")
-    #     send_keys("t")
-    #     send_keys("%f")
-    #     send_keys("p")
-    #     send_keys("%p")
-    #     send_keys("%p")
-
-    #     process_list.set_focus()
-    #     time.sleep(1)
-    #     process_list_window = gw.getActiveWindow()
-    #     print(f"current window = {process_list_window.title}")
-
-    #     send_keys("{DOWN}")
-
-    #     time.sleep(5)
-    #     window = gw.getActiveWindow()
-    #     print(f"current window = {window.title}")
-    #     if process_list_window == window:
-    #         print('processing complete')
-    #         return
-    #     else:
-    #         printer(main_window, process_list, counter)
-
-
-    #printer(main_window, process_list, counter)
-    
-
-
-    # target_mode = main_window.child_window(auto_id="1132", control_type="MenuItem", found_index=0)
-    # target_mode.click_input()
-
-    # #main_window.wait("ready", timeout=1)
-
-    # file = main_window.child_window(title="File", control_type = "MenuItem", found_index = 0, visible_only=False)
-    # file.click_input()
-
-    # print_dialog = main_window.child_window(auto_id="161", control_type = "MenuItem", found_index = 0)
-    # print_dialog.invoke()
-
-    # Access child elements, like "Results of Last Batch Job"
-    # results_dialog = main_window.child_window(title="Results of Last Batch Job", control_type="Window")
-    # results_dialog.print_control_identifiers()  # Lists all child elements
-
 
 if __name__ == '__main__':
     print(f"sys.argv: {sys.argv}", flush=True)

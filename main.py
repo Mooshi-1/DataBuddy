@@ -13,7 +13,8 @@ import itertools
 import time
 from PIL import Image, ImageTk
 from tkhtmlview import HTMLLabel
-from tkhtmldescriptions import sequence_description, sequence_description_2
+from tkhtmldescriptions import sequence_description_3, screens_description, quants_description, Z_description
+from ttkbootstrap import Style
 
 import audit
 import logging
@@ -140,6 +141,9 @@ def main():
     root = ttk.Window(themename="darkly")
     root.title(f"Data Buddy - {version}")
     root.geometry("1300x800")
+
+    style = Style("darkly")
+    style.colors.success = "#b33939"
 
     pm = None
     spinner = None
@@ -297,7 +301,7 @@ def main():
     except Exception as e:
         print(e)
 
-    send_button = ttk.Button(io, text="Send", command=send_command)
+    send_button = ttk.Button(io, bootstyle='success', text="Send", command=send_command)
     send_button.grid(row=7, column=1, pady=10, sticky="e")
     entry_widget.bind("<Return>", send_command)
 
@@ -329,17 +333,13 @@ def main():
     renamer_var = tk.StringVar(value=None)
     renamer_check = ttk.Checkbutton(screens, text="Rename only mode?", onvalue='-r', offvalue=None, variable=renamer_var).grid(row=2, column=0, columnspan=2, pady=5)
 
-    ttk.Button(screens, text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens,
+    ttk.Button(screens, bootstyle='success',text="Run Screen Binder", command=lambda: [start_thread(venv_path, script_path_screens,
                                                                     sc_batch.get(), sc_var.get(), renamer_var.get())]).grid(row=3, column=0, columnspan=2, pady=10)
 
-    ttk.Label(screens, text="Requirements: \
-                                    \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
-                                    \n-Data that is not in the directories listed above will be ignored by the script \
-                                    \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
-                                    \n \
-                                    \n-If you have reinjects, manually bind them to the appropriate file beforehand and ensure that no duplicate files are present \
-                                    \n-Manually bind your sequence to the batch pack after running. \
-                                    \n ").grid(row=4, column=0, columnspan=2, pady=20)
+
+    screens_label = HTMLLabel(screens, html=screens_description, background="#343a40")
+    screens_label.grid(row=4, column=0, columnspan=2, pady=20, sticky='nsew')
+    screens_label.fit_height()
 
     ## START QUANTS TAB ##
     quants = ttk.Frame(notebook)
@@ -359,27 +359,11 @@ def main():
     combobox2 = ttk.Combobox(quants, textvariable=qt_var, values=qt_methods)
     combobox2.grid(row=1, column=1, sticky='w')
 
-    ttk.Label(quants, text="The 2 boxes below can be left blank", font=('Arial', 12, 'bold')).grid(row=2, column=0, columnspan=2, pady=10)
-    ttk.Label(quants, text="Extraction date in MM/DD/YY format WITH slashes: ").grid(row=3, column=0, sticky='e', pady=10)
-    qt_date = ttk.Entry(quants)
-    qt_date.grid(row=3, column=1, sticky='w')
+    ttk.Button(quants, bootstyle='success',text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants,
+                                                                    qt_batch.get(), qt_var.get().upper())]).grid(row=2, column=0, columnspan=2, pady=10)
 
-    ttk.Label(quants, text="Enter your initials: ").grid(row=4, column=0, sticky='e', pady=10)
-    qt_initials = ttk.Entry(quants)
-    qt_initials.grid(row=4, column=1, sticky='w')
-
-    ttk.Button(quants, text="Run Quants Binder", command=lambda: [start_thread(venv_path, script_path_quants,
-                                                                    qt_batch.get(), qt_var.get().upper(), qt_date.get(), qt_initials.get().upper())]).grid(row=5, column=0, columnspan=2, pady=10)
-
-    ttk.Label(quants, text="Requirements: \
-                                    \n-Data must be in BATCH PACK DATA, CASE DATA, or auto-generated CASE DATA subfolders\
-                                    \n-Data that is not in the directories listed above will be ignored by the script \
-                                    \n-Data that is open in Adobe or open in a windows explorer preview window may have issues -- make sure to close them\
-                                    \n \
-                                    \n-If you have MSA's, Excel must be closed on your computer to fill the LF-10/LF-11 forms \
-                                    \n-Make sure your curve and sequence are printed, the script will handle them appropriately. \
-                                    \n-Extraction date and initials can be left empty -- these are for the LJ charts which are not being used currently \
-                                    \n ").grid(row=6, column=0, columnspan=2, pady=20)
+    quants_label = HTMLLabel(quants, html=quants_description, background="#343a40")
+    quants_label.grid(row=3, column=0, columnspan=2, pady=20, sticky='nsew')
 
     ## START SEQUENCE TAB ##
     sequence = ttk.Frame(notebook)
@@ -392,22 +376,11 @@ def main():
     initials = ttk.Entry(sequence)
     initials.grid(row=0, column=1, sticky='w')
 
-    ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper())]).grid(row=1, column=0, columnspan=2, pady=10)
+    ttk.Button(sequence,bootstyle='success',text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper())]).grid(row=1, column=0, columnspan=2, pady=10)
 
-    seq_label = HTMLLabel(sequence, html=sequence_description_2, background="#343a40")
+    seq_label = HTMLLabel(sequence, html=sequence_description_3, background="#343a40")
     seq_label.grid(row=2, column=0, columnspan=2, pady=20, sticky='nsew')
-    # ttk.Label(sequence, text=r""" 
-    # -New feature: CME Test Batches with different Methods is now supported.
-    #     A test batch report for QTABUSE and separate batch report for QTSTIM will be separated into 
-    #     two sequences automatically. 2 test batch reports for SCRNZ will still create only one sequence.
 
-    # Requirements:
-    #     -This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for pdf printed Test Batches,
-    #     then prepares a sequence suitable for the instrument/method being prepared
-    #     -You can make extra directories, 'Archive', 'Old batches', etc, without issue -- 
-    #     they are not checked or recognized by the script
-                        
-    # """).grid(row=2, column=0, columnspan=2, pady=20)
 
     ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
@@ -416,39 +389,17 @@ def main():
     carryover.columnconfigure(0, weight=1, uniform='equal_width')
     carryover.columnconfigure(1, weight=1, uniform='equal_width')
 
-    ttk.Label(carryover, text="start AMDIS printer: Your files must be processed already").grid(row=0, column=0, columnspan=2, pady=10)
-    ttk.Button(carryover, text="Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint)]).grid(row=1, column=0, columnspan=2, pady=10)
+    ttk.Button(carryover, bootstyle='success',text="1. Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint)]).grid(row=0, column=0, columnspan=2, pady=10)
 
-    ttk.Label(carryover, text="Enter the network path where the raw data is: ").grid(row=2, sticky='e', column=0)
+    ttk.Label(carryover, text="Enter the raw data path: ").grid(row=1, column=0)
     location = ttk.Entry(carryover, width=80)
-    location.grid(row=2, column=1, sticky='w')
-    ttk.Label(carryover, text="make sure that no other files are in the directory except for the AMDIS reports in order they were printed").grid(row=3, column=0, columnspan=2)
+    location.grid(row=1, column=1, columnspan=2)
+ 
+    ttk.Button(carryover, bootstyle='success',text="2. Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get())]).grid(row=2, column=0, columnspan=2, pady=20)
 
-    ttk.Button(carryover, text="Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get())]).grid(row=4, column=0, columnspan=2)
+    z_label = HTMLLabel(carryover, html=Z_description, background="#343a40")
+    z_label.grid(row=3, column=0, columnspan=2, pady=20, sticky='nsew')
 
-    ttk.Label(carryover, text=r""" 
-    Requirements:
-        -This script only accepts entire network paths to a directory
-        -The only files inside the above directory are the printed AMDIS reports, in the order they were injected
-        -It is important to not rename these files before running carryover to ensure proper order
-        
-    Output:
-        -A single excel file with 3 tabs. 
-        -The first tab contains a list of samples for reinject and the analytes which are potentially carryover
-            The script checks for carryover in a rudimentary manner, and should be overridden by an 
-            analyst if necessary.
-                        
-        -The second tab contains a summation of each AMDIS pdf report fed into it.
-            The analyte name and abundance found in each report is compared to the previous report.
-            If the same analyte appeared in the previous sample at a larger abundance, the current sample
-            is marked for carryover. 
-                            
-            If this tab is not accurate to the injection order or contains "ERROR"/repeated fields, 
-            the automated carryover check is invalid and should be done manually instead.
-                            
-        -The third tab contains a new sequence directly for copy/paste into Agilent instrument software.
-            Adjust with analyst discretion as necessary.
-    """).grid(row=5, column=0, columnspan=2, pady=20)
 
     ## START PDF RENAME TAB ##
     rename = ttk.Frame(notebook)
@@ -467,7 +418,7 @@ def main():
     combobox3 = ttk.Combobox(rename, textvariable=rename_var, values=rename_methods)
     combobox3.grid(row=1, column=1, sticky='w')
 
-    ttk.Button(rename, text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get())]).grid(row=2, column=0, columnspan=2)
+    ttk.Button(rename, bootstyle='success',text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get())]).grid(row=2, column=0, columnspan=2)
 
     ttk.Label(rename, text=r"""
                     This script will simply check the directory for instrument raw data reports.
