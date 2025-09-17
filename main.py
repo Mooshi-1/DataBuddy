@@ -13,7 +13,8 @@ import itertools
 import time
 from PIL import Image, ImageTk
 from tkhtmlview import HTMLLabel
-from tkhtmldescriptions import sequence_description_3, screens_description, quants_description, Z_description
+from tkhtmldescriptions import sequence_description_3, screens_description, quants_description, \
+                                Z_description, rename_description, email_html, help_description
 from ttkbootstrap import Style
 
 import audit
@@ -140,7 +141,7 @@ def main():
     #root = tk.Tk()
     root = ttk.Window(themename="darkly")
     root.title(f"Data Buddy - {version}")
-    root.geometry("1300x800")
+    root.geometry("1300x720")
 
     style = Style("darkly")
     style.colors.success = "#b33939"
@@ -218,19 +219,23 @@ def main():
         header.grid(row=0, column=0, columnspan=2, pady=10)
         update()
     else:    
-        header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"))
+        header = ttk.Label(root, text=f"Happy {date}.", font=("Arial", 16, "bold"),foreground='#ffda79')
         header.grid(row=0, column=0, columnspan=2, pady=10)
 
 
-    readme = ttk.Label(root, text="Use the tabs to start a Python script", font=("Arial", 14))
+    readme = ttk.Label(root, text="Use the tabs to start a Python script", font=("Arial", 14), foreground='#706fd3')
     readme.grid(row=1, column=0, pady=10)
 
-    readme2 = ttk.Label(root, text="Use the terminal for verification and script input", font=("Arial", 14))
+    readme2 = ttk.Label(root, text="Use the terminal for verification and script input", font=("Arial", 14), foreground='#706fd3')
     readme2.grid(row=1, column=1, pady=10)
 
     ## create notebook tabs ##
     notebook = ttk.Notebook(root)
     notebook.grid(row=2, column=0)
+
+    email = HTMLLabel(root, html=email_html, background=style.colors.bg)
+    email.config(bg=style.colors.bg, fg=style.colors.fg)
+    email.grid(row=8, column=0, columnspan=2, sticky='ew')
 
     ## IO ##
     io = ttk.Frame(root)
@@ -259,6 +264,7 @@ def main():
     io.rowconfigure(5, weight=1, uniform='equal_width')
     io.rowconfigure(6, weight=1, uniform='equal_width')
     io.rowconfigure(7, weight=1, uniform='equal_width')
+    root.rowconfigure(8)
 
     def update_output(text):
         stdout_log = "stdout.txt"
@@ -319,6 +325,7 @@ def main():
 
     screens.columnconfigure(0, weight=1, uniform='equal_width')
     screens.columnconfigure(1, weight=1, uniform='equal_width')
+    screens.rowconfigure(4, weight=1)
 
     ttk.Label(screens, text="Batch Number: ").grid(row=0, column=0, sticky='e', pady=10)
     sc_batch = ttk.Entry(screens)
@@ -337,9 +344,11 @@ def main():
                                                                     sc_batch.get(), sc_var.get(), renamer_var.get())]).grid(row=3, column=0, columnspan=2, pady=10)
 
 
-    screens_label = HTMLLabel(screens, html=screens_description, background="#343a40")
-    screens_label.grid(row=4, column=0, columnspan=2, pady=20, sticky='nsew')
-    screens_label.fit_height()
+
+    screens_label = HTMLLabel(screens, html=screens_description, background="#2c2c54")
+    screens_label.config(bg="#2c2c54")
+    screens_label.grid(row=4, column=0, columnspan=2, sticky='nsew')
+
 
     ## START QUANTS TAB ##
     quants = ttk.Frame(notebook)
@@ -347,6 +356,7 @@ def main():
 
     quants.columnconfigure(0, weight=1, uniform="equal_width")
     quants.columnconfigure(1, weight=1, uniform="equal_width")
+    quants.rowconfigure(3, weight=1)
 
     ttk.Label(quants, text="Batch Number: ").grid(row=0, column=0, sticky='e', pady=10)
     qt_batch = ttk.Entry(quants)
@@ -363,7 +373,8 @@ def main():
                                                                     qt_batch.get(), qt_var.get().upper())]).grid(row=2, column=0, columnspan=2, pady=10)
 
     quants_label = HTMLLabel(quants, html=quants_description, background="#343a40")
-    quants_label.grid(row=3, column=0, columnspan=2, pady=20, sticky='nsew')
+    quants_label.config(bg="#2c2c54")
+    quants_label.grid(row=3, column=0, columnspan=2, sticky='nsew')
 
     ## START SEQUENCE TAB ##
     sequence = ttk.Frame(notebook)
@@ -371,6 +382,7 @@ def main():
 
     sequence.columnconfigure(0, weight=1, uniform='equal_width')
     sequence.columnconfigure(1, weight=1, uniform='equal_width')
+    sequence.rowconfigure(2, weight=1)
 
     ttk.Label(sequence, text="Enter your initials: ").grid(row=0, column=0, pady=10, sticky='e')
     initials = ttk.Entry(sequence)
@@ -378,8 +390,9 @@ def main():
 
     ttk.Button(sequence,bootstyle='success',text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper())]).grid(row=1, column=0, columnspan=2, pady=10)
 
-    seq_label = HTMLLabel(sequence, html=sequence_description_3, background="#343a40")
-    seq_label.grid(row=2, column=0, columnspan=2, pady=20, sticky='nsew')
+    seq_label = HTMLLabel(sequence, html=sequence_description_3, background="#2c2c54")
+    seq_label.config(bg="#2c2c54")
+    seq_label.grid(row=2, column=0, columnspan=2, sticky='nsew')
 
 
     ## START CARRYOVER TAB ##
@@ -388,6 +401,7 @@ def main():
 
     carryover.columnconfigure(0, weight=1, uniform='equal_width')
     carryover.columnconfigure(1, weight=1, uniform='equal_width')
+    carryover.rowconfigure(3, weight=1)
 
     ttk.Button(carryover, bootstyle='success',text="1. Start AMDIS Printer", command=lambda: [start_thread(venv_path, script_path_Zprint)]).grid(row=0, column=0, columnspan=2, pady=10)
 
@@ -398,7 +412,8 @@ def main():
     ttk.Button(carryover, bootstyle='success',text="2. Run Carryover Check", command=lambda: [start_thread(venv_path, script_path_carryover, location.get())]).grid(row=2, column=0, columnspan=2, pady=20)
 
     z_label = HTMLLabel(carryover, html=Z_description, background="#343a40")
-    z_label.grid(row=3, column=0, columnspan=2, pady=20, sticky='nsew')
+    z_label.config(bg="#2c2c54")
+    z_label.grid(row=3, column=0, columnspan=2, sticky='nsew')
 
 
     ## START PDF RENAME TAB ##
@@ -407,8 +422,9 @@ def main():
 
     rename.columnconfigure(0, weight=1, uniform='equal_width')
     rename.columnconfigure(1, weight=1, uniform='equal_width')
+    rename.rowconfigure(3, weight=1)
 
-    ttk.Label(rename, text="Enter the full network path where the raw data is: ").grid(row=0, column=0, pady=10, sticky='e')
+    ttk.Label(rename, text="Enter the full network path where the raw data is: ").grid(row=0, column=0, pady=20, sticky='e')
     rename_ent = ttk.Entry(rename)
     rename_ent.grid(row=0, column=1, sticky='w')
 
@@ -418,37 +434,21 @@ def main():
     combobox3 = ttk.Combobox(rename, textvariable=rename_var, values=rename_methods)
     combobox3.grid(row=1, column=1, sticky='w')
 
-    ttk.Button(rename, bootstyle='success',text="Run PDF Rename", command=lambda: [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get())]).grid(row=2, column=0, columnspan=2)
+    ttk.Button(rename, bootstyle='success',text="Run PDF Rename", command=lambda: 
+               [start_thread(venv_path, script_path_rename, rename_ent.get(), rename_var.get())]).grid(row=2, column=0, pady=10,columnspan=2)
 
-    ttk.Label(rename, text=r"""
-                    This script will simply check the directory for instrument raw data reports.
-                    If the format matches a supported type... then the file will be renamed by the sample ID field.
-                    This tab should only be used if the data you are producing is not part of a routine batch (validation, etc)
-                    
-                    To rename files but not bind a routine batch, use the checkbox on the 'screens' tab.
-                        """).grid(row=3, column=0, columnspan=2)
+    rename_label = HTMLLabel(rename, html=rename_description, background="#2c2c54")
+    rename_label.config(bg="#2c2c54")
+    rename_label.grid(row=3, column=0, columnspan=2, sticky='nsew')
+
 
     ## START HELP TAB ##
     help = ttk.Frame(root)
     notebook.add(help, text="Help")
 
-    help_text = r""" 
-    What's going on here?
-
-    In previous versions of the data manipulation scripts, each one would be a separate executable file.
-    This new program is GUI (graphical user interface) that serves as a launch-pad for the same data manipulation scripts.
-    Each of the tabs corresponds to a separate script, and the data entered before you hit "RUN" is passed as a command-line argument, in the same way you were prompted before. 
-
-    The program is split into 2 main windows. A "Notebook" which holds all the tabs for different ways we process data, and a "Terminal" which shows the output of the script.
-    The terminal will remain empty until a script is started. 
-
-    This new setup makes it much easier for the maintainer (me) to not only push updates, but also continue to scale it with more and more features. 
-
-    """
-    help_box = tk.Text(help, wrap="word", font=("Arial", 13))
-    help_box.insert("1.0", help_text)
-    help_box.config(state="disabled")
-    help_box.grid(sticky='nsew')
+    screens_label = HTMLLabel(help, html=help_description, background="#2c2c54")
+    screens_label.config(bg="#2c2c54")
+    screens_label.grid(row=0, column=0, sticky='nsew')
 
     help.columnconfigure(0, weight=1)
     help.rowconfigure(0, weight=1)

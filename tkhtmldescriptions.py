@@ -25,6 +25,10 @@ def styled_list(items: list[str]) -> str:
     list_items = ''.join(f'<li>{item}</li>' for item in items)
     return f'<ul style="{LIST_STYLE}">{list_items}</ul>'
 
+def spacer_div(height: int = 20) -> str:
+    """Returns a spacer div with specified height in pixels."""
+    return f'<div style="height:{height}px;"></div>'
+
 sequence_description_3 = wrap_html(
     styled_header("Quick Links:") +
     styled_list([
@@ -56,7 +60,7 @@ screens_description = wrap_html(
         "Data that is not in the directories listed above will be ignored by the script",]) + "<br>" +
     styled_list([
         "Close the file explorer preview window and any open PDF files",
-        "Manually bind reinjects manually before or after running the script",
+        "Manually bind reinjects before or after running the script",
         "Manually bind sequence to batch pack after running the script"
     ])
 )
@@ -95,5 +99,38 @@ Z_description = wrap_html(
         "The network path must only contain AMDIS files",
         "The printed order must match the sequence order",
         "Do not rename AMDIS files after being printed until the Carryover Check is complete",
+    ])
+)
+
+rename_description = wrap_html(
+    styled_header("Explanation: ") +
+    "This script will check the network path entered for PDF data." + "<br>" + 
+    "If the format matches, the PDF file will be renamed by the sample ID field." + "<br>" + 
+    "This tab was designed for validation and means establishment."
+)
+
+email_html = r"""
+<div style='text-align: center; color: white; font-family:Segoe UI, sans-serif;'>
+    Having an issue or looking for an unsupported feature?
+    <a href='mailto:alexg1@miamidade.gov?subject=DataBuddy&body=Dude. Fix it.' style='color:#00aaff; text-decoration:none;'>
+        Click here to email me.
+    </a>
+</div>
+"""
+
+help_description = wrap_html(
+    styled_header("What is this?") +
+    "DataBuddy is a collection of scripts written in the 🐍Python🐍 programming language. <br>" +
+    "This program is a graphical user interface (GUI) which serves as a launchpad for scripts used in data processing." +
+    "<br>" + spacer_div(100) +
+    "The program is split into 2 main windows. A Notebook which holds all the tabs for different ways we process data, and a Terminal which shows the output of the script. The terminal will remain empty until a script is started."
+    +"<br>" + spacer_div(100) +
+    "Tab Functions:" +
+    styled_list([
+        "Screens: Renames and binds data files for SCRNZ, SCLCMSMS, and SCGEN",
+        "Quants: Renames and binds data files for all Shimadzu and Scion quants.<br>Fills required forms like ISAR and MSA",
+        "Sequence: Translates a CME test batch into an excel file, specific for the method being run",
+        "Z Carryover: Specific for ZSCRN, speeds up AMDIS printing and carryover checking",
+        "Rename: Renames files outside of routine batch analysis"
     ])
 )
