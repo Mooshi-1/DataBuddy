@@ -148,18 +148,24 @@ def batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_con
 
 def serum_batch_pack_handler(curve,shooter,neg_ctl,cal_curve,controls,sequence,dil_controls,
                              serum_shooter,serum_neg,serum_controls,serum_dil_controls,serum_cal_curve):
+    
     if len(serum_controls) <=2 and len(controls) <=2:
         batch_pack = (curve + shooter + neg_ctl + cal_curve + controls + dil_controls + 
                       serum_shooter + serum_neg + serum_cal_curve + serum_controls + serum_dil_controls + sequence)
         return batch_pack
     else:
         s_split_1, s_split_2, c_split_1, c_split_2 = [], [], [], []
+        s_split_1 = serum_controls
+        c_split_1 = controls
+
         if len(serum_controls) > 2:
             s_split_1 = serum_controls[:2]
             s_split_2 = serum_controls[2:]
+
         if len(controls) > 2:
             c_split_1 = controls[:2]
             c_split_2 = controls[2:]
+
         batch_pack = (curve + shooter + neg_ctl + cal_curve + c_split_1 + dil_controls + c_split_2 +
                     serum_shooter + serum_neg + serum_cal_curve + s_split_1 + serum_dil_controls + s_split_2 + sequence)  
         return batch_pack      

@@ -1,6 +1,7 @@
 import os
 import fitz  # type: ignore # PyMuPDF
 from sample_dict import sample_type_dict, sample_container_dict, vol_duplicate
+import sys
 
 class sequence():
     def __init__(self, sample_number, sample_type, sample_container, barcode, abbrv=None, comment=None):
@@ -216,14 +217,15 @@ def read_sequence(pdf_path):
         page = doc[page_num]
         text = page.get_text()
         lines = text.strip().split('\n')
-        if 'TEST BATCH ' not in lines:
-            print('INIT FAILED -- PLEASE REMOVE NON-TEST BATCH FILES')
-            return
         batch_number = lines[3].strip().replace(",","")
     #remove non-sample indexes
-        start_index = lines.index('TEST BATCH ') + 1
-        end_index = lines.index('CRTestBatch') - 1
-        cases = lines[start_index:end_index]
+        try:
+            start_index = lines.index('TEST BATCH ') + 1
+            end_index = lines.index('CRTestBatch') - 1
+            cases = lines[start_index:end_index]
+        except Exception as e:
+            print(f'Fatal error: {e}. Please restart the script after removing {pdf_path}')
+            sys.exit()
     #start case info loop
         for i in range(0, len(cases), 5):
             sample_number = (cases[i])

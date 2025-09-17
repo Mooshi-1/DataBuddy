@@ -12,6 +12,8 @@ import threading
 import itertools
 import time
 from PIL import Image, ImageTk
+from tkhtmlview import HTMLLabel
+from tkhtmldescriptions import sequence_description, sequence_description_2
 
 import audit
 import logging
@@ -392,18 +394,20 @@ def main():
 
     ttk.Button(sequence, text="Run Sequence Generator", command=lambda: [start_thread(venv_path, script_path_sequence, initials.get().upper())]).grid(row=1, column=0, columnspan=2, pady=10)
 
-    ttk.Label(sequence, text=r""" 
-    -New feature: CME Test Batches with different Methods is now supported.
-        A test batch report for QTABUSE and separate batch report for QTSTIM will be separated into 
-        two sequences automatically. 2 test batch reports for SCRNZ will still create only one sequence.
+    seq_label = HTMLLabel(sequence, html=sequence_description_2, background="#343a40")
+    seq_label.grid(row=2, column=0, columnspan=2, pady=20, sticky='nsew')
+    # ttk.Label(sequence, text=r""" 
+    # -New feature: CME Test Batches with different Methods is now supported.
+    #     A test batch report for QTABUSE and separate batch report for QTSTIM will be separated into 
+    #     two sequences automatically. 2 test batch reports for SCRNZ will still create only one sequence.
 
-    Requirements:
-        -This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for pdf printed Test Batches,
-        then prepares a sequence suitable for the instrument/method being prepared
-        -You can make extra directories, 'Archive', 'Old batches', etc, without issue -- 
-        they are not checked or recognized by the script
+    # Requirements:
+    #     -This script looks in the directory G:\PDF DATA\TEST BATCH REPORTS for pdf printed Test Batches,
+    #     then prepares a sequence suitable for the instrument/method being prepared
+    #     -You can make extra directories, 'Archive', 'Old batches', etc, without issue -- 
+    #     they are not checked or recognized by the script
                         
-    """).grid(row=2, column=0, columnspan=2, pady=20)
+    # """).grid(row=2, column=0, columnspan=2, pady=20)
 
     ## START CARRYOVER TAB ##
     carryover = ttk.Frame(notebook)
