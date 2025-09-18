@@ -20,17 +20,8 @@ from ttkbootstrap import Style
 import audit
 import logging
 
-#things to code:
-#figure out how to encode ascii art into terminal
-
-#font / font size overhaul
-#button styles with ttk bootstrap
-#bootstyle = "success"
-#explore other widgets
-
 #SQVOL - anything in CUP -- add blanks
 #reinject/reassign tracker + whole batch analysis
-# solution for FDLE's, binding/naming
 
 #Z SCREENS - what else do we need?
 # C > G > C transfer and folder creation
@@ -41,7 +32,7 @@ import logging
 #helpful images to explain the process
 
 
-version = "3.5" #8-25-25
+version = "3.6" #9-17-25
 
 ##### SUBPROCESSES ######
 
@@ -141,7 +132,7 @@ def main():
     #root = tk.Tk()
     root = ttk.Window(themename="darkly")
     root.title(f"Data Buddy - {version}")
-    root.geometry("1300x720")
+    root.geometry("1300x710")
 
     style = Style("darkly")
     style.colors.success = "#b33939"
@@ -229,6 +220,7 @@ def main():
     readme2 = ttk.Label(root, text="Use the terminal for verification and script input", font=("Arial", 14), foreground='#706fd3')
     readme2.grid(row=1, column=1, pady=10)
 
+    #style.colors.bg = "#2c2c54"
     ## create notebook tabs ##
     notebook = ttk.Notebook(root)
     notebook.grid(row=2, column=0)

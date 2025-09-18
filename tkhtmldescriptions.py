@@ -111,9 +111,9 @@ rename_description = wrap_html(
 
 email_html = r"""
 <div style='text-align: center; color: white; font-family:Segoe UI, sans-serif;'>
-    Having an issue or looking for an unsupported feature?
+    Having an issue or looking for a new feature?
     <a href='mailto:alexg1@miamidade.gov?subject=DataBuddy&body=Dude. Fix it.' style='color:#00aaff; text-decoration:none;'>
-        Click here to email me.
+        Click here to email!
     </a>
 </div>
 """
