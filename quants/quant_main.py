@@ -41,7 +41,7 @@ ascii_art = """
 Version 1.11 - 03/07/2025
 """
 
-def main(batch, method, extraction_date, initials):
+def main(batch, method, extraction_date=None, initials=None):
     print(f"Batch Number: {batch}")
     print(f"Method: {method}")
     
@@ -192,24 +192,16 @@ def main(batch, method, extraction_date, initials):
 if __name__ == "__main__":
     #print(ascii_art)
     print(f"sys.argv: {sys.argv}")
+    print('hit start')
 
     logger = logging.getLogger("quants")
 
-    # Check if the required arguments are passed via sys.argv
-    if len(sys.argv) < 5:
-        batch = input("Enter the batch number: ")
-        method = input("Enter the shimadzu quant (QTABUSE, QTSTIM, SQVOL, etc): ").upper()
-        extraction_date = input("Enter extraction date with slashes in MM/DD/YY format: ")
-        initials = input("Enter your initials: ").upper()
-        input("WARNING: Close your pdf's/preview windows. Make sure that Excel on your computer is closed. Don't forget to print your curve. Press Enter to continue...")
-    else:
-        # Use CLI provided arguments
-        batch = sys.argv[1]
-        method = sys.argv[2].upper()
-        extraction_date = sys.argv[3]
-        initials = sys.argv[4].upper()
+    # Use CLI provided arguments
+    batch = sys.argv[1]
+    method = sys.argv[2].upper()
 
+    print('start main')
     # Call the main function with the provided or inputted arguments
-    main(batch, method, extraction_date, initials)
+    main(batch, method)
     logger.info("Completed batch %s", batch)
 
