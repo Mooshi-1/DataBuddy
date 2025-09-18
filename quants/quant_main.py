@@ -192,7 +192,7 @@ def main(batch, method, extraction_date=None, initials=None):
 if __name__ == "__main__":
     #print(ascii_art)
     print(f"sys.argv: {sys.argv}")
-    print('hit start')
+    #print('hit start')
 
     logger = logging.getLogger("quants")
 
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     batch = sys.argv[1]
     method = sys.argv[2].upper()
 
-    print('start main')
+   # print('start main')
     # Call the main function with the provided or inputted arguments
     main(batch, method)
     logger.info("Completed batch %s", batch)
